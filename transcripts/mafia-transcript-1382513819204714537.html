@@ -1,0 +1,395 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Transcript - #mafia</title>
+        <style>
+            * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+            }
+            
+            body {
+                font-family: Whitney, "Helvetica Neue", Helvetica, Arial, sans-serif;
+                background-color: #36393f;
+                color: #dcddde;
+                padding: 20px;
+                line-height: 1.5;
+            }
+            
+            .transcript-container {
+                max-width: 980px;
+                margin: 0 auto;
+                background-color: #36393f;
+                border-radius: 8px;
+                overflow: hidden;
+            }
+            
+            .header {
+                background-color: #2f3136;
+                padding: 16px 20px;
+                border-bottom: 1px solid #202225;
+                display: flex;
+                align-items: center;
+                gap: 12px;
+            }
+            
+            .header-icon {
+                width: 40px;
+                height: 40px;
+                border-radius: 50%;
+                background-color: #5865f2;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 20px;
+                font-weight: bold;
+            }
+            
+            .header-info h1 {
+                font-size: 20px;
+                font-weight: 600;
+                margin-bottom: 4px;
+            }
+            
+            .header-info p {
+                font-size: 14px;
+                color: #b9bbbe;
+            }
+            
+            .messages-container {
+                padding: 20px;
+            }
+            
+            .message {
+                display: flex;
+                padding: 4px 0;
+                margin: 8px 0;
+                position: relative;
+            }
+            
+            .message:hover {
+                background-color: #32353b;
+                border-radius: 4px;
+            }
+            
+            .message-avatar {
+                width: 40px;
+                height: 40px;
+                border-radius: 50%;
+                margin-right: 16px;
+                flex-shrink: 0;
+                background-color: #5865f2;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-weight: 600;
+                color: white;
+            }
+            
+            .message-avatar img {
+                width: 100%;
+                height: 100%;
+                border-radius: 50%;
+                object-fit: cover;
+            }
+            
+            .message-content {
+                flex: 1;
+                min-width: 0;
+            }
+            
+            .message-header {
+                display: flex;
+                align-items: baseline;
+                gap: 8px;
+                margin-bottom: 4px;
+            }
+            
+            .message-author {
+                font-weight: 600;
+                font-size: 16px;
+                color: #ffffff;
+            }
+            
+            .message-timestamp {
+                font-size: 12px;
+                color: #72767d;
+            }
+            
+            .message-text {
+                color: #dcddde;
+                font-size: 16px;
+                line-height: 1.375;
+                word-wrap: break-word;
+            }
+            
+            .message-text a {
+                color: #00b0f4;
+                text-decoration: none;
+            }
+            
+            .message-text a:hover {
+                text-decoration: underline;
+            }
+            
+            .message-attachments {
+                margin-top: 8px;
+            }
+            
+            .attachment {
+                display: inline-block;
+                margin: 4px 0;
+            }
+            
+            .attachment img {
+                max-width: 400px;
+                max-height: 300px;
+                border-radius: 8px;
+                cursor: pointer;
+            }
+            
+            .attachment-file {
+                background-color: #2f3136;
+                border: 1px solid #202225;
+                border-radius: 8px;
+                padding: 10px 16px;
+                display: inline-flex;
+                align-items: center;
+                gap: 8px;
+                text-decoration: none;
+                color: #00b0f4;
+            }
+            
+            .attachment-file:hover {
+                background-color: #393c43;
+            }
+            
+            .embed {
+                margin-top: 8px;
+                max-width: 520px;
+                border-radius: 4px;
+                background-color: #2f3136;
+                display: flex;
+                overflow: hidden;
+            }
+            
+            .embed-color-bar {
+                width: 4px;
+                flex-shrink: 0;
+                background-color: #5865f2;
+            }
+            
+            .embed-content {
+                padding: 16px;
+                flex: 1;
+            }
+            
+            .embed-author {
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                margin-bottom: 8px;
+                font-size: 14px;
+                font-weight: 600;
+            }
+            
+            .embed-author img {
+                width: 24px;
+                height: 24px;
+                border-radius: 50%;
+            }
+            
+            .embed-title {
+                font-size: 16px;
+                font-weight: 600;
+                margin-bottom: 8px;
+                color: #00b0f4;
+            }
+            
+            .embed-description {
+                font-size: 14px;
+                line-height: 1.5;
+                margin-bottom: 12px;
+                white-space: pre-wrap;
+            }
+            
+            .embed-fields {
+                display: grid;
+                gap: 8px;
+            }
+            
+            .embed-field {
+                min-width: 0;
+            }
+            
+            .embed-field-inline {
+                display: inline-block;
+                width: calc(33.33% - 8px);
+                vertical-align: top;
+            }
+            
+            .embed-field-name {
+                font-size: 14px;
+                font-weight: 600;
+                margin-bottom: 2px;
+                color: #ffffff;
+            }
+            
+            .embed-field-value {
+                font-size: 14px;
+                line-height: 1.5;
+                white-space: pre-wrap;
+            }
+            
+            .embed-thumbnail {
+                margin-left: 16px;
+                flex-shrink: 0;
+            }
+            
+            .embed-thumbnail img {
+                max-width: 80px;
+                max-height: 80px;
+                border-radius: 4px;
+            }
+            
+            .embed-image {
+                margin-top: 12px;
+            }
+            
+            .embed-image img {
+                max-width: 100%;
+                border-radius: 4px;
+            }
+            
+            .embed-footer {
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                margin-top: 12px;
+                font-size: 12px;
+                color: #72767d;
+            }
+            
+            .embed-footer img {
+                width: 20px;
+                height: 20px;
+                border-radius: 50%;
+            }
+            
+            .reactions {
+                display: flex;
+                gap: 4px;
+                margin-top: 8px;
+                flex-wrap: wrap;
+            }
+            
+            .reaction {
+                background-color: #2f3136;
+                border: 1px solid #2f3136;
+                border-radius: 8px;
+                padding: 4px 8px;
+                display: flex;
+                align-items: center;
+                gap: 4px;
+                font-size: 14px;
+                cursor: pointer;
+            }
+            
+            .reaction:hover {
+                border-color: #4f545c;
+            }
+            
+            .reaction-emoji {
+                width: 16px;
+                height: 16px;
+            }
+            
+            .reaction-count {
+                color: #b9bbbe;
+                font-weight: 500;
+            }
+            
+            .system-message {
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                padding: 8px 16px;
+                margin: 16px 0;
+                color: #72767d;
+                font-size: 14px;
+            }
+            
+            .system-message-icon {
+                width: 16px;
+                height: 16px;
+                flex-shrink: 0;
+            }
+            
+            .mention {
+                background-color: rgba(88, 101, 242, 0.3);
+                color: #dee0fc;
+                padding: 0 2px;
+                border-radius: 3px;
+                font-weight: 500;
+            }
+            
+            .mention:hover {
+                background-color: #5865f2;
+                color: #ffffff;
+            }
+            
+            .code-inline {
+                background-color: #2f3136;
+                padding: 2px 4px;
+                border-radius: 3px;
+                font-family: Consolas, "Andale Mono WT", "Andale Mono", "Lucida Console", monospace;
+                font-size: 14px;
+            }
+            
+            .code-block {
+                background-color: #2f3136;
+                border: 1px solid #202225;
+                border-radius: 4px;
+                padding: 12px;
+                margin: 8px 0;
+                font-family: Consolas, "Andale Mono WT", "Andale Mono", "Lucida Console", monospace;
+                font-size: 14px;
+                overflow-x: auto;
+            }
+            
+            .spoiler {
+                background-color: #202225;
+                color: transparent;
+                padding: 0 2px;
+                border-radius: 3px;
+                cursor: pointer;
+                transition: all 0.1s;
+            }
+            
+            .spoiler:hover {
+                background-color: rgba(255, 255, 255, 0.1);
+                color: #dcddde;
+            }
+            
+            .divider {
+                display: flex;
+                align-items: center;
+                margin: 20px 0;
+                color: #72767d;
+                font-size: 12px;
+                font-weight: 600;
+                text-transform: uppercase;
+            }
+            
+            .divider::before,
+            .divider::after {
+                content: "";
+                flex: 1;
+                height: 1px;
+                background-color: #4f545c;
+            }
+            
+            .divider-text {
+                padding: 0 16px;
+            }
+        </style>
+        </head><body><div class="transcript-container"><div class="header"><div class="header-icon">#</div><div class="header-info"><h1>#mafia</h1><p>82 messages • Generated on June 12, 2025 at 01:03 AM</p></div></div><div class="messages-container"><div class="divider"><span class="divider-text">June 12, 2025</span></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/758999095070687284/a_49f0b6e4308836d53ff62c887d055489.gif?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Mafia</span><span class="message-timestamp">06/12/2025 12:16 AM</span></div><div class="message-text"><span class="mention">@𝑀𝑜𝑜𝓃</span> <span class="mention">@:ballsfish</span> <span class="mention">@utopia #FAT UGLY AND GAY HAMMY</span> <span class="mention">@Sebaba208</span> <span class="mention">@vidu</span> <span class="mention">@Musa #fatHammy</span> <span class="mention">@gruck cult fatback</span> <span class="mention">@gruck cult&#x27;s one who waits</span></div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/758999095070687284/a_49f0b6e4308836d53ff62c887d055489.gif?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Mafia</span><span class="message-timestamp">06/12/2025 12:16 AM</span></div><div class="embed"><div class="embed-color-bar" style="background-color: #9c59b6;"></div><div class="embed-content"><div class="embed-title">🖐️ Welcome to Mafia!</div><div class="embed-description">📕 If you haven&#x27;t read the rules yet, please type &lt;/game:1042058961274282025&gt; to view them!</div><div class="embed-fields"><div class="embed-field "><div class="embed-field-name">❗ HEY LISTEN UP</div><div class="embed-field-value">💢 Please do not type in this chat unless instructed to do so. Admins please don&#x27;t abuse your godly powers and talk when other people can&#x27;t. Thank you.</div></div><div class="embed-field "><div class="embed-field-name">💀 To those who are dead:</div><div class="embed-field-value">Please do not talk. I know it&#x27;s hard to grasp but dead people can&#x27;t talk.</div></div><div class="embed-field "><div class="embed-field-name">👀 Some important rules:</div><div class="embed-field-value">🚫 Screenshots are not permitted and would only ruin the game. However, you CAN claim roles to either coordinate among yourselves or trick other people. Just NO SCREENSHOTS (unless you are a mafia showing results to other mafias).</div></div><div class="embed-field "><div class="embed-field-name">🗣️ Some useful commands:</div><div class="embed-field-value">&lt;/reset:1133666068360077378&gt;, &lt;/help:1042058961274282026&gt;, &lt;/game:1042058961274282025&gt;</div></div></div><div class="embed-footer"><span>Note: Parts of the game can be customized with the /config command! To view the current settings, use /settings</span></div></div></div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/758999095070687284/a_49f0b6e4308836d53ff62c887d055489.gif?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Mafia</span><span class="message-timestamp">06/12/2025 12:16 AM</span></div><div class="embed"><div class="embed-color-bar" style="background-color: #15826c;"></div><div class="embed-content"><div class="embed-title">Anomalies are enabled</div><div class="embed-description">Throughout the game, there is a 40% chance of anomalies happening. Let the crazy begin!</div><div class="embed-footer"><span>Hope you manage to survive this.</span></div></div></div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/758999095070687284/a_49f0b6e4308836d53ff62c887d055489.gif?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Mafia</span><span class="message-timestamp">06/12/2025 12:16 AM</span></div><div class="embed"><div class="embed-color-bar" style="background-color: #972f25;"></div><div class="embed-content"><div class="embed-author"><img src="https://cdn.discordapp.com/avatars/758999095070687284/a_49f0b6e4308836d53ff62c887d055489.gif" alt=""><span>MafiaBot</span></div><div class="embed-description">Alright! Let the game begin!</div></div></div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/758999095070687284/a_49f0b6e4308836d53ff62c887d055489.gif?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Mafia</span><span class="message-timestamp">06/12/2025 12:16 AM</span></div><div class="embed"><div class="embed-color-bar" style="background-color: #3498db;"></div><div class="embed-content"><div class="embed-title">Night 1</div><div class="embed-fields"><div class="embed-field embed-field-inline"><div class="embed-field-name">Currently Alive</div><div class="embed-field-value">🙂 <span class="mention">@User</span><br><br>🙂 <span class="mention">@User</span><br><br>🙂 <span class="mention">@User</span><br><br>🙂 <span class="mention">@User</span><br><br>🙂 <span class="mention">@User</span><br><br>🙂 <span class="mention">@User</span><br><br>🙂 <span class="mention">@User</span><br><br>🙂 <span class="mention">@User</span></div></div><div class="embed-field embed-field-inline"><div class="embed-field-name">Currently Dead</div><div class="embed-field-value">No one is dead yet...</div></div></div></div></div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/758999095070687284/a_49f0b6e4308836d53ff62c887d055489.gif?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Mafia</span><span class="message-timestamp">06/12/2025 12:16 AM</span></div><div class="embed"><div class="embed-color-bar" style="background-color: #3498db;"></div><div class="embed-content"><div class="embed-title">To do your action tonight, click the Action button below.</div><div class="embed-description">To cancel your action, just click the &#x27;Cancel&#x27; button.</div><div class="embed-footer"><span>Night 1</span></div></div></div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/758999095070687284/a_49f0b6e4308836d53ff62c887d055489.gif?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Mafia</span><span class="message-timestamp">06/12/2025 12:17 AM</span></div><div class="embed"><div class="embed-color-bar" style="background-color: #972f25;"></div><div class="embed-content"><div class="embed-author"><img src="https://cdn.discordapp.com/avatars/758999095070687284/a_49f0b6e4308836d53ff62c887d055489.gif" alt=""><span>Mafia Remastered</span></div><div class="embed-description">Alright everybody, get your butts back here. It&#x27;s storytime.</div></div></div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/758999095070687284/a_49f0b6e4308836d53ff62c887d055489.gif?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Mafia</span><span class="message-timestamp">06/12/2025 12:17 AM</span></div><div class="embed"><div class="embed-color-bar" style="background-color: #972f25;"></div><div class="embed-content"><div class="embed-title">vitouxd1230925 was attacked by the Mafia :(</div><div class="embed-description">vitouxd1230925 beaten Touhou on lunatic without taking any hits or using bomb, and are very confident about their dodging skill. Well turns out vitouxd1230925 can’t even dodge the single bullet came from the Mafia’s gun. That was even less than Easy mode, massive skill issue.</div><div class="embed-image"><img src="https://github.com/3061LRTAGSPKJMORMRT/mafia/blob/main/Misc/youdied-default.png?raw=true" alt=""></div></div></div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/758999095070687284/a_49f0b6e4308836d53ff62c887d055489.gif?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Mafia</span><span class="message-timestamp">06/12/2025 12:17 AM</span></div><div class="embed"><div class="embed-color-bar" style="background-color: #972f25;"></div><div class="embed-content"><div class="embed-title">Day 1</div><div class="embed-description">## Currently Dead<br>💀 <span class="mention">@User</span> - Mayor</div></div><div class="embed-thumbnail"><img src="https://media.discordapp.net/attachments/923932323710398495/1046292063358029925/Screenshot_2022-11-27-13-10-29-43_680d03679600f7af0b4c700c6b270fe7.jpg?ex=684b0a2b&is=6849b8ab&hm=6ab73a7e615b0e19d2eacccdc76521670894f6452b082228eaeaab207d6dc741&" alt=""></div></div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/758999095070687284/a_49f0b6e4308836d53ff62c887d055489.gif?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Mafia</span><span class="message-timestamp">06/12/2025 12:17 AM</span></div><div class="embed"><div class="embed-color-bar" style="background-color: #3498db;"></div><div class="embed-content"><div class="embed-title">Currently Alive</div><div class="embed-description">◽ <span class="mention">@User</span><br><br>◽ <span class="mention">@User</span><br><br>◽ <span class="mention">@User</span><br><br>◽ <span class="mention">@User</span><br><br>◽ <span class="mention">@User</span><br><br>◽ <span class="mention">@User</span><br><br>◽ <span class="mention">@User</span></div><div class="embed-footer"><span>Have fun!</span></div></div></div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/724599486910824499/c1ed8e94b5ebd78e27d4c0b3187d38d8.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">gruck cult&#x27;s one who waits</span><span class="message-timestamp">06/12/2025 12:17 AM</span></div><div class="message-text">guys</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/748339732605436055/b67a3ff0277cd0bb4e289c4bd85d00b1.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">𝑀𝑜𝑜𝓃</span><span class="message-timestamp">06/12/2025 12:17 AM</span></div><div class="message-text">can i reset</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/711472626832375829/eb73147a75d1cd9b9023c08b979d5832.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">gruck cult fatback</span><span class="message-timestamp">06/12/2025 12:17 AM</span></div><div class="message-text">F</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/724599486910824499/c1ed8e94b5ebd78e27d4c0b3187d38d8.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">gruck cult&#x27;s one who waits</span><span class="message-timestamp">06/12/2025 12:17 AM</span></div><div class="message-text">im taking over as mayor</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/1001290637821358191/c494f5e27bac4279ecb3df0a80ecb5ff.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Sebaba208</span><span class="message-timestamp">06/12/2025 12:17 AM</span></div><div class="message-text">Sure</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/1197065572131799080/baa8187f57979991d38812e415d41191.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">utopia #FAT UGLY AND GAY HAMMY</span><span class="message-timestamp">06/12/2025 12:17 AM</span></div><div class="message-text">i wanna let it be known</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/748339732605436055/b67a3ff0277cd0bb4e289c4bd85d00b1.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">𝑀𝑜𝑜𝓃</span><span class="message-timestamp">06/12/2025 12:17 AM</span></div><div class="message-text">does everyone consent to me resetting this</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/956751521679306833/0da3c0186b5ab83291057985dbcc3d0e.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Musa #fatHammy</span><span class="message-timestamp">06/12/2025 12:17 AM</span></div><div class="message-text">Can I be mayor</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/955952297874161694/0b813355a705e012d27e103235848e3c.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">:ballsfish</span><span class="message-timestamp">06/12/2025 12:17 AM</span></div><div class="message-text">Ok mayor</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/724599486910824499/c1ed8e94b5ebd78e27d4c0b3187d38d8.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">gruck cult&#x27;s one who waits</span><span class="message-timestamp">06/12/2025 12:17 AM</span></div><div class="message-text">LETS RESET!!!!</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/1197065572131799080/baa8187f57979991d38812e415d41191.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">utopia #FAT UGLY AND GAY HAMMY</span><span class="message-timestamp">06/12/2025 12:17 AM</span></div><div class="message-text">moon could be mafia</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/1001290637821358191/c494f5e27bac4279ecb3df0a80ecb5ff.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Sebaba208</span><span class="message-timestamp">06/12/2025 12:17 AM</span></div><div class="message-text">I do</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/1197065572131799080/baa8187f57979991d38812e415d41191.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">utopia #FAT UGLY AND GAY HAMMY</span><span class="message-timestamp">06/12/2025 12:17 AM</span></div><div class="message-text">yea</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/1001290637821358191/c494f5e27bac4279ecb3df0a80ecb5ff.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Sebaba208</span><span class="message-timestamp">06/12/2025 12:17 AM</span></div><div class="message-text">Please</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/955952297874161694/0b813355a705e012d27e103235848e3c.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">:ballsfish</span><span class="message-timestamp">06/12/2025 12:17 AM</span></div><div class="message-text">No</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/724599486910824499/c1ed8e94b5ebd78e27d4c0b3187d38d8.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">gruck cult&#x27;s one who waits</span><span class="message-timestamp">06/12/2025 12:18 AM</span></div><div class="message-text">CHAT</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/956751521679306833/0da3c0186b5ab83291057985dbcc3d0e.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Musa #fatHammy</span><span class="message-timestamp">06/12/2025 12:18 AM</span></div><div class="message-text">Why reset 😭</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/955952297874161694/0b813355a705e012d27e103235848e3c.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">:ballsfish</span><span class="message-timestamp">06/12/2025 12:18 AM</span></div><div class="message-text">No</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/724599486910824499/c1ed8e94b5ebd78e27d4c0b3187d38d8.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">gruck cult&#x27;s one who waits</span><span class="message-timestamp">06/12/2025 12:18 AM</span></div><div class="message-text">LETS RESET</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/956751521679306833/0da3c0186b5ab83291057985dbcc3d0e.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Musa #fatHammy</span><span class="message-timestamp">06/12/2025 12:18 AM</span></div><div class="message-text">Again</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/1197065572131799080/baa8187f57979991d38812e415d41191.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">utopia #FAT UGLY AND GAY HAMMY</span><span class="message-timestamp">06/12/2025 12:18 AM</span></div><div class="message-text">but we’re resetting</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/724599486910824499/c1ed8e94b5ebd78e27d4c0b3187d38d8.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">gruck cult&#x27;s one who waits</span><span class="message-timestamp">06/12/2025 12:18 AM</span></div><div class="message-text">NOWW</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/748339732605436055/b67a3ff0277cd0bb4e289c4bd85d00b1.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">𝑀𝑜𝑜𝓃</span><span class="message-timestamp">06/12/2025 12:18 AM</span></div><div class="message-text">ok lynaah u suck</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/724599486910824499/c1ed8e94b5ebd78e27d4c0b3187d38d8.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">gruck cult&#x27;s one who waits</span><span class="message-timestamp">06/12/2025 12:18 AM</span></div><div class="message-text">RESET</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/955952297874161694/0b813355a705e012d27e103235848e3c.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">:ballsfish</span><span class="message-timestamp">06/12/2025 12:18 AM</span></div><div class="message-text">I like my role</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/1197065572131799080/baa8187f57979991d38812e415d41191.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">utopia #FAT UGLY AND GAY HAMMY</span><span class="message-timestamp">06/12/2025 12:18 AM</span></div><div class="message-text"># RESET</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/748339732605436055/b67a3ff0277cd0bb4e289c4bd85d00b1.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">𝑀𝑜𝑜𝓃</span><span class="message-timestamp">06/12/2025 12:18 AM</span></div><div class="message-text">musa u too</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/1001290637821358191/c494f5e27bac4279ecb3df0a80ecb5ff.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Sebaba208</span><span class="message-timestamp">06/12/2025 12:18 AM</span></div><div class="message-text">Fr</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/955952297874161694/0b813355a705e012d27e103235848e3c.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">:ballsfish</span><span class="message-timestamp">06/12/2025 12:18 AM</span></div><div class="message-text">It&#x27;s funny</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/1001290637821358191/c494f5e27bac4279ecb3df0a80ecb5ff.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Sebaba208</span><span class="message-timestamp">06/12/2025 12:18 AM</span></div><div class="message-text">L lynna</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/956751521679306833/0da3c0186b5ab83291057985dbcc3d0e.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Musa #fatHammy</span><span class="message-timestamp">06/12/2025 12:18 AM</span></div><div class="message-text">Eh reset</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/758999095070687284/a_49f0b6e4308836d53ff62c887d055489.gif?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Mafia</span><span class="message-timestamp">06/12/2025 12:18 AM</span></div><div class="embed"><div class="embed-color-bar" style="background-color: #a94300;"></div><div class="embed-content"><div class="embed-title">Now it is time to nominate! Vote the player you want by pressing the button below on who should be put on trial!
+Minimum votes required: 4</div><div class="embed-description">◽ <span class="mention">@User</span><br>◽ <span class="mention">@User</span><br>◽ <span class="mention">@User</span><br>◽ <span class="mention">@User</span><br>◽ <span class="mention">@User</span><br>◽ <span class="mention">@User</span><br>◽ <span class="mention">@User</span></div><div class="embed-footer"><span>Day 1 | You have 45 seconds to nominate...</span></div></div></div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/724599486910824499/c1ed8e94b5ebd78e27d4c0b3187d38d8.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">gruck cult&#x27;s one who waits</span><span class="message-timestamp">06/12/2025 12:18 AM</span></div><div class="message-text">RESET</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/1197065572131799080/baa8187f57979991d38812e415d41191.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">utopia #FAT UGLY AND GAY HAMMY</span><span class="message-timestamp">06/12/2025 12:18 AM</span></div><div class="message-text">btw moon’s mafia</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/724599486910824499/c1ed8e94b5ebd78e27d4c0b3187d38d8.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">gruck cult&#x27;s one who waits</span><span class="message-timestamp">06/12/2025 12:18 AM</span></div><div class="message-text">GUYS</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/956751521679306833/0da3c0186b5ab83291057985dbcc3d0e.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Musa #fatHammy</span><span class="message-timestamp">06/12/2025 12:18 AM</span></div><div class="message-text">I&#x27;m just curious as to why</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/1197065572131799080/baa8187f57979991d38812e415d41191.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">utopia #FAT UGLY AND GAY HAMMY</span><span class="message-timestamp">06/12/2025 12:18 AM</span></div><div class="message-text">calling it</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/724599486910824499/c1ed8e94b5ebd78e27d4c0b3187d38d8.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">gruck cult&#x27;s one who waits</span><span class="message-timestamp">06/12/2025 12:18 AM</span></div><div class="message-text">VOTE LYNAAH FOR RESET</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/955952297874161694/0b813355a705e012d27e103235848e3c.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">:ballsfish</span><span class="message-timestamp">06/12/2025 12:18 AM</span></div><div class="message-text">It&#x27;s cus moon is mafia then</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/955952297874161694/0b813355a705e012d27e103235848e3c.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">:ballsfish</span><span class="message-timestamp">06/12/2025 12:18 AM</span></div><div class="message-text">100%</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/748339732605436055/b67a3ff0277cd0bb4e289c4bd85d00b1.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">𝑀𝑜𝑜𝓃</span><span class="message-timestamp">06/12/2025 12:18 AM</span></div><div class="message-text">bc uh im stupid</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/1001290637821358191/c494f5e27bac4279ecb3df0a80ecb5ff.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Sebaba208</span><span class="message-timestamp">06/12/2025 12:18 AM</span></div><div class="message-text">Everyone on lynna so we get one less person</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/955952297874161694/0b813355a705e012d27e103235848e3c.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">:ballsfish</span><span class="message-timestamp">06/12/2025 12:18 AM</span></div><div class="message-text">He doesn&#x27;t like his role</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/724599486910824499/c1ed8e94b5ebd78e27d4c0b3187d38d8.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">gruck cult&#x27;s one who waits</span><span class="message-timestamp">06/12/2025 12:18 AM</span></div><div class="message-text">VOTE LUNAR FOR RESET</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/955952297874161694/0b813355a705e012d27e103235848e3c.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">:ballsfish</span><span class="message-timestamp">06/12/2025 12:18 AM</span></div><div class="message-text">Okay okay sure</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/748339732605436055/b67a3ff0277cd0bb4e289c4bd85d00b1.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">𝑀𝑜𝑜𝓃</span><span class="message-timestamp">06/12/2025 12:18 AM</span></div><div class="message-text">VOTE LYNAAH</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/724599486910824499/c1ed8e94b5ebd78e27d4c0b3187d38d8.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">gruck cult&#x27;s one who waits</span><span class="message-timestamp">06/12/2025 12:18 AM</span></div><div class="message-text">IF LUNAR GETS VOTED OUT</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/955952297874161694/0b813355a705e012d27e103235848e3c.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">:ballsfish</span><span class="message-timestamp">06/12/2025 12:18 AM</span></div><div class="message-text">Reset</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/956751521679306833/0da3c0186b5ab83291057985dbcc3d0e.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Musa #fatHammy</span><span class="message-timestamp">06/12/2025 12:18 AM</span></div><div class="message-text">Okay lunar</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/724599486910824499/c1ed8e94b5ebd78e27d4c0b3187d38d8.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">gruck cult&#x27;s one who waits</span><span class="message-timestamp">06/12/2025 12:18 AM</span></div><div class="message-text">THEN RESET</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/955952297874161694/0b813355a705e012d27e103235848e3c.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">:ballsfish</span><span class="message-timestamp">06/12/2025 12:18 AM</span></div><div class="message-text">Sob</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/724599486910824499/c1ed8e94b5ebd78e27d4c0b3187d38d8.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">gruck cult&#x27;s one who waits</span><span class="message-timestamp">06/12/2025 12:18 AM</span></div><div class="message-text">OK</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/1001290637821358191/c494f5e27bac4279ecb3df0a80ecb5ff.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Sebaba208</span><span class="message-timestamp">06/12/2025 12:18 AM</span></div><div class="message-text">Vote lynnah for reset</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/955952297874161694/0b813355a705e012d27e103235848e3c.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">:ballsfish</span><span class="message-timestamp">06/12/2025 12:18 AM</span></div><div class="message-text">OKAY RESET</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/955952297874161694/0b813355a705e012d27e103235848e3c.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">:ballsfish</span><span class="message-timestamp">06/12/2025 12:18 AM</span></div><div class="message-text">CALM DOWN</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/724599486910824499/c1ed8e94b5ebd78e27d4c0b3187d38d8.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">gruck cult&#x27;s one who waits</span><span class="message-timestamp">06/12/2025 12:18 AM</span></div><div class="message-text">IF LUNAR GETS LYNCHED</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/758999095070687284/a_49f0b6e4308836d53ff62c887d055489.gif?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Mafia</span><span class="message-timestamp">06/12/2025 12:18 AM</span></div><div class="embed"><div class="embed-color-bar" style="background-color: #c67c1c;"></div><div class="embed-content"><div class="embed-title">Nomination results</div><div class="embed-description">All votes are hidden. If someone is on trial, it will be announced.</div><div class="embed-footer"><span>Minimum votes to put someone on stand: 4</span></div></div></div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/1001290637821358191/c494f5e27bac4279ecb3df0a80ecb5ff.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Sebaba208</span><span class="message-timestamp">06/12/2025 12:18 AM</span></div><div class="message-text">Yay</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/758999095070687284/a_49f0b6e4308836d53ff62c887d055489.gif?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Mafia</span><span class="message-timestamp">06/12/2025 12:18 AM</span></div><div class="embed"><div class="embed-color-bar" style="background-color: #5865f2;"></div><div class="embed-content"><div class="embed-title">lunarpvp has been called to the stand. How do you plea lunarpvp?</div><div class="embed-description">You have 30 seconds to defend yourself before the town casts their judgement...</div></div><div class="embed-thumbnail"><img src="https://cdn.discordapp.com/avatars/955952297874161694/0b813355a705e012d27e103235848e3c.webp" alt=""></div></div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/748339732605436055/b67a3ff0277cd0bb4e289c4bd85d00b1.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">𝑀𝑜𝑜𝓃</span><span class="message-timestamp">06/12/2025 12:18 AM</span></div><div class="message-text">ok</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/724599486910824499/c1ed8e94b5ebd78e27d4c0b3187d38d8.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">gruck cult&#x27;s one who waits</span><span class="message-timestamp">06/12/2025 12:18 AM</span></div><div class="message-text">ALR</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/724599486910824499/c1ed8e94b5ebd78e27d4c0b3187d38d8.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">gruck cult&#x27;s one who waits</span><span class="message-timestamp">06/12/2025 12:18 AM</span></div><div class="message-text">RESET</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/1001290637821358191/c494f5e27bac4279ecb3df0a80ecb5ff.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Sebaba208</span><span class="message-timestamp">06/12/2025 12:18 AM</span></div><div class="message-text">No way</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/758999095070687284/a_49f0b6e4308836d53ff62c887d055489.gif?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Mafia</span><span class="message-timestamp">06/12/2025 12:18 AM</span></div><div class="embed"><div class="embed-color-bar" style="background-color: #3498db;"></div><div class="embed-content"><div class="embed-title">Game has ended</div><div class="embed-description">🕊️ 𝑀𝑜𝑜𝓃 - link<br>🗡️ :ballsfish - framer<br>🕊️ utopia #FAT UGLY AND GAY HAMMY - pi<br>🕊️ Sebaba208 - alchemist<br>🕊️ vidu - mayor<br>🗡️ Musa #fatHammy - godfather<br>🕊️ gruck cult fatback - distractor<br>🕊️ gruck cult&#x27;s one who waits - manager</div></div></div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/758999095070687284/a_49f0b6e4308836d53ff62c887d055489.gif?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Mafia</span><span class="message-timestamp">06/12/2025 12:18 AM</span></div><div class="embed"><div class="embed-color-bar" style="background-color: #972f25;"></div><div class="embed-content"><div class="embed-author"><img src="https://cdn.discordapp.com/avatars/758999095070687284/a_49f0b6e4308836d53ff62c887d055489.gif" alt=""><span>Mafia Remastered</span></div><div class="embed-description">moon.chan. performed a bot reset.</div></div></div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/724599486910824499/c1ed8e94b5ebd78e27d4c0b3187d38d8.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">gruck cult&#x27;s one who waits</span><span class="message-timestamp">06/12/2025 12:18 AM</span></div><div class="message-text">LOL</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/955952297874161694/0b813355a705e012d27e103235848e3c.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">:ballsfish</span><span class="message-timestamp">06/12/2025 12:18 AM</span></div><div class="message-text">&lt;:toothystare:1152646177062391839&gt;</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/711472626832375829/eb73147a75d1cd9b9023c08b979d5832.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">gruck cult fatback</span><span class="message-timestamp">06/12/2025 12:18 AM</span></div><div class="message-text">sacrifice ! sacrifice!</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/955952297874161694/0b813355a705e012d27e103235848e3c.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">:ballsfish</span><span class="message-timestamp">06/12/2025 12:18 AM</span></div><div class="message-text">lol</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/724599486910824499/c1ed8e94b5ebd78e27d4c0b3187d38d8.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">gruck cult&#x27;s one who waits</span><span class="message-timestamp">06/12/2025 12:18 AM</span></div><div class="message-text">MUSA AND LUNAR</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/1166134423146729563/725f5af8abc6d27b7a05609e29d8e2dd.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">LordFalcon787</span><span class="message-timestamp">06/12/2025 01:03 AM</span></div><div class="message-text">!!evalcc {{$1 := (getMessage 1205270487454974061 1323371655514427493).Embeds}}{{$2 := index $1 0}}{{$3 := structToSdict $2}}{{sendMessage nil (complexMessage &quot;embed&quot; (cembed $3))}}</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/204255221017214977/a_f745fbd1c07799ac4ec443e988e2b766.gif?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">yapper bot [ !! ]</span><span class="message-timestamp">06/12/2025 01:03 AM</span></div><div class="embed"><div class="embed-color-bar" style="background-color: #972f25;"></div><div class="embed-content"><div class="embed-title">Game Over - Mafia won the match!</div><div class="embed-fields"><div class="embed-field embed-field-inline"><div class="embed-field-name">🎊 Winners</div><div class="embed-field-value"><strong><em></em>Main winners<em></em></strong><br>👼 <span class="mention">@User</span> - Politician <br>👼 <span class="mention">@User</span> - Framer <br>👼 <span class="mention">@User</span> - Godfather <br><br><strong><em></em>Other winners<em></em></strong><br>👼 <span class="mention">@User</span> - Thief <br><br><br><em> </em></div></div><div class="embed-field embed-field-inline"><div class="embed-field-name">🗡️ Losers</div><div class="embed-field-value">👼 <span class="mention">@User</span> - Doctor <br>👼 <span class="mention">@User</span> - Manager <br>☠️ <span class="mention">@User</span> - Judge <br>☠️ <span class="mention">@User</span> - Isekai <br>☠️ <span class="mention">@User</span> - Alchemist (Village) <br>☠️ <span class="mention">@User</span> - Distractor <br>☠️ <span class="mention">@User</span> - Lawyer <br>☠️ <span class="mention">@User</span> - Detective <br>☠️ <span class="mention">@User</span> - Mortician <br>☠️ <span class="mention">@User</span> - Oracle</div></div></div><div class="embed-footer"><span>W Mafia L others</span></div></div></div></div></div></div></div></body></html>
