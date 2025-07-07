@@ -1,0 +1,395 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Transcript - #mafia</title>
+        <style>
+            * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+            }
+            
+            body {
+                font-family: Whitney, "Helvetica Neue", Helvetica, Arial, sans-serif;
+                background-color: #36393f;
+                color: #dcddde;
+                padding: 20px;
+                line-height: 1.5;
+            }
+            
+            .transcript-container {
+                max-width: 980px;
+                margin: 0 auto;
+                background-color: #36393f;
+                border-radius: 8px;
+                overflow: hidden;
+            }
+            
+            .header {
+                background-color: #2f3136;
+                padding: 16px 20px;
+                border-bottom: 1px solid #202225;
+                display: flex;
+                align-items: center;
+                gap: 12px;
+            }
+            
+            .header-icon {
+                width: 40px;
+                height: 40px;
+                border-radius: 50%;
+                background-color: #5865f2;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 20px;
+                font-weight: bold;
+            }
+            
+            .header-info h1 {
+                font-size: 20px;
+                font-weight: 600;
+                margin-bottom: 4px;
+            }
+            
+            .header-info p {
+                font-size: 14px;
+                color: #b9bbbe;
+            }
+            
+            .messages-container {
+                padding: 20px;
+            }
+            
+            .message {
+                display: flex;
+                padding: 4px 0;
+                margin: 8px 0;
+                position: relative;
+            }
+            
+            .message:hover {
+                background-color: #32353b;
+                border-radius: 4px;
+            }
+            
+            .message-avatar {
+                width: 40px;
+                height: 40px;
+                border-radius: 50%;
+                margin-right: 16px;
+                flex-shrink: 0;
+                background-color: #5865f2;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-weight: 600;
+                color: white;
+            }
+            
+            .message-avatar img {
+                width: 100%;
+                height: 100%;
+                border-radius: 50%;
+                object-fit: cover;
+            }
+            
+            .message-content {
+                flex: 1;
+                min-width: 0;
+            }
+            
+            .message-header {
+                display: flex;
+                align-items: baseline;
+                gap: 8px;
+                margin-bottom: 4px;
+            }
+            
+            .message-author {
+                font-weight: 600;
+                font-size: 16px;
+                color: #ffffff;
+            }
+            
+            .message-timestamp {
+                font-size: 12px;
+                color: #72767d;
+            }
+            
+            .message-text {
+                color: #dcddde;
+                font-size: 16px;
+                line-height: 1.375;
+                word-wrap: break-word;
+            }
+            
+            .message-text a {
+                color: #00b0f4;
+                text-decoration: none;
+            }
+            
+            .message-text a:hover {
+                text-decoration: underline;
+            }
+            
+            .message-attachments {
+                margin-top: 8px;
+            }
+            
+            .attachment {
+                display: inline-block;
+                margin: 4px 0;
+            }
+            
+            .attachment img {
+                max-width: 400px;
+                max-height: 300px;
+                border-radius: 8px;
+                cursor: pointer;
+            }
+            
+            .attachment-file {
+                background-color: #2f3136;
+                border: 1px solid #202225;
+                border-radius: 8px;
+                padding: 10px 16px;
+                display: inline-flex;
+                align-items: center;
+                gap: 8px;
+                text-decoration: none;
+                color: #00b0f4;
+            }
+            
+            .attachment-file:hover {
+                background-color: #393c43;
+            }
+            
+            .embed {
+                margin-top: 8px;
+                max-width: 520px;
+                border-radius: 4px;
+                background-color: #2f3136;
+                display: flex;
+                overflow: hidden;
+            }
+            
+            .embed-color-bar {
+                width: 4px;
+                flex-shrink: 0;
+                background-color: #5865f2;
+            }
+            
+            .embed-content {
+                padding: 16px;
+                flex: 1;
+            }
+            
+            .embed-author {
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                margin-bottom: 8px;
+                font-size: 14px;
+                font-weight: 600;
+            }
+            
+            .embed-author img {
+                width: 24px;
+                height: 24px;
+                border-radius: 50%;
+            }
+            
+            .embed-title {
+                font-size: 16px;
+                font-weight: 600;
+                margin-bottom: 8px;
+                color: #00b0f4;
+            }
+            
+            .embed-description {
+                font-size: 14px;
+                line-height: 1.5;
+                margin-bottom: 12px;
+                white-space: pre-wrap;
+            }
+            
+            .embed-fields {
+                display: grid;
+                gap: 8px;
+            }
+            
+            .embed-field {
+                min-width: 0;
+            }
+            
+            .embed-field-inline {
+                display: inline-block;
+                width: calc(33.33% - 8px);
+                vertical-align: top;
+            }
+            
+            .embed-field-name {
+                font-size: 14px;
+                font-weight: 600;
+                margin-bottom: 2px;
+                color: #ffffff;
+            }
+            
+            .embed-field-value {
+                font-size: 14px;
+                line-height: 1.5;
+                white-space: pre-wrap;
+            }
+            
+            .embed-thumbnail {
+                margin-left: 16px;
+                flex-shrink: 0;
+            }
+            
+            .embed-thumbnail img {
+                max-width: 80px;
+                max-height: 80px;
+                border-radius: 4px;
+            }
+            
+            .embed-image {
+                margin-top: 12px;
+            }
+            
+            .embed-image img {
+                max-width: 100%;
+                border-radius: 4px;
+            }
+            
+            .embed-footer {
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                margin-top: 12px;
+                font-size: 12px;
+                color: #72767d;
+            }
+            
+            .embed-footer img {
+                width: 20px;
+                height: 20px;
+                border-radius: 50%;
+            }
+            
+            .reactions {
+                display: flex;
+                gap: 4px;
+                margin-top: 8px;
+                flex-wrap: wrap;
+            }
+            
+            .reaction {
+                background-color: #2f3136;
+                border: 1px solid #2f3136;
+                border-radius: 8px;
+                padding: 4px 8px;
+                display: flex;
+                align-items: center;
+                gap: 4px;
+                font-size: 14px;
+                cursor: pointer;
+            }
+            
+            .reaction:hover {
+                border-color: #4f545c;
+            }
+            
+            .reaction-emoji {
+                width: 16px;
+                height: 16px;
+            }
+            
+            .reaction-count {
+                color: #b9bbbe;
+                font-weight: 500;
+            }
+            
+            .system-message {
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                padding: 8px 16px;
+                margin: 16px 0;
+                color: #72767d;
+                font-size: 14px;
+            }
+            
+            .system-message-icon {
+                width: 16px;
+                height: 16px;
+                flex-shrink: 0;
+            }
+            
+            .mention {
+                background-color: rgba(88, 101, 242, 0.3);
+                color: #dee0fc;
+                padding: 0 2px;
+                border-radius: 3px;
+                font-weight: 500;
+            }
+            
+            .mention:hover {
+                background-color: #5865f2;
+                color: #ffffff;
+            }
+            
+            .code-inline {
+                background-color: #2f3136;
+                padding: 2px 4px;
+                border-radius: 3px;
+                font-family: Consolas, "Andale Mono WT", "Andale Mono", "Lucida Console", monospace;
+                font-size: 14px;
+            }
+            
+            .code-block {
+                background-color: #2f3136;
+                border: 1px solid #202225;
+                border-radius: 4px;
+                padding: 12px;
+                margin: 8px 0;
+                font-family: Consolas, "Andale Mono WT", "Andale Mono", "Lucida Console", monospace;
+                font-size: 14px;
+                overflow-x: auto;
+            }
+            
+            .spoiler {
+                background-color: #202225;
+                color: transparent;
+                padding: 0 2px;
+                border-radius: 3px;
+                cursor: pointer;
+                transition: all 0.1s;
+            }
+            
+            .spoiler:hover {
+                background-color: rgba(255, 255, 255, 0.1);
+                color: #dcddde;
+            }
+            
+            .divider {
+                display: flex;
+                align-items: center;
+                margin: 20px 0;
+                color: #72767d;
+                font-size: 12px;
+                font-weight: 600;
+                text-transform: uppercase;
+            }
+            
+            .divider::before,
+            .divider::after {
+                content: "";
+                flex: 1;
+                height: 1px;
+                background-color: #4f545c;
+            }
+            
+            .divider-text {
+                padding: 0 16px;
+            }
+        </style>
+        </head><body><div class="transcript-container"><div class="header"><div class="header-icon">#</div><div class="header-info"><h1>#mafia</h1><p>78 messages • Generated on July 07, 2025 at 05:10 PM</p></div></div><div class="messages-container"><div class="divider"><span class="divider-text">July 07, 2025</span></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/758999095070687284/a_49f0b6e4308836d53ff62c887d055489.gif?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Mafia</span><span class="message-timestamp">07/07/2025 05:05 PM</span></div><div class="message-text"><span class="mention">@Taj</span> <span class="mention">@Blackquill</span> <span class="mention">@Cash Deviant</span> <span class="mention">@Sebaba208</span> <span class="mention">@New Zealandian Mixxle</span> <span class="mention">@choco</span></div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/758999095070687284/a_49f0b6e4308836d53ff62c887d055489.gif?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Mafia</span><span class="message-timestamp">07/07/2025 05:05 PM</span></div><div class="embed"><div class="embed-color-bar" style="background-color: #9c59b6;"></div><div class="embed-content"><div class="embed-title">🖐️ Welcome to Mafia!</div><div class="embed-description">📕 If you haven&#x27;t read the rules yet, please type &lt;/game:1042058961274282025&gt; to view them!</div><div class="embed-fields"><div class="embed-field "><div class="embed-field-name">❗ HEY LISTEN UP</div><div class="embed-field-value">💢 Please do not type in this chat unless instructed to do so. Admins please don&#x27;t abuse your godly powers and talk when other people can&#x27;t. Thank you.</div></div><div class="embed-field "><div class="embed-field-name">💀 To those who are dead:</div><div class="embed-field-value">Please do not talk. I know it&#x27;s hard to grasp but dead people can&#x27;t talk.</div></div><div class="embed-field "><div class="embed-field-name">👀 Some important rules:</div><div class="embed-field-value">🚫 Screenshots are not permitted and would only ruin the game. However, you CAN claim roles to either coordinate among yourselves or trick other people. Just NO SCREENSHOTS (unless you are a mafia showing results to other mafias).</div></div><div class="embed-field "><div class="embed-field-name">🗣️ Some useful commands:</div><div class="embed-field-value">&lt;/reset:1133666068360077378&gt;, &lt;/help:1042058961274282026&gt;, &lt;/game:1042058961274282025&gt;</div></div></div><div class="embed-footer"><span>Note: Parts of the game can be customized with the /config command! To view the current settings, use /settings</span></div></div></div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/758999095070687284/a_49f0b6e4308836d53ff62c887d055489.gif?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Mafia</span><span class="message-timestamp">07/07/2025 05:05 PM</span></div><div class="embed"><div class="embed-color-bar" style="background-color: #15826c;"></div><div class="embed-content"><div class="embed-title">Anomalies are enabled</div><div class="embed-description">Throughout the game, there is a 40% chance of anomalies happening. Let the crazy begin!</div><div class="embed-footer"><span>Hope you manage to survive this.</span></div></div></div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/758999095070687284/a_49f0b6e4308836d53ff62c887d055489.gif?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Mafia</span><span class="message-timestamp">07/07/2025 05:05 PM</span></div><div class="embed"><div class="embed-color-bar" style="background-color: #972f25;"></div><div class="embed-content"><div class="embed-author"><img src="https://cdn.discordapp.com/avatars/758999095070687284/a_49f0b6e4308836d53ff62c887d055489.gif" alt=""><span>MafiaBot</span></div><div class="embed-description">Alright! Let the game begin!</div></div></div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/758999095070687284/a_49f0b6e4308836d53ff62c887d055489.gif?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Mafia</span><span class="message-timestamp">07/07/2025 05:05 PM</span></div><div class="embed"><div class="embed-color-bar" style="background-color: #3498db;"></div><div class="embed-content"><div class="embed-title">Night 1</div><div class="embed-fields"><div class="embed-field embed-field-inline"><div class="embed-field-name">Currently Alive</div><div class="embed-field-value">🙂 <span class="mention">@Taj</span><br><br>🙂 <span class="mention">@Blackquill</span><br><br>🙂 <span class="mention">@Cash Deviant</span><br><br>🙂 <span class="mention">@Sebaba208</span><br><br>🙂 <span class="mention">@New Zealandian Mixxle</span><br><br>🙂 <span class="mention">@choco</span></div></div><div class="embed-field embed-field-inline"><div class="embed-field-name">Currently Dead</div><div class="embed-field-value">No one is dead yet...</div></div></div></div></div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/758999095070687284/a_49f0b6e4308836d53ff62c887d055489.gif?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Mafia</span><span class="message-timestamp">07/07/2025 05:05 PM</span></div><div class="embed"><div class="embed-color-bar" style="background-color: #3498db;"></div><div class="embed-content"><div class="embed-title">To do your action tonight, click the Action button below.</div><div class="embed-description">To cancel your action, just click the &#x27;Cancel&#x27; button.</div><div class="embed-footer"><span>Night 1</span></div></div></div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/758999095070687284/a_49f0b6e4308836d53ff62c887d055489.gif?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Mafia</span><span class="message-timestamp">07/07/2025 05:06 PM</span></div><div class="embed"><div class="embed-color-bar" style="background-color: #972f25;"></div><div class="embed-content"><div class="embed-author"><img src="https://cdn.discordapp.com/avatars/758999095070687284/a_49f0b6e4308836d53ff62c887d055489.gif" alt=""><span>Mafia Remastered</span></div><div class="embed-description">Alright everybody, get your butts back here. It&#x27;s storytime.</div></div></div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/758999095070687284/a_49f0b6e4308836d53ff62c887d055489.gif?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Mafia</span><span class="message-timestamp">07/07/2025 05:06 PM</span></div><div class="embed"><div class="embed-color-bar" style="background-color: #972f25;"></div><div class="embed-content"><div class="embed-title">wolfram.gd was attacked by the Mafia :(</div><div class="embed-description">wolfram.gd was playing Minecraft one night, wolfram.gd heard strange noises but completely ignored it thinking it came from the game, a few minutes later they were stabbed in the head with a diamond sword.</div><div class="embed-image"><img src="https://github.com/3061LRTAGSPKJMORMRT/mafia/blob/main/Misc/youdied-default.png?raw=true" alt=""></div></div></div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/758999095070687284/a_49f0b6e4308836d53ff62c887d055489.gif?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Mafia</span><span class="message-timestamp">07/07/2025 05:06 PM</span></div><div class="embed"><div class="embed-color-bar" style="background-color: #2ebb6a;"></div><div class="embed-content"><div class="embed-title">🧐 The mayor has been revealed!!!</div><div class="embed-description"><span class="mention">@choco</span> is the mayor!</div></div><div class="embed-thumbnail"><img src="https://github.com/3061LRTAGSPKJMORMRT/mafia/blob/main/Ability%20Icons/reveal.png?raw=true" alt=""></div></div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/758999095070687284/a_49f0b6e4308836d53ff62c887d055489.gif?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Mafia</span><span class="message-timestamp">07/07/2025 05:06 PM</span></div><div class="embed"><div class="embed-color-bar" style="background-color: #972f25;"></div><div class="embed-content"><div class="embed-title">Day 1</div><div class="embed-description">## Currently Dead<br>💀 <span class="mention">@Taj</span> - Watcher<br><br>💀 <span class="mention">@Blackquill</span> - Alchemist</div></div><div class="embed-thumbnail"><img src="https://media.discordapp.net/attachments/923932323710398495/1046292063358029925/Screenshot_2022-11-27-13-10-29-43_680d03679600f7af0b4c700c6b270fe7.jpg?ex=686ca86b&is=686b56eb&hm=7e665d33168c557ac4ff54d150174b0aef2b24e5c01046c8628d9f65348daa4f&" alt=""></div></div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/758999095070687284/a_49f0b6e4308836d53ff62c887d055489.gif?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Mafia</span><span class="message-timestamp">07/07/2025 05:06 PM</span></div><div class="embed"><div class="embed-color-bar" style="background-color: #1bbc9b;"></div><div class="embed-content"><div class="embed-title">ANOMALY: ☀️ Scorching Sun</div><div class="embed-description">The heatstroke was too strong, and unfortunately <strong>bruce\<em>wayne\</em>b</strong> couldn&#x27;t take it, so they died!</div><div class="embed-image"><img src="https://daijiworld.ap-south-1.linodeobjects.com/Linode/images3/denzil_160322_sun1.jpg" alt=""></div></div></div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/758999095070687284/a_49f0b6e4308836d53ff62c887d055489.gif?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Mafia</span><span class="message-timestamp">07/07/2025 05:06 PM</span></div><div class="embed"><div class="embed-color-bar" style="background-color: #3498db;"></div><div class="embed-content"><div class="embed-title">Currently Alive</div><div class="embed-description">◽ <span class="mention">@Cash Deviant</span><br><br>◽ <span class="mention">@Sebaba208</span><br><br>◽ <span class="mention">@New Zealandian Mixxle</span><br><br>◽ <span class="mention">@choco</span></div><div class="embed-footer"><span>Have fun!</span></div></div></div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/1141919105272787006/93c88bf4834ee1c0f788e62ad79a59fd.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">New Zealandian Mixxle</span><span class="message-timestamp">07/07/2025 05:06 PM</span></div><div class="message-text">i can claim</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/1141919105272787006/93c88bf4834ee1c0f788e62ad79a59fd.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">New Zealandian Mixxle</span><span class="message-timestamp">07/07/2025 05:06 PM</span></div><div class="message-text">Im the dist</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/994736882938302494/daf3fcef2380094c0b41aa1fe7cec3b6.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Cash Deviant</span><span class="message-timestamp">07/07/2025 05:06 PM</span></div><div class="message-text">Im vigi</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/1141919105272787006/93c88bf4834ee1c0f788e62ad79a59fd.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">New Zealandian Mixxle</span><span class="message-timestamp">07/07/2025 05:06 PM</span></div><div class="message-text">and i wasted it on choco &lt;a:0_blackkms:1031367782853529600&gt;</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/1001290637821358191/c494f5e27bac4279ecb3df0a80ecb5ff.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Sebaba208</span><span class="message-timestamp">07/07/2025 05:06 PM</span></div><div class="message-text">Who did u dist</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/1001290637821358191/c494f5e27bac4279ecb3df0a80ecb5ff.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Sebaba208</span><span class="message-timestamp">07/07/2025 05:07 PM</span></div><div class="message-text">Ok</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/1141919105272787006/93c88bf4834ee1c0f788e62ad79a59fd.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">New Zealandian Mixxle</span><span class="message-timestamp">07/07/2025 05:07 PM</span></div><div class="message-text">random player 4</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/994736882938302494/daf3fcef2380094c0b41aa1fe7cec3b6.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Cash Deviant</span><span class="message-timestamp">07/07/2025 05:07 PM</span></div><div class="message-text">I did not shoot</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/1141919105272787006/93c88bf4834ee1c0f788e62ad79a59fd.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">New Zealandian Mixxle</span><span class="message-timestamp">07/07/2025 05:07 PM</span></div><div class="message-text">which was choco &lt;a:0_blackkms:1031367782853529600&gt;</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/1001290637821358191/c494f5e27bac4279ecb3df0a80ecb5ff.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Sebaba208</span><span class="message-timestamp">07/07/2025 05:07 PM</span></div><div class="message-text">Choco??</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/1141919105272787006/93c88bf4834ee1c0f788e62ad79a59fd.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">New Zealandian Mixxle</span><span class="message-timestamp">07/07/2025 05:07 PM</span></div><div class="message-text"><span class="mention">@Sebaba208</span> claim?</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/1291996619490984037/68af925983c4da4fd4aec6994389495e.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Compass [ - ]</span><span class="message-timestamp">07/07/2025 05:07 PM</span></div><div class="message-text">&lt;a:pepe<em>oops</em>bye:1206348065813037146&gt;</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/758999095070687284/a_49f0b6e4308836d53ff62c887d055489.gif?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Mafia</span><span class="message-timestamp">07/07/2025 05:07 PM</span></div><div class="embed"><div class="embed-color-bar" style="background-color: #a94300;"></div><div class="embed-content"><div class="embed-title">Now it is time to nominate! Vote the player you want by pressing the button below on who should be put on trial!
+Minimum votes required: 2</div><div class="embed-description">◽ <span class="mention">@Cash Deviant</span><br>◽ <span class="mention">@Sebaba208</span><br>◽ <span class="mention">@New Zealandian Mixxle</span><br>◽ <span class="mention">@choco</span></div><div class="embed-footer"><span>Day 1 | You have 45 seconds to nominate...</span></div></div></div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/1001290637821358191/c494f5e27bac4279ecb3df0a80ecb5ff.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Sebaba208</span><span class="message-timestamp">07/07/2025 05:07 PM</span></div><div class="message-text">Gamb it failed</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/1001290637821358191/c494f5e27bac4279ecb3df0a80ecb5ff.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Sebaba208</span><span class="message-timestamp">07/07/2025 05:07 PM</span></div><div class="message-text">Also random 4</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/994736882938302494/daf3fcef2380094c0b41aa1fe7cec3b6.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Cash Deviant</span><span class="message-timestamp">07/07/2025 05:07 PM</span></div><div class="message-text">Then wouldn&#x27;t it say it failed</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/1001290637821358191/c494f5e27bac4279ecb3df0a80ecb5ff.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Sebaba208</span><span class="message-timestamp">07/07/2025 05:07 PM</span></div><div class="message-text">Idk</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/1001290637821358191/c494f5e27bac4279ecb3df0a80ecb5ff.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Sebaba208</span><span class="message-timestamp">07/07/2025 05:07 PM</span></div><div class="message-text">Oh shoot</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/994736882938302494/daf3fcef2380094c0b41aa1fe7cec3b6.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Cash Deviant</span><span class="message-timestamp">07/07/2025 05:07 PM</span></div><div class="message-text">Or is that only for vote</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/758999095070687284/a_49f0b6e4308836d53ff62c887d055489.gif?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Mafia</span><span class="message-timestamp">07/07/2025 05:07 PM</span></div><div class="embed"><div class="embed-color-bar" style="background-color: #c67c1c;"></div><div class="embed-content"><div class="embed-title">Nomination results</div><div class="embed-description">All votes are hidden. If someone is on trial, it will be announced.</div><div class="embed-footer"><span>Minimum votes to put someone on stand: 2</span></div></div></div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/1001290637821358191/c494f5e27bac4279ecb3df0a80ecb5ff.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Sebaba208</span><span class="message-timestamp">07/07/2025 05:07 PM</span></div><div class="message-text">I forgot to select it</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/758999095070687284/a_49f0b6e4308836d53ff62c887d055489.gif?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Mafia</span><span class="message-timestamp">07/07/2025 05:07 PM</span></div><div class="embed"><div class="embed-color-bar" style="background-color: #5865f2;"></div><div class="embed-content"><div class="embed-title">sebaba208 has been called to the stand. How do you plea sebaba208?</div><div class="embed-description">You have 30 seconds to defend yourself before the town casts their judgement...</div></div><div class="embed-thumbnail"><img src="https://cdn.discordapp.com/avatars/1001290637821358191/c494f5e27bac4279ecb3df0a80ecb5ff.webp" alt=""></div></div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/1001290637821358191/c494f5e27bac4279ecb3df0a80ecb5ff.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Sebaba208</span><span class="message-timestamp">07/07/2025 05:07 PM</span></div><div class="message-text">Inno pls</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/994736882938302494/daf3fcef2380094c0b41aa1fe7cec3b6.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Cash Deviant</span><span class="message-timestamp">07/07/2025 05:07 PM</span></div><div class="message-text">Lowkey its probably yuno</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/1001290637821358191/c494f5e27bac4279ecb3df0a80ecb5ff.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Sebaba208</span><span class="message-timestamp">07/07/2025 05:07 PM</span></div><div class="message-text">I’ll do white on cash</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/1141919105272787006/93c88bf4834ee1c0f788e62ad79a59fd.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">New Zealandian Mixxle</span><span class="message-timestamp">07/07/2025 05:08 PM</span></div><div class="message-text">ill inno</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/994736882938302494/daf3fcef2380094c0b41aa1fe7cec3b6.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Cash Deviant</span><span class="message-timestamp">07/07/2025 05:08 PM</span></div><div class="message-text">Ok</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/1001290637821358191/c494f5e27bac4279ecb3df0a80ecb5ff.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Sebaba208</span><span class="message-timestamp">07/07/2025 05:08 PM</span></div><div class="message-text">Thank you 🙏</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/1141919105272787006/93c88bf4834ee1c0f788e62ad79a59fd.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">New Zealandian Mixxle</span><span class="message-timestamp">07/07/2025 05:08 PM</span></div><div class="message-text">do yellow</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/1141919105272787006/93c88bf4834ee1c0f788e62ad79a59fd.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">New Zealandian Mixxle</span><span class="message-timestamp">07/07/2025 05:08 PM</span></div><div class="message-text">do yellow dice on choco</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/994736882938302494/daf3fcef2380094c0b41aa1fe7cec3b6.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Cash Deviant</span><span class="message-timestamp">07/07/2025 05:08 PM</span></div><div class="message-text">No do white</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/758999095070687284/a_49f0b6e4308836d53ff62c887d055489.gif?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Mafia</span><span class="message-timestamp">07/07/2025 05:08 PM</span></div><div class="embed"><div class="embed-color-bar" style="background-color: #c67c1c;"></div><div class="embed-content"><div class="embed-title">It is judgement time 👨‍⚖️👩‍⚖️. The village has 30 seconds to vote.</div><div class="embed-description">The voting will end once 30 seconds has passed.</div><div class="embed-fields"><div class="embed-field embed-field-inline"><div class="embed-field-name">👿 Guilty</div><div class="embed-field-value">Votes are hidden.</div></div><div class="embed-field embed-field-inline"><div class="embed-field-name">👼 Innocent</div><div class="embed-field-value">Votes are hidden.</div></div></div></div></div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/1141919105272787006/93c88bf4834ee1c0f788e62ad79a59fd.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">New Zealandian Mixxle</span><span class="message-timestamp">07/07/2025 05:08 PM</span></div><div class="message-text">no do yellow</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/1001290637821358191/c494f5e27bac4279ecb3df0a80ecb5ff.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Sebaba208</span><span class="message-timestamp">07/07/2025 05:08 PM</span></div><div class="message-text">What</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/1001290637821358191/c494f5e27bac4279ecb3df0a80ecb5ff.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Sebaba208</span><span class="message-timestamp">07/07/2025 05:08 PM</span></div><div class="message-text">Alr</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/1141919105272787006/93c88bf4834ee1c0f788e62ad79a59fd.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">New Zealandian Mixxle</span><span class="message-timestamp">07/07/2025 05:08 PM</span></div><div class="message-text">if it&#x27;s yellow we will know</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/1141919105272787006/93c88bf4834ee1c0f788e62ad79a59fd.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">New Zealandian Mixxle</span><span class="message-timestamp">07/07/2025 05:08 PM</span></div><div class="message-text">so</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/1141919105272787006/93c88bf4834ee1c0f788e62ad79a59fd.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">New Zealandian Mixxle</span><span class="message-timestamp">07/07/2025 05:08 PM</span></div><div class="message-text">yeah.</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/994736882938302494/daf3fcef2380094c0b41aa1fe7cec3b6.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Cash Deviant</span><span class="message-timestamp">07/07/2025 05:08 PM</span></div><div class="message-text">Why would u do yellow</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/1001290637821358191/c494f5e27bac4279ecb3df0a80ecb5ff.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Sebaba208</span><span class="message-timestamp">07/07/2025 05:08 PM</span></div><div class="message-text">Fair</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/1141919105272787006/93c88bf4834ee1c0f788e62ad79a59fd.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">New Zealandian Mixxle</span><span class="message-timestamp">07/07/2025 05:08 PM</span></div><div class="message-text">do yellow.</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/1141919105272787006/93c88bf4834ee1c0f788e62ad79a59fd.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">New Zealandian Mixxle</span><span class="message-timestamp">07/07/2025 05:08 PM</span></div><div class="message-text">bc yellow dice shows</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/1001290637821358191/c494f5e27bac4279ecb3df0a80ecb5ff.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Sebaba208</span><span class="message-timestamp">07/07/2025 05:08 PM</span></div><div class="message-text">What</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/1141919105272787006/93c88bf4834ee1c0f788e62ad79a59fd.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">New Zealandian Mixxle</span><span class="message-timestamp">07/07/2025 05:08 PM</span></div><div class="message-text">if it succeeds</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/1141919105272787006/93c88bf4834ee1c0f788e62ad79a59fd.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">New Zealandian Mixxle</span><span class="message-timestamp">07/07/2025 05:08 PM</span></div><div class="message-text"><span class="mention">@choco</span> inno</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/1001290637821358191/c494f5e27bac4279ecb3df0a80ecb5ff.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Sebaba208</span><span class="message-timestamp">07/07/2025 05:08 PM</span></div><div class="message-text">Yellow or white??????</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/1141919105272787006/93c88bf4834ee1c0f788e62ad79a59fd.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">New Zealandian Mixxle</span><span class="message-timestamp">07/07/2025 05:08 PM</span></div><div class="message-text">YELLOW</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/1141919105272787006/93c88bf4834ee1c0f788e62ad79a59fd.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">New Zealandian Mixxle</span><span class="message-timestamp">07/07/2025 05:08 PM</span></div><div class="message-text">dumb ass</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/994736882938302494/daf3fcef2380094c0b41aa1fe7cec3b6.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Cash Deviant</span><span class="message-timestamp">07/07/2025 05:08 PM</span></div><div class="message-text">Yellow ig</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/1001290637821358191/c494f5e27bac4279ecb3df0a80ecb5ff.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Sebaba208</span><span class="message-timestamp">07/07/2025 05:08 PM</span></div><div class="message-text">On choco</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/758999095070687284/a_49f0b6e4308836d53ff62c887d055489.gif?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Mafia</span><span class="message-timestamp">07/07/2025 05:08 PM</span></div><div class="embed"><div class="embed-color-bar" style="background-color: #3498db;"></div><div class="embed-content"><div class="embed-title">Here are the final results</div><div class="embed-description">Votes are hidden.</div></div></div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/1001290637821358191/c494f5e27bac4279ecb3df0a80ecb5ff.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Sebaba208</span><span class="message-timestamp">07/07/2025 05:08 PM</span></div><div class="message-text">Right</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/1141919105272787006/93c88bf4834ee1c0f788e62ad79a59fd.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">New Zealandian Mixxle</span><span class="message-timestamp">07/07/2025 05:08 PM</span></div><div class="message-text">yes</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/758999095070687284/a_49f0b6e4308836d53ff62c887d055489.gif?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Mafia</span><span class="message-timestamp">07/07/2025 05:08 PM</span></div><div class="embed"><div class="embed-color-bar" style="background-color: #972f25;"></div><div class="embed-content"><div class="embed-author"><img src="https://cdn.discordapp.com/avatars/758999095070687284/a_49f0b6e4308836d53ff62c887d055489.gif" alt=""><span>Mafia Remastered</span></div><div class="embed-description">No one was hanged.</div></div></div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/1141919105272787006/93c88bf4834ee1c0f788e62ad79a59fd.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">New Zealandian Mixxle</span><span class="message-timestamp">07/07/2025 05:08 PM</span></div><div class="message-text">yellow on choco</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/1001290637821358191/c494f5e27bac4279ecb3df0a80ecb5ff.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Sebaba208</span><span class="message-timestamp">07/07/2025 05:08 PM</span></div><div class="message-text">Ok</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/758999095070687284/a_49f0b6e4308836d53ff62c887d055489.gif?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Mafia</span><span class="message-timestamp">07/07/2025 05:09 PM</span></div><div class="embed"><div class="embed-color-bar" style="background-color: #3498db;"></div><div class="embed-content"><div class="embed-title">Night 2</div><div class="embed-fields"><div class="embed-field embed-field-inline"><div class="embed-field-name">Currently Alive</div><div class="embed-field-value">🙂 <span class="mention">@Cash Deviant</span><br><br>🙂 <span class="mention">@Sebaba208</span><br><br>🙂 <span class="mention">@New Zealandian Mixxle</span><br><br>🙂 <span class="mention">@choco</span></div></div><div class="embed-field embed-field-inline"><div class="embed-field-name">Currently Dead</div><div class="embed-field-value">💀 <span class="mention">@Taj</span> - Watcher<br><br>💀 <span class="mention">@Blackquill</span> - Alchemist</div></div></div></div></div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/758999095070687284/a_49f0b6e4308836d53ff62c887d055489.gif?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Mafia</span><span class="message-timestamp">07/07/2025 05:09 PM</span></div><div class="embed"><div class="embed-color-bar" style="background-color: #3498db;"></div><div class="embed-content"><div class="embed-title">To do your action tonight, click the Action button below.</div><div class="embed-description">To cancel your action, just click the &#x27;Cancel&#x27; button.</div><div class="embed-footer"><span>Night 2</span></div></div></div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/758999095070687284/a_49f0b6e4308836d53ff62c887d055489.gif?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Mafia</span><span class="message-timestamp">07/07/2025 05:09 PM</span></div><div class="embed"><div class="embed-color-bar" style="background-color: #972f25;"></div><div class="embed-content"><div class="embed-author"><img src="https://cdn.discordapp.com/avatars/758999095070687284/a_49f0b6e4308836d53ff62c887d055489.gif" alt=""><span>Mafia Remastered</span></div><div class="embed-description">Alright everybody, get your butts back here. It&#x27;s storytime.</div></div></div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/758999095070687284/a_49f0b6e4308836d53ff62c887d055489.gif?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Mafia</span><span class="message-timestamp">07/07/2025 05:09 PM</span></div><div class="embed"><div class="embed-color-bar" style="background-color: #972f25;"></div><div class="embed-content"><div class="embed-title">chocothefirst was attacked by the Mafia :(</div><div class="embed-description">i choked on some beans lolz</div><div class="embed-image"><img src="https://github.com/3061LRTAGSPKJMORMRT/mafia/blob/main/Misc/youdied-default.png?raw=true" alt=""></div></div></div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/758999095070687284/a_49f0b6e4308836d53ff62c887d055489.gif?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Mafia</span><span class="message-timestamp">07/07/2025 05:09 PM</span></div><div class="embed"><div class="embed-color-bar" style="background-color: #1bbc9b;"></div><div class="embed-content"><div class="embed-title">Oh ya this also happened...</div><div class="embed-description">&lt;:bullet:1160816931876651019&gt; The <strong>Vigilante</strong> shot an <strong>innocent</strong> person! The innocent person was <strong>yuno.fan</strong>.</div></div></div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/998902622343938169/d45f25750570e066873c071b2445cee6.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">choco</span><span class="message-timestamp">07/07/2025 05:10 PM</span></div><div class="message-text">💀💀</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/758999095070687284/a_49f0b6e4308836d53ff62c887d055489.gif?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Mafia</span><span class="message-timestamp">07/07/2025 05:10 PM</span></div><div class="embed"><div class="embed-color-bar" style="background-color: #972f25;"></div><div class="embed-content"><div class="embed-title">Day 2</div><div class="embed-description">## Currently Dead<br>💀 <span class="mention">@Blackquill</span> - Alchemist<br><br>💀 <span class="mention">@Cash Deviant</span> - Vigilante<br><br>💀 <span class="mention">@New Zealandian Mixxle</span> - Distractor<br><br>💀 <span class="mention">@choco</span> - Mayor</div></div><div class="embed-thumbnail"><img src="https://media.discordapp.net/attachments/923932323710398495/1046292063358029925/Screenshot_2022-11-27-13-10-29-43_680d03679600f7af0b4c700c6b270fe7.jpg?ex=686ca86b&is=686b56eb&hm=7e665d33168c557ac4ff54d150174b0aef2b24e5c01046c8628d9f65348daa4f&" alt=""></div></div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/758999095070687284/a_49f0b6e4308836d53ff62c887d055489.gif?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Mafia</span><span class="message-timestamp">07/07/2025 05:10 PM</span></div><div class="embed"><div class="embed-color-bar" style="background-color: #15826c;"></div><div class="embed-content"><div class="embed-title">ANOMALY: 💀 Living Dead</div><div class="embed-description">The time has come for <strong>bruce\<em>wayne\</em>b</strong> as they have been risen from the dead!</div><div class="embed-image"><img src="https://t4.ftcdn.net/jpg/04/47/96/17/360_F_447961761_iuUjiZopwFczXD2clxXUnYOT4tT2Nldf.jpg" alt=""></div></div></div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/998902622343938169/d45f25750570e066873c071b2445cee6.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">choco</span><span class="message-timestamp">07/07/2025 05:10 PM</span></div><div class="message-text">💀❓</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/758999095070687284/a_49f0b6e4308836d53ff62c887d055489.gif?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Mafia</span><span class="message-timestamp">07/07/2025 05:10 PM</span></div><div class="embed"><div class="embed-color-bar" style="background-color: #972f25;"></div><div class="embed-content"><div class="embed-title">Game Over - Mafia won the match!</div><div class="embed-fields"><div class="embed-field embed-field-inline"><div class="embed-field-name">🎊 Winners</div><div class="embed-field-value"><strong><em></em>Main winners<em></em></strong><br>👼 <span class="mention">@Sebaba208</span> - Godfather</div></div><div class="embed-field embed-field-inline"><div class="embed-field-name">🗡️ Losers</div><div class="embed-field-value">👼 <span class="mention">@Taj</span> - Watcher <br>☠️ <span class="mention">@Blackquill</span> - Alchemist (Village) <br>☠️ <span class="mention">@Cash Deviant</span> - Vigilante <br>☠️ <span class="mention">@New Zealandian Mixxle</span> - Distractor <br>☠️ <span class="mention">@choco</span> - Mayor</div></div></div><div class="embed-footer"><span>W Mafia L others</span></div></div></div></div></div></div></div></body></html>
