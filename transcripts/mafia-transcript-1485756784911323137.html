@@ -1,0 +1,396 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Transcript - #mafia</title>
+        <style>
+            * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+            }
+            
+            body {
+                font-family: Whitney, "Helvetica Neue", Helvetica, Arial, sans-serif;
+                background-color: #36393f;
+                color: #dcddde;
+                padding: 20px;
+                line-height: 1.5;
+            }
+            
+            .transcript-container {
+                max-width: 980px;
+                margin: 0 auto;
+                background-color: #36393f;
+                border-radius: 8px;
+                overflow: hidden;
+            }
+            
+            .header {
+                background-color: #2f3136;
+                padding: 16px 20px;
+                border-bottom: 1px solid #202225;
+                display: flex;
+                align-items: center;
+                gap: 12px;
+            }
+            
+            .header-icon {
+                width: 40px;
+                height: 40px;
+                border-radius: 50%;
+                background-color: #5865f2;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 20px;
+                font-weight: bold;
+            }
+            
+            .header-info h1 {
+                font-size: 20px;
+                font-weight: 600;
+                margin-bottom: 4px;
+            }
+            
+            .header-info p {
+                font-size: 14px;
+                color: #b9bbbe;
+            }
+            
+            .messages-container {
+                padding: 20px;
+            }
+            
+            .message {
+                display: flex;
+                padding: 4px 0;
+                margin: 8px 0;
+                position: relative;
+            }
+            
+            .message:hover {
+                background-color: #32353b;
+                border-radius: 4px;
+            }
+            
+            .message-avatar {
+                width: 40px;
+                height: 40px;
+                border-radius: 50%;
+                margin-right: 16px;
+                flex-shrink: 0;
+                background-color: #5865f2;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-weight: 600;
+                color: white;
+            }
+            
+            .message-avatar img {
+                width: 100%;
+                height: 100%;
+                border-radius: 50%;
+                object-fit: cover;
+            }
+            
+            .message-content {
+                flex: 1;
+                min-width: 0;
+            }
+            
+            .message-header {
+                display: flex;
+                align-items: baseline;
+                gap: 8px;
+                margin-bottom: 4px;
+            }
+            
+            .message-author {
+                font-weight: 600;
+                font-size: 16px;
+                color: #ffffff;
+            }
+            
+            .message-timestamp {
+                font-size: 12px;
+                color: #72767d;
+            }
+            
+            .message-text {
+                color: #dcddde;
+                font-size: 16px;
+                line-height: 1.375;
+                word-wrap: break-word;
+            }
+            
+            .message-text a {
+                color: #00b0f4;
+                text-decoration: none;
+            }
+            
+            .message-text a:hover {
+                text-decoration: underline;
+            }
+            
+            .message-attachments {
+                margin-top: 8px;
+            }
+            
+            .attachment {
+                display: inline-block;
+                margin: 4px 0;
+            }
+            
+            .attachment img {
+                max-width: 400px;
+                max-height: 300px;
+                border-radius: 8px;
+                cursor: pointer;
+            }
+            
+            .attachment-file {
+                background-color: #2f3136;
+                border: 1px solid #202225;
+                border-radius: 8px;
+                padding: 10px 16px;
+                display: inline-flex;
+                align-items: center;
+                gap: 8px;
+                text-decoration: none;
+                color: #00b0f4;
+            }
+            
+            .attachment-file:hover {
+                background-color: #393c43;
+            }
+            
+            .embed {
+                margin-top: 8px;
+                max-width: 520px;
+                border-radius: 4px;
+                background-color: #2f3136;
+                display: flex;
+                overflow: hidden;
+            }
+            
+            .embed-color-bar {
+                width: 4px;
+                flex-shrink: 0;
+                background-color: #5865f2;
+            }
+            
+            .embed-content {
+                padding: 16px;
+                flex: 1;
+            }
+            
+            .embed-author {
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                margin-bottom: 8px;
+                font-size: 14px;
+                font-weight: 600;
+            }
+            
+            .embed-author img {
+                width: 24px;
+                height: 24px;
+                border-radius: 50%;
+            }
+            
+            .embed-title {
+                font-size: 16px;
+                font-weight: 600;
+                margin-bottom: 8px;
+                color: #00b0f4;
+            }
+            
+            .embed-description {
+                font-size: 14px;
+                line-height: 1.5;
+                margin-bottom: 12px;
+                white-space: pre-wrap;
+            }
+            
+            .embed-fields {
+                display: grid;
+                gap: 8px;
+            }
+            
+            .embed-field {
+                min-width: 0;
+            }
+            
+            .embed-field-inline {
+                display: inline-block;
+                width: calc(33.33% - 8px);
+                vertical-align: top;
+            }
+            
+            .embed-field-name {
+                font-size: 14px;
+                font-weight: 600;
+                margin-bottom: 2px;
+                color: #ffffff;
+            }
+            
+            .embed-field-value {
+                font-size: 14px;
+                line-height: 1.5;
+                white-space: pre-wrap;
+            }
+            
+            .embed-thumbnail {
+                margin-left: 16px;
+                flex-shrink: 0;
+            }
+            
+            .embed-thumbnail img {
+                max-width: 80px;
+                max-height: 80px;
+                border-radius: 4px;
+            }
+            
+            .embed-image {
+                margin-top: 12px;
+            }
+            
+            .embed-image img {
+                max-width: 100%;
+                border-radius: 4px;
+            }
+            
+            .embed-footer {
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                margin-top: 12px;
+                font-size: 12px;
+                color: #72767d;
+            }
+            
+            .embed-footer img {
+                width: 20px;
+                height: 20px;
+                border-radius: 50%;
+            }
+            
+            .reactions {
+                display: flex;
+                gap: 4px;
+                margin-top: 8px;
+                flex-wrap: wrap;
+            }
+            
+            .reaction {
+                background-color: #2f3136;
+                border: 1px solid #2f3136;
+                border-radius: 8px;
+                padding: 4px 8px;
+                display: flex;
+                align-items: center;
+                gap: 4px;
+                font-size: 14px;
+                cursor: pointer;
+            }
+            
+            .reaction:hover {
+                border-color: #4f545c;
+            }
+            
+            .reaction-emoji {
+                width: 16px;
+                height: 16px;
+            }
+            
+            .reaction-count {
+                color: #b9bbbe;
+                font-weight: 500;
+            }
+            
+            .system-message {
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                padding: 8px 16px;
+                margin: 16px 0;
+                color: #72767d;
+                font-size: 14px;
+            }
+            
+            .system-message-icon {
+                width: 16px;
+                height: 16px;
+                flex-shrink: 0;
+            }
+            
+            .mention {
+                background-color: rgba(88, 101, 242, 0.3);
+                color: #dee0fc;
+                padding: 0 2px;
+                border-radius: 3px;
+                font-weight: 500;
+            }
+            
+            .mention:hover {
+                background-color: #5865f2;
+                color: #ffffff;
+            }
+            
+            .code-inline {
+                background-color: #2f3136;
+                padding: 2px 4px;
+                border-radius: 3px;
+                font-family: Consolas, "Andale Mono WT", "Andale Mono", "Lucida Console", monospace;
+                font-size: 14px;
+            }
+            
+            .code-block {
+                background-color: #2f3136;
+                border: 1px solid #202225;
+                border-radius: 4px;
+                padding: 12px;
+                margin: 8px 0;
+                font-family: Consolas, "Andale Mono WT", "Andale Mono", "Lucida Console", monospace;
+                font-size: 14px;
+                overflow-x: auto;
+            }
+            
+            .spoiler {
+                background-color: #202225;
+                color: transparent;
+                padding: 0 2px;
+                border-radius: 3px;
+                cursor: pointer;
+                transition: all 0.1s;
+            }
+            
+            .spoiler:hover {
+                background-color: rgba(255, 255, 255, 0.1);
+                color: #dcddde;
+            }
+            
+            .divider {
+                display: flex;
+                align-items: center;
+                margin: 20px 0;
+                color: #72767d;
+                font-size: 12px;
+                font-weight: 600;
+                text-transform: uppercase;
+            }
+            
+            .divider::before,
+            .divider::after {
+                content: "";
+                flex: 1;
+                height: 1px;
+                background-color: #4f545c;
+            }
+            
+            .divider-text {
+                padding: 0 16px;
+            }
+        </style>
+        </head><body><div class="transcript-container"><div class="header"><div class="header-icon">#</div><div class="header-info"><h1>#mafia</h1><p>115 messages • Generated on March 23, 2026 at 09:53 PM</p></div></div><div class="messages-container"><div class="divider"><span class="divider-text">March 23, 2026</span></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/758999095070687284/817b0fd10381784fda331791d73dae75.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Mafia Remastered</span><span class="message-timestamp">03/23/2026 09:47 PM</span></div><div class="message-text"><span class="mention">@AlexanderTheGreat #BroMuted</span> <span class="mention">@kaelix</span> <span class="mention">@666𝓥𝓲𝓬𝓥𝓸𝓷𝓥𝓪𝓷𝓲𝓽𝔂</span> <span class="mention">@Supa Hot Fire</span> <span class="mention">@cookiedrem</span> <span class="mention">@sugarfina</span> <span class="mention">@ambiguousenemy12</span> <span class="mention">@Furiyasa Darkness</span> <span class="mention">@Retro, Framer of the Apocalypse</span> <span class="mention">@z</span> <span class="mention">@Snowzy (22 iq maf player)</span></div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/758999095070687284/817b0fd10381784fda331791d73dae75.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Mafia Remastered</span><span class="message-timestamp">03/23/2026 09:47 PM</span></div><div class="embed"><div class="embed-color-bar" style="background-color: #9c59b6;"></div><div class="embed-content"><div class="embed-title">🖐️ Welcome to Mafia!</div><div class="embed-description">📕 If you haven&#x27;t read the rules yet, please type &lt;/game:1042058961274282025&gt; to view them!</div><div class="embed-fields"><div class="embed-field "><div class="embed-field-name">❗ HEY LISTEN UP</div><div class="embed-field-value">💢 Please do not type in this chat unless instructed to do so. Admins please don&#x27;t abuse your godly powers and talk when other people can&#x27;t. Thank you.</div></div><div class="embed-field "><div class="embed-field-name">💀 To those who are dead:</div><div class="embed-field-value">Please do not talk. I know it&#x27;s hard to grasp but dead people can&#x27;t talk.</div></div><div class="embed-field "><div class="embed-field-name">👀 Some important rules:</div><div class="embed-field-value">🚫 Screenshots are not permitted and would only ruin the game. However, you CAN claim roles to either coordinate among yourselves or trick other people. Just NO SCREENSHOTS (unless you are a mafia showing results to other mafias).</div></div><div class="embed-field "><div class="embed-field-name">🗣️ Some useful commands:</div><div class="embed-field-value">&lt;/reset:1133666068360077378&gt;, &lt;/help:1042058961274282026&gt;, &lt;/game:1042058961274282025&gt;</div></div></div><div class="embed-footer"><span>Note: Parts of the game can be customized with the /config command! To view the current settings, use /settings</span></div></div></div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/758999095070687284/817b0fd10381784fda331791d73dae75.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Mafia Remastered</span><span class="message-timestamp">03/23/2026 09:47 PM</span></div><div class="embed"><div class="embed-color-bar" style="background-color: #15826c;"></div><div class="embed-content"><div class="embed-title">Anomalies are enabled</div><div class="embed-description">Throughout the game, there is a 40% chance of anomalies happening. Let the crazy begin!</div><div class="embed-footer"><span>Hope you manage to survive this.</span></div></div></div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/758999095070687284/817b0fd10381784fda331791d73dae75.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Mafia Remastered</span><span class="message-timestamp">03/23/2026 09:47 PM</span></div><div class="embed"><div class="embed-color-bar" style="background-color: #972f25;"></div><div class="embed-content"><div class="embed-author"><img src="https://cdn.discordapp.com/avatars/758999095070687284/817b0fd10381784fda331791d73dae75.webp" alt=""><span>MafiaBot</span></div><div class="embed-description">Alright! Let the game begin!</div></div></div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/758999095070687284/817b0fd10381784fda331791d73dae75.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Mafia Remastered</span><span class="message-timestamp">03/23/2026 09:47 PM</span></div><div class="embed"><div class="embed-color-bar" style="background-color: #3498db;"></div><div class="embed-content"><div class="embed-title">Night 1</div><div class="embed-fields"><div class="embed-field embed-field-inline"><div class="embed-field-name">Currently Alive</div><div class="embed-field-value">🙂 <span class="mention">@AlexanderTheGreat #BroMuted</span><br><br>🙂 <span class="mention">@kaelix</span><br><br>🙂 <span class="mention">@666𝓥𝓲𝓬𝓥𝓸𝓷𝓥𝓪𝓷𝓲𝓽𝔂</span><br><br>🙂 <span class="mention">@Supa Hot Fire</span><br><br>🙂 <span class="mention">@cookiedrem</span><br><br>🙂 <span class="mention">@sugarfina</span><br><br>🙂 <span class="mention">@ambiguousenemy12</span><br><br>🙂 <span class="mention">@Furiyasa Darkness</span><br><br>🙂 <span class="mention">@Retro, Framer of the Apocalypse</span><br><br>🙂 <span class="mention">@z</span><br><br>🙂 <span class="mention">@Snowzy (22 iq maf player)</span></div></div><div class="embed-field embed-field-inline"><div class="embed-field-name">Currently Dead</div><div class="embed-field-value">No one is dead yet...</div></div></div></div></div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/758999095070687284/817b0fd10381784fda331791d73dae75.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Mafia Remastered</span><span class="message-timestamp">03/23/2026 09:47 PM</span></div><div class="embed"><div class="embed-color-bar" style="background-color: #3498db;"></div><div class="embed-content"><div class="embed-title">To do your action tonight, click the Action button below.</div><div class="embed-description">To cancel your action, just click the &#x27;Cancel&#x27; button.</div><div class="embed-footer"><span>Night 1</span></div></div></div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/758999095070687284/817b0fd10381784fda331791d73dae75.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Mafia Remastered</span><span class="message-timestamp">03/23/2026 09:48 PM</span></div><div class="embed"><div class="embed-color-bar" style="background-color: #972f25;"></div><div class="embed-content"><div class="embed-author"><img src="https://cdn.discordapp.com/avatars/758999095070687284/817b0fd10381784fda331791d73dae75.webp" alt=""><span>Mafia Remastered</span></div><div class="embed-description">Alright everybody, get your butts back here. It&#x27;s storytime.</div></div></div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/758999095070687284/817b0fd10381784fda331791d73dae75.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Mafia Remastered</span><span class="message-timestamp">03/23/2026 09:48 PM</span></div><div class="embed"><div class="embed-color-bar" style="background-color: #972f25;"></div><div class="embed-content"><div class="embed-title">furiyasadarkness0825 was attacked by the Mafia :(</div><div class="embed-description">The Godfather ordered the Mafia to kill someone, and furiyasadarkness0825 was shot. Well.. there was a typo in the Godfather’s target list, and furiyasadarkness0825 wasn’t their actual target at all. Well at least the other guy lives… LOL!</div><div class="embed-image"><img src="https://res.cloudinary.com/dkpraixbv/image/upload/misc/youdied-default.png" alt=""></div></div></div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/758999095070687284/817b0fd10381784fda331791d73dae75.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Mafia Remastered</span><span class="message-timestamp">03/23/2026 09:48 PM</span></div><div class="embed"><div class="embed-color-bar" style="background-color: #972f25;"></div><div class="embed-content"><div class="embed-title">Day 1</div><div class="embed-description">## Currently Dead<br>💀 <span class="mention">@Furiyasa Darkness</span> - Lawyer</div></div><div class="embed-thumbnail"><img src="https://media.discordapp.net/attachments/923932323710398495/1046292063358029925/Screenshot_2022-11-27-13-10-29-43_680d03679600f7af0b4c700c6b270fe7.jpg?ex=69c2c5ab&is=69c1742b&hm=6ecfb977c77291cd1d9d5441f10f0a98908272541ffec0222c41a34eb5d64954&" alt=""></div></div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/758999095070687284/817b0fd10381784fda331791d73dae75.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Mafia Remastered</span><span class="message-timestamp">03/23/2026 09:48 PM</span></div><div class="embed"><div class="embed-color-bar" style="background-color: #c67c1c;"></div><div class="embed-content"><div class="embed-title">ANOMALY: 🌧️ Acid Rain</div><div class="embed-description">The acid rain has wiped the disguise of someone&#x27;s role! <strong>victoriavonvanity</strong> is the <strong>&lt;:doctor:1157656768353148998&gt; Doctor</strong>!</div><div class="embed-image"><img src="https://d3mvlb3hz2g78.cloudfront.net/wp-content/uploads/2023/04/thumb_720_450_dreamstime_xs_191493424.jpg" alt=""></div></div></div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/758999095070687284/817b0fd10381784fda331791d73dae75.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Mafia Remastered</span><span class="message-timestamp">03/23/2026 09:48 PM</span></div><div class="embed"><div class="embed-color-bar" style="background-color: #3498db;"></div><div class="embed-content"><div class="embed-title">Currently Alive</div><div class="embed-description">◽ <span class="mention">@AlexanderTheGreat #BroMuted</span><br><br>◽ <span class="mention">@kaelix</span><br><br>◽ <span class="mention">@666𝓥𝓲𝓬𝓥𝓸𝓷𝓥𝓪𝓷𝓲𝓽𝔂</span><br><br>◽ <span class="mention">@Supa Hot Fire</span><br><br>◽ <span class="mention">@cookiedrem</span><br><br>◽ <span class="mention">@sugarfina</span><br><br>◽ <span class="mention">@ambiguousenemy12</span><br><br>◽ <span class="mention">@Retro, Framer of the Apocalypse</span><br><br>◽ <span class="mention">@z</span><br><br>◽ <span class="mention">@Snowzy (22 iq maf player)</span></div><div class="embed-footer"><span>Have fun!</span></div></div></div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/672278845226876940/3519975a929a6a785cabc4e2d76b731b.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Supa Hot Fire</span><span class="message-timestamp">03/23/2026 09:48 PM</span></div><div class="message-text">Crazy</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/800565154345517097/f434e2bab7f7c8b0d9ca39ddae698295.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">ambiguousenemy12</span><span class="message-timestamp">03/23/2026 09:48 PM</span></div><div class="message-text">oh</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/1149672049980227585/b98723c13b91d033be3d85d43523bfcc.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Retro, Framer of the Apocalypse</span><span class="message-timestamp">03/23/2026 09:48 PM</span></div><div class="message-text">ahh well the rain targetting today</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/1174599435901222996/d171d4d98053f9ce524d43c556757c3c.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">666𝓥𝓲𝓬𝓥𝓸𝓷𝓥𝓪𝓷𝓲𝓽𝔂</span><span class="message-timestamp">03/23/2026 09:48 PM</span></div><div class="message-text">Hey fuck you baker</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/808709836208341115/4f76f1ebad9be432064454bb892352ca.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">cookiedrem</span><span class="message-timestamp">03/23/2026 09:48 PM</span></div><div class="message-text">cold link</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/672278845226876940/3519975a929a6a785cabc4e2d76b731b.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Supa Hot Fire</span><span class="message-timestamp">03/23/2026 09:48 PM</span></div><div class="message-text">Rip lawyer</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/808421736163967076/94e37e9cde4be6656b77c386e9569b28.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">z</span><span class="message-timestamp">03/23/2026 09:48 PM</span></div><div class="message-text">tuff</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/1149672049980227585/b98723c13b91d033be3d85d43523bfcc.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Retro, Framer of the Apocalypse</span><span class="message-timestamp">03/23/2026 09:48 PM</span></div><div class="message-text">any info?</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/672278845226876940/3519975a929a6a785cabc4e2d76b731b.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Supa Hot Fire</span><span class="message-timestamp">03/23/2026 09:48 PM</span></div><div class="message-text">U got bread?</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/1379896339189596342/e1d3f5755022fc41a8ff436ed1444002.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">kaelix</span><span class="message-timestamp">03/23/2026 09:48 PM</span></div><div class="message-text">sad</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/800565154345517097/f434e2bab7f7c8b0d9ca39ddae698295.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">ambiguousenemy12</span><span class="message-timestamp">03/23/2026 09:48 PM</span></div><div class="message-text">is baker a bad neut I forgot</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/1149672049980227585/b98723c13b91d033be3d85d43523bfcc.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Retro, Framer of the Apocalypse</span><span class="message-timestamp">03/23/2026 09:48 PM</span></div><div class="message-text">yea</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/758999095070687284/817b0fd10381784fda331791d73dae75.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Mafia Remastered</span><span class="message-timestamp">03/23/2026 09:48 PM</span></div><div class="embed"><div class="embed-color-bar" style="background-color: #a94300;"></div><div class="embed-content"><div class="embed-title">Now it is time to nominate! Vote the player you want by pressing the button below on who should be put on trial!
+Minimum votes required: 5</div><div class="embed-description">◽ <span class="mention">@AlexanderTheGreat #BroMuted</span><br>◽ <span class="mention">@kaelix</span><br>◽ <span class="mention">@666𝓥𝓲𝓬𝓥𝓸𝓷𝓥𝓪𝓷𝓲𝓽𝔂</span><br>◽ <span class="mention">@Supa Hot Fire</span><br>◽ <span class="mention">@cookiedrem</span><br>◽ <span class="mention">@sugarfina</span><br>◽ <span class="mention">@ambiguousenemy12</span><br>◽ <span class="mention">@Retro, Framer of the Apocalypse</span><br>◽ <span class="mention">@z</span><br>◽ <span class="mention">@Snowzy (22 iq maf player)</span></div><div class="embed-footer"><span>Day 1 | You have 30 seconds to nominate...</span></div></div></div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/808709836208341115/4f76f1ebad9be432064454bb892352ca.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">cookiedrem</span><span class="message-timestamp">03/23/2026 09:48 PM</span></div><div class="message-text">yes</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/808421736163967076/94e37e9cde4be6656b77c386e9569b28.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">z</span><span class="message-timestamp">03/23/2026 09:48 PM</span></div><div class="message-text">nah</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/672278845226876940/3519975a929a6a785cabc4e2d76b731b.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Supa Hot Fire</span><span class="message-timestamp">03/23/2026 09:48 PM</span></div><div class="message-text">I mean</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/800565154345517097/f434e2bab7f7c8b0d9ca39ddae698295.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">ambiguousenemy12</span><span class="message-timestamp">03/23/2026 09:48 PM</span></div><div class="message-text">ok</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/1149672049980227585/b98723c13b91d033be3d85d43523bfcc.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Retro, Framer of the Apocalypse</span><span class="message-timestamp">03/23/2026 09:49 PM</span></div><div class="message-text">but like</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/808709836208341115/4f76f1ebad9be432064454bb892352ca.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">cookiedrem</span><span class="message-timestamp">03/23/2026 09:49 PM</span></div><div class="message-text">😭🙏</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/1042526807586508871/7993960ad4e2cbebf4baf6546461475a.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">AlexanderTheGreat #BroMuted</span><span class="message-timestamp">03/23/2026 09:49 PM</span></div><div class="message-text">Snowzy clear via me</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/1149672049980227585/b98723c13b91d033be3d85d43523bfcc.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Retro, Framer of the Apocalypse</span><span class="message-timestamp">03/23/2026 09:49 PM</span></div><div class="message-text">we found the baker</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/1174599435901222996/d171d4d98053f9ce524d43c556757c3c.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">666𝓥𝓲𝓬𝓥𝓸𝓷𝓥𝓪𝓷𝓲𝓽𝔂</span><span class="message-timestamp">03/23/2026 09:49 PM</span></div><div class="message-text">I gave an extra vote</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/672278845226876940/3519975a929a6a785cabc4e2d76b731b.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Supa Hot Fire</span><span class="message-timestamp">03/23/2026 09:49 PM</span></div><div class="message-text">They can team with villa if they want</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/836347954947686402/7c2316a4b34fdf7444c76d6d9d3253fe.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Snowzy (22 iq maf player)</span><span class="message-timestamp">03/23/2026 09:49 PM</span></div><div class="message-text">oh vik youre back</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/800565154345517097/f434e2bab7f7c8b0d9ca39ddae698295.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">ambiguousenemy12</span><span class="message-timestamp">03/23/2026 09:49 PM</span></div><div class="message-text">oooh</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/808421736163967076/94e37e9cde4be6656b77c386e9569b28.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">z</span><span class="message-timestamp">03/23/2026 09:49 PM</span></div><div class="message-text">where!</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/1149672049980227585/b98723c13b91d033be3d85d43523bfcc.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Retro, Framer of the Apocalypse</span><span class="message-timestamp">03/23/2026 09:49 PM</span></div><div class="message-text"><span class="mention">@z</span> is just baker</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/1174599435901222996/d171d4d98053f9ce524d43c556757c3c.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">666𝓥𝓲𝓬𝓥𝓸𝓷𝓥𝓪𝓷𝓲𝓽𝔂</span><span class="message-timestamp">03/23/2026 09:49 PM</span></div><div class="message-text">On z</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/1149672049980227585/b98723c13b91d033be3d85d43523bfcc.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Retro, Framer of the Apocalypse</span><span class="message-timestamp">03/23/2026 09:49 PM</span></div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/758999095070687284/817b0fd10381784fda331791d73dae75.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Mafia Remastered</span><span class="message-timestamp">03/23/2026 09:49 PM</span></div><div class="embed"><div class="embed-color-bar" style="background-color: #c67c1c;"></div><div class="embed-content"><div class="embed-title">Nomination results</div><div class="embed-description">All votes are hidden. If someone is on trial, it will be announced.</div><div class="embed-footer"><span>Minimum votes to put someone on stand: 5</span></div></div></div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/758999095070687284/817b0fd10381784fda331791d73dae75.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Mafia Remastered</span><span class="message-timestamp">03/23/2026 09:49 PM</span></div><div class="embed"><div class="embed-color-bar" style="background-color: #972f25;"></div><div class="embed-content"><div class="embed-title">The town wasn&#x27;t able to decide on who to lynch so no one was nominated...</div><div class="embed-description">Better work together next time...</div></div></div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/672278845226876940/3519975a929a6a785cabc4e2d76b731b.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Supa Hot Fire</span><span class="message-timestamp">03/23/2026 09:49 PM</span></div><div class="message-text">Lol</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/808421736163967076/94e37e9cde4be6656b77c386e9569b28.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">z</span><span class="message-timestamp">03/23/2026 09:49 PM</span></div><div class="message-text">haha good one</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/808421736163967076/94e37e9cde4be6656b77c386e9569b28.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">z</span><span class="message-timestamp">03/23/2026 09:49 PM</span></div><div class="message-text">retro the mafia.</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/758999095070687284/817b0fd10381784fda331791d73dae75.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Mafia Remastered</span><span class="message-timestamp">03/23/2026 09:49 PM</span></div><div class="embed"><div class="embed-color-bar" style="background-color: #972f25;"></div><div class="embed-content"><div class="embed-author"><img src="https://cdn.discordapp.com/avatars/758999095070687284/817b0fd10381784fda331791d73dae75.webp" alt=""><span>Mafia Remastered</span></div><div class="embed-description">No one was hanged.</div></div></div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/836347954947686402/7c2316a4b34fdf7444c76d6d9d3253fe.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Snowzy (22 iq maf player)</span><span class="message-timestamp">03/23/2026 09:49 PM</span></div><div class="message-text">that never happens</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/758999095070687284/817b0fd10381784fda331791d73dae75.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Mafia Remastered</span><span class="message-timestamp">03/23/2026 09:49 PM</span></div><div class="embed"><div class="embed-color-bar" style="background-color: #3498db;"></div><div class="embed-content"><div class="embed-title">Night 2</div><div class="embed-fields"><div class="embed-field embed-field-inline"><div class="embed-field-name">Currently Alive</div><div class="embed-field-value">🙂 <span class="mention">@AlexanderTheGreat #BroMuted</span><br><br>🙂 <span class="mention">@kaelix</span><br><br>🙂 <span class="mention">@666𝓥𝓲𝓬𝓥𝓸𝓷𝓥𝓪𝓷𝓲𝓽𝔂</span><br><br>🙂 <span class="mention">@Supa Hot Fire</span><br><br>🙂 <span class="mention">@cookiedrem</span><br><br>🙂 <span class="mention">@sugarfina</span><br><br>🙂 <span class="mention">@ambiguousenemy12</span><br><br>🙂 <span class="mention">@Retro, Framer of the Apocalypse</span><br><br>🙂 <span class="mention">@z</span><br><br>🙂 <span class="mention">@Snowzy (22 iq maf player)</span></div></div><div class="embed-field embed-field-inline"><div class="embed-field-name">Currently Dead</div><div class="embed-field-value">💀 <span class="mention">@Furiyasa Darkness</span> - Lawyer</div></div></div></div></div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/758999095070687284/817b0fd10381784fda331791d73dae75.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Mafia Remastered</span><span class="message-timestamp">03/23/2026 09:49 PM</span></div><div class="embed"><div class="embed-color-bar" style="background-color: #3498db;"></div><div class="embed-content"><div class="embed-title">To do your action tonight, click the Action button below.</div><div class="embed-description">To cancel your action, just click the &#x27;Cancel&#x27; button.</div><div class="embed-footer"><span>Night 2</span></div></div></div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/758999095070687284/817b0fd10381784fda331791d73dae75.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Mafia Remastered</span><span class="message-timestamp">03/23/2026 09:50 PM</span></div><div class="embed"><div class="embed-color-bar" style="background-color: #972f25;"></div><div class="embed-content"><div class="embed-author"><img src="https://cdn.discordapp.com/avatars/758999095070687284/817b0fd10381784fda331791d73dae75.webp" alt=""><span>Mafia Remastered</span></div><div class="embed-description">Alright everybody, get your butts back here. It&#x27;s storytime.</div></div></div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/758999095070687284/817b0fd10381784fda331791d73dae75.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Mafia Remastered</span><span class="message-timestamp">03/23/2026 09:50 PM</span></div><div class="embed"><div class="embed-color-bar" style="background-color: #972f25;"></div><div class="embed-content"><div class="embed-title">supa.hot.fire was attacked by the Mafia :(</div><div class="embed-description">supa.hot.fire was told by her grandma that she can be a great detective in the future. supa.hot.fire got so excited that she went into the woods for investigating the myths about rainbow crystal onix.</div><div class="embed-image"><img src="https://res.cloudinary.com/dkpraixbv/image/upload/misc/youdied-default.png" alt=""></div></div></div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/758999095070687284/817b0fd10381784fda331791d73dae75.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Mafia Remastered</span><span class="message-timestamp">03/23/2026 09:50 PM</span></div><div class="embed"><div class="embed-color-bar" style="background-color: #972f25;"></div><div class="embed-content"><div class="embed-title">Day 2</div><div class="embed-description">## Currently Dead<br>💀 <span class="mention">@Supa Hot Fire</span> - Farmer<br><br>💀 <span class="mention">@Furiyasa Darkness</span> - Lawyer</div></div><div class="embed-thumbnail"><img src="https://media.discordapp.net/attachments/923932323710398495/1046292063358029925/Screenshot_2022-11-27-13-10-29-43_680d03679600f7af0b4c700c6b270fe7.jpg?ex=69c2c5ab&is=69c1742b&hm=6ecfb977c77291cd1d9d5441f10f0a98908272541ffec0222c41a34eb5d64954&" alt=""></div></div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/758999095070687284/817b0fd10381784fda331791d73dae75.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Mafia Remastered</span><span class="message-timestamp">03/23/2026 09:50 PM</span></div><div class="embed"><div class="embed-color-bar" style="background-color: #3498db;"></div><div class="embed-content"><div class="embed-title">Currently Alive</div><div class="embed-description">◽ <span class="mention">@AlexanderTheGreat #BroMuted</span><br><br>◽ <span class="mention">@kaelix</span><br><br>◽ <span class="mention">@666𝓥𝓲𝓬𝓥𝓸𝓷𝓥𝓪𝓷𝓲𝓽𝔂</span><br><br>◽ <span class="mention">@cookiedrem</span><br><br>◽ <span class="mention">@sugarfina</span><br><br>◽ <span class="mention">@ambiguousenemy12</span><br><br>◽ <span class="mention">@Retro, Framer of the Apocalypse</span><br><br>◽ <span class="mention">@z</span><br><br>◽ <span class="mention">@Snowzy (22 iq maf player)</span></div><div class="embed-footer"><span>Have fun!</span></div></div></div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/1149672049980227585/b98723c13b91d033be3d85d43523bfcc.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Retro, Framer of the Apocalypse</span><span class="message-timestamp">03/23/2026 09:50 PM</span></div><div class="message-text">W mafia</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/1042526807586508871/7993960ad4e2cbebf4baf6546461475a.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">AlexanderTheGreat #BroMuted</span><span class="message-timestamp">03/23/2026 09:50 PM</span></div><div class="message-text">I GOT BRRAD</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/837433356944670741/887fc01a4c699116ef3ae8c8df70083f.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">sugarfina</span><span class="message-timestamp">03/23/2026 09:50 PM</span></div><div class="message-text">Bahahahahahaha w mafia</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/1379896339189596342/e1d3f5755022fc41a8ff436ed1444002.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">kaelix</span><span class="message-timestamp">03/23/2026 09:50 PM</span></div><div class="message-text">nice</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/808421736163967076/94e37e9cde4be6656b77c386e9569b28.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">z</span><span class="message-timestamp">03/23/2026 09:50 PM</span></div><div class="message-text">w</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/1042526807586508871/7993960ad4e2cbebf4baf6546461475a.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">AlexanderTheGreat #BroMuted</span><span class="message-timestamp">03/23/2026 09:50 PM</span></div><div class="message-text">ON SNOWZY</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/800565154345517097/f434e2bab7f7c8b0d9ca39ddae698295.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">ambiguousenemy12</span><span class="message-timestamp">03/23/2026 09:51 PM</span></div><div class="message-text">yayy</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/1042526807586508871/7993960ad4e2cbebf4baf6546461475a.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">AlexanderTheGreat #BroMuted</span><span class="message-timestamp">03/23/2026 09:51 PM</span></div><div class="message-text"># I MEANT</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/1042526807586508871/7993960ad4e2cbebf4baf6546461475a.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">AlexanderTheGreat #BroMuted</span><span class="message-timestamp">03/23/2026 09:51 PM</span></div><div class="message-text"># ON Z</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/1149672049980227585/b98723c13b91d033be3d85d43523bfcc.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Retro, Framer of the Apocalypse</span><span class="message-timestamp">03/23/2026 09:51 PM</span></div><div class="message-text">via?</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/808709836208341115/4f76f1ebad9be432064454bb892352ca.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">cookiedrem</span><span class="message-timestamp">03/23/2026 09:51 PM</span></div><div class="message-text">ON SNOWZYYZY</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/800565154345517097/f434e2bab7f7c8b0d9ca39ddae698295.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">ambiguousenemy12</span><span class="message-timestamp">03/23/2026 09:51 PM</span></div><div class="message-text">uh</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/808709836208341115/4f76f1ebad9be432064454bb892352ca.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">cookiedrem</span><span class="message-timestamp">03/23/2026 09:51 PM</span></div><div class="message-text">ON Z</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/808421736163967076/94e37e9cde4be6656b77c386e9569b28.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">z</span><span class="message-timestamp">03/23/2026 09:51 PM</span></div><div class="message-text">🤨</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/836347954947686402/7c2316a4b34fdf7444c76d6d9d3253fe.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Snowzy (22 iq maf player)</span><span class="message-timestamp">03/23/2026 09:51 PM</span></div><div class="message-text">?</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/808421736163967076/94e37e9cde4be6656b77c386e9569b28.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">z</span><span class="message-timestamp">03/23/2026 09:51 PM</span></div><div class="message-text">whatd i do</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/1149672049980227585/b98723c13b91d033be3d85d43523bfcc.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Retro, Framer of the Apocalypse</span><span class="message-timestamp">03/23/2026 09:51 PM</span></div><div class="message-text">ON Z</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/808709836208341115/4f76f1ebad9be432064454bb892352ca.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">cookiedrem</span><span class="message-timestamp">03/23/2026 09:51 PM</span></div><div class="message-text">ON SNWOYZ ON Z IS</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/1042526807586508871/7993960ad4e2cbebf4baf6546461475a.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">AlexanderTheGreat #BroMuted</span><span class="message-timestamp">03/23/2026 09:51 PM</span></div><div class="message-text">snowzy clear</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/836347954947686402/7c2316a4b34fdf7444c76d6d9d3253fe.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Snowzy (22 iq maf player)</span><span class="message-timestamp">03/23/2026 09:51 PM</span></div><div class="message-text">wut is z</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/1149672049980227585/b98723c13b91d033be3d85d43523bfcc.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Retro, Framer of the Apocalypse</span><span class="message-timestamp">03/23/2026 09:51 PM</span></div><div class="message-text">claim</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/800565154345517097/f434e2bab7f7c8b0d9ca39ddae698295.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">ambiguousenemy12</span><span class="message-timestamp">03/23/2026 09:51 PM</span></div><div class="message-text">zzz</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/1149672049980227585/b98723c13b91d033be3d85d43523bfcc.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Retro, Framer of the Apocalypse</span><span class="message-timestamp">03/23/2026 09:51 PM</span></div><div class="message-text">oh</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/808709836208341115/4f76f1ebad9be432064454bb892352ca.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">cookiedrem</span><span class="message-timestamp">03/23/2026 09:51 PM</span></div><div class="message-text">via watcher right</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/1042526807586508871/7993960ad4e2cbebf4baf6546461475a.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">AlexanderTheGreat #BroMuted</span><span class="message-timestamp">03/23/2026 09:51 PM</span></div><div class="message-text"># Z IS BAKER I THINK?</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/808709836208341115/4f76f1ebad9be432064454bb892352ca.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">cookiedrem</span><span class="message-timestamp">03/23/2026 09:51 PM</span></div><div class="message-text">on z z z</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/808421736163967076/94e37e9cde4be6656b77c386e9569b28.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">z</span><span class="message-timestamp">03/23/2026 09:51 PM</span></div><div class="message-text">is there info to accuse me 🤨</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/1174599435901222996/d171d4d98053f9ce524d43c556757c3c.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">666𝓥𝓲𝓬𝓥𝓸𝓷𝓥𝓪𝓷𝓲𝓽𝔂</span><span class="message-timestamp">03/23/2026 09:51 PM</span></div><div class="message-text">On z</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/758999095070687284/817b0fd10381784fda331791d73dae75.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Mafia Remastered</span><span class="message-timestamp">03/23/2026 09:51 PM</span></div><div class="embed"><div class="embed-color-bar" style="background-color: #a94300;"></div><div class="embed-content"><div class="embed-title">Now it is time to nominate! Vote the player you want by pressing the button below on who should be put on trial!
+Minimum votes required: 5</div><div class="embed-description">◽ <span class="mention">@AlexanderTheGreat #BroMuted</span><br>◽ <span class="mention">@kaelix</span><br>◽ <span class="mention">@666𝓥𝓲𝓬𝓥𝓸𝓷𝓥𝓪𝓷𝓲𝓽𝔂</span><br>◽ <span class="mention">@cookiedrem</span><br>◽ <span class="mention">@sugarfina</span><br>◽ <span class="mention">@ambiguousenemy12</span><br>◽ <span class="mention">@Retro, Framer of the Apocalypse</span><br>◽ <span class="mention">@z</span><br>◽ <span class="mention">@Snowzy (22 iq maf player)</span></div><div class="embed-footer"><span>Day 2 | You have 30 seconds to nominate...</span></div></div></div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/800565154345517097/f434e2bab7f7c8b0d9ca39ddae698295.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">ambiguousenemy12</span><span class="message-timestamp">03/23/2026 09:51 PM</span></div><div class="message-text">do we have info or</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/836347954947686402/7c2316a4b34fdf7444c76d6d9d3253fe.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Snowzy (22 iq maf player)</span><span class="message-timestamp">03/23/2026 09:51 PM</span></div><div class="message-text">waht info</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/1042526807586508871/7993960ad4e2cbebf4baf6546461475a.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">AlexanderTheGreat #BroMuted</span><span class="message-timestamp">03/23/2026 09:51 PM</span></div><div class="message-text">Someone said ur Baker</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/808421736163967076/94e37e9cde4be6656b77c386e9569b28.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">z</span><span class="message-timestamp">03/23/2026 09:51 PM</span></div><div class="message-text">no retro was making some dumb accusation</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/1042526807586508871/7993960ad4e2cbebf4baf6546461475a.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">AlexanderTheGreat #BroMuted</span><span class="message-timestamp">03/23/2026 09:51 PM</span></div><div class="message-text">I got vote less</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/808421736163967076/94e37e9cde4be6656b77c386e9569b28.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">z</span><span class="message-timestamp">03/23/2026 09:51 PM</span></div><div class="message-text">cuz i said baker isnt bad</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/1042526807586508871/7993960ad4e2cbebf4baf6546461475a.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">AlexanderTheGreat #BroMuted</span><span class="message-timestamp">03/23/2026 09:51 PM</span></div><div class="message-text">Loss</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/1379896339189596342/e1d3f5755022fc41a8ff436ed1444002.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">kaelix</span><span class="message-timestamp">03/23/2026 09:51 PM</span></div><div class="message-text">on z until claim</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/800565154345517097/f434e2bab7f7c8b0d9ca39ddae698295.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">ambiguousenemy12</span><span class="message-timestamp">03/23/2026 09:51 PM</span></div><div class="message-text">bruh</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/1042526807586508871/7993960ad4e2cbebf4baf6546461475a.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">AlexanderTheGreat #BroMuted</span><span class="message-timestamp">03/23/2026 09:51 PM</span></div><div class="message-text">Ok i will die</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/1149672049980227585/b98723c13b91d033be3d85d43523bfcc.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Retro, Framer of the Apocalypse</span><span class="message-timestamp">03/23/2026 09:51 PM</span></div><div class="message-text">they called baker a good neutral, so i tunneled them as baker</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/1042526807586508871/7993960ad4e2cbebf4baf6546461475a.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">AlexanderTheGreat #BroMuted</span><span class="message-timestamp">03/23/2026 09:51 PM</span></div><div class="message-text">} REMEMBER TJIS</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/1174599435901222996/d171d4d98053f9ce524d43c556757c3c.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">666𝓥𝓲𝓬𝓥𝓸𝓷𝓥𝓪𝓷𝓲𝓽𝔂</span><span class="message-timestamp">03/23/2026 09:51 PM</span></div><div class="message-text">On z</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/800565154345517097/f434e2bab7f7c8b0d9ca39ddae698295.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">ambiguousenemy12</span><span class="message-timestamp">03/23/2026 09:51 PM</span></div><div class="message-text">Baker is bad though</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/836347954947686402/7c2316a4b34fdf7444c76d6d9d3253fe.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Snowzy (22 iq maf player)</span><span class="message-timestamp">03/23/2026 09:51 PM</span></div><div class="message-text">z claim</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/758999095070687284/817b0fd10381784fda331791d73dae75.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Mafia Remastered</span><span class="message-timestamp">03/23/2026 09:51 PM</span></div><div class="embed"><div class="embed-color-bar" style="background-color: #c67c1c;"></div><div class="embed-content"><div class="embed-title">Nomination results</div><div class="embed-description">All votes are hidden. If someone is on trial, it will be announced.</div><div class="embed-footer"><span>Minimum votes to put someone on stand: 5</span></div></div></div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/758999095070687284/817b0fd10381784fda331791d73dae75.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Mafia Remastered</span><span class="message-timestamp">03/23/2026 09:51 PM</span></div><div class="embed"><div class="embed-color-bar" style="background-color: #972f25;"></div><div class="embed-content"><div class="embed-title">The town wasn&#x27;t able to decide on who to lynch so no one was nominated...</div><div class="embed-description">Better work together next time...</div></div></div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/808421736163967076/94e37e9cde4be6656b77c386e9569b28.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">z</span><span class="message-timestamp">03/23/2026 09:51 PM</span></div><div class="message-text">gng why would a real baker ever speak on that during the game?? think 💀</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/1042526807586508871/7993960ad4e2cbebf4baf6546461475a.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">AlexanderTheGreat #BroMuted</span><span class="message-timestamp">03/23/2026 09:52 PM</span></div><div class="message-text"># <span class="mention">@sugarfina</span> mafia via det before i Die😢🙏</div><div class="reactions"><div class="reaction"><span class="reaction-emoji">💀</span><span class="reaction-count">1</span></div></div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/758999095070687284/817b0fd10381784fda331791d73dae75.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Mafia Remastered</span><span class="message-timestamp">03/23/2026 09:52 PM</span></div><div class="embed"><div class="embed-color-bar" style="background-color: #972f25;"></div><div class="embed-content"><div class="embed-author"><img src="https://cdn.discordapp.com/avatars/758999095070687284/817b0fd10381784fda331791d73dae75.webp" alt=""><span>Mafia Remastered</span></div><div class="embed-description">No one was hanged.</div></div></div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/1174599435901222996/d171d4d98053f9ce524d43c556757c3c.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">666𝓥𝓲𝓬𝓥𝓸𝓷𝓥𝓪𝓷𝓲𝓽𝔂</span><span class="message-timestamp">03/23/2026 09:52 PM</span></div><div class="message-text">L</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/808421736163967076/94e37e9cde4be6656b77c386e9569b28.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">z</span><span class="message-timestamp">03/23/2026 09:52 PM</span></div><div class="message-text">bro</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/1042526807586508871/7993960ad4e2cbebf4baf6546461475a.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">AlexanderTheGreat #BroMuted</span><span class="message-timestamp">03/23/2026 09:52 PM</span></div><div class="message-text"># <span class="mention">@sugarfina</span> mafia via det before i Die😢🙏</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/808421736163967076/94e37e9cde4be6656b77c386e9569b28.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">z</span><span class="message-timestamp">03/23/2026 09:52 PM</span></div><div class="message-text">u couldve said thart</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/808421736163967076/94e37e9cde4be6656b77c386e9569b28.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">z</span><span class="message-timestamp">03/23/2026 09:52 PM</span></div><div class="message-text">that</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/758999095070687284/817b0fd10381784fda331791d73dae75.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Mafia Remastered</span><span class="message-timestamp">03/23/2026 09:52 PM</span></div><div class="embed"><div class="embed-color-bar" style="background-color: #3498db;"></div><div class="embed-content"><div class="embed-title">Night 3</div><div class="embed-fields"><div class="embed-field embed-field-inline"><div class="embed-field-name">Currently Alive</div><div class="embed-field-value">🙂 <span class="mention">@AlexanderTheGreat #BroMuted</span><br><br>🙂 <span class="mention">@kaelix</span><br><br>🙂 <span class="mention">@666𝓥𝓲𝓬𝓥𝓸𝓷𝓥𝓪𝓷𝓲𝓽𝔂</span><br><br>🙂 <span class="mention">@cookiedrem</span><br><br>🙂 <span class="mention">@sugarfina</span><br><br>🙂 <span class="mention">@ambiguousenemy12</span><br><br>🙂 <span class="mention">@Retro, Framer of the Apocalypse</span><br><br>🙂 <span class="mention">@z</span><br><br>🙂 <span class="mention">@Snowzy (22 iq maf player)</span></div></div><div class="embed-field embed-field-inline"><div class="embed-field-name">Currently Dead</div><div class="embed-field-value">💀 <span class="mention">@Supa Hot Fire</span> - Farmer<br><br>💀 <span class="mention">@Furiyasa Darkness</span> - Lawyer</div></div></div></div></div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/758999095070687284/817b0fd10381784fda331791d73dae75.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Mafia Remastered</span><span class="message-timestamp">03/23/2026 09:52 PM</span></div><div class="embed"><div class="embed-color-bar" style="background-color: #3498db;"></div><div class="embed-content"><div class="embed-title">To do your action tonight, click the Action button below.</div><div class="embed-description">To cancel your action, just click the &#x27;Cancel&#x27; button.</div><div class="embed-footer"><span>Night 3</span></div></div></div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/758999095070687284/817b0fd10381784fda331791d73dae75.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Mafia Remastered</span><span class="message-timestamp">03/23/2026 09:53 PM</span></div><div class="embed"><div class="embed-color-bar" style="background-color: #972f25;"></div><div class="embed-content"><div class="embed-author"><img src="https://cdn.discordapp.com/avatars/758999095070687284/817b0fd10381784fda331791d73dae75.webp" alt=""><span>Mafia Remastered</span></div><div class="embed-description">Alright everybody, get your butts back here. It&#x27;s storytime.</div></div></div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/758999095070687284/817b0fd10381784fda331791d73dae75.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Mafia Remastered</span><span class="message-timestamp">03/23/2026 09:53 PM</span></div><div class="embed"><div class="embed-color-bar" style="background-color: #972f25;"></div><div class="embed-content"><div class="embed-title">snowleopardgirl was attacked by the Mafia :(</div><div class="embed-description">Whelp. Unfortunate. AVENGE ME NERDS!!!!!</div><div class="embed-image"><img src="https://res.cloudinary.com/dkpraixbv/image/upload/misc/youdied-default.png" alt=""></div></div></div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/758999095070687284/817b0fd10381784fda331791d73dae75.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Mafia Remastered</span><span class="message-timestamp">03/23/2026 09:53 PM</span></div><div class="embed"><div class="embed-color-bar" style="background-color: #9c59b6;"></div><div class="embed-content"><div class="embed-title">Oh ya this also happened...</div><div class="embed-description">&lt;:bullet:1160816931876651019&gt; The <strong>Vigilante</strong> shot an <strong>innocent</strong> person! The innocent person was <strong>srand0m1</strong>.</div></div></div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/758999095070687284/817b0fd10381784fda331791d73dae75.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Mafia Remastered</span><span class="message-timestamp">03/23/2026 09:53 PM</span></div><div class="embed"><div class="embed-color-bar" style="background-color: #9c59b6;"></div><div class="embed-content"><div class="embed-title">Even more things happened tonight:</div><div class="embed-description">cookiedrem the <strong>&lt;:baker:1186738535475183798&gt; Baker</strong> has given enough bread to alive players! They have completed their mission and have left the town in victory.<br><br><br>&lt;:lethal_potion:1161191408888201256&gt; The <strong>&lt;:baker:1186738535475183798&gt; Baker</strong> has left the town, so all the bread given has expired, killing:<br>- <strong>victoriavonvanity</strong><br>- <strong>alexdd145</strong><br>- <strong>champagnegummybear</strong></div></div></div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/758999095070687284/817b0fd10381784fda331791d73dae75.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Mafia Remastered</span><span class="message-timestamp">03/23/2026 09:53 PM</span></div><div class="embed"><div class="embed-color-bar" style="background-color: #972f25;"></div><div class="embed-content"><div class="embed-title">Day 3</div><div class="embed-description">## Currently Dead<br>💀 <span class="mention">@AlexanderTheGreat #BroMuted</span> - Detective<br><br>💀 <span class="mention">@kaelix</span> - Vigilante<br><br>💀 <span class="mention">@666𝓥𝓲𝓬𝓥𝓸𝓷𝓥𝓪𝓷𝓲𝓽𝔂</span> - Doctor<br><br>💀 <span class="mention">@Supa Hot Fire</span> - Farmer<br><br>💀 <span class="mention">@cookiedrem</span> - Baker<br><br>💀 <span class="mention">@sugarfina</span> - Godfather<br><br>💀 <span class="mention">@Furiyasa Darkness</span> - Lawyer<br><br>💀 <span class="mention">@z</span> - Link<br><br>💀 <span class="mention">@Snowzy (22 iq maf player)</span> - Judge</div></div><div class="embed-thumbnail"><img src="https://media.discordapp.net/attachments/923932323710398495/1046292063358029925/Screenshot_2022-11-27-13-10-29-43_680d03679600f7af0b4c700c6b270fe7.jpg?ex=69c2c5ab&is=69c1742b&hm=6ecfb977c77291cd1d9d5441f10f0a98908272541ffec0222c41a34eb5d64954&" alt=""></div></div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/758999095070687284/817b0fd10381784fda331791d73dae75.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Mafia Remastered</span><span class="message-timestamp">03/23/2026 09:53 PM</span></div><div class="embed"><div class="embed-color-bar" style="background-color: #972f25;"></div><div class="embed-content"><div class="embed-title">Game Over - Mafia won the match!</div><div class="embed-fields"><div class="embed-field embed-field-inline"><div class="embed-field-name">🎊 Winners</div><div class="embed-field-value"><strong><em></em>Main winners<em></em></strong><br>👼 <span class="mention">@ambiguousenemy12</span> - Politician <br><br>☠️ <span class="mention">@sugarfina</span> - Godfather <br><br><strong><em></em>Other winners<em></em></strong><br>☠️ <span class="mention">@cookiedrem</span> - Baker <br><br><em> </em></div></div><div class="embed-field embed-field-inline"><div class="embed-field-name">🗡️ Losers</div><div class="embed-field-value">👼 <span class="mention">@Retro, Framer of the Apocalypse</span> - Oracle <br>☠️ <span class="mention">@AlexanderTheGreat #BroMuted</span> - Detective <br>☠️ <span class="mention">@kaelix</span> - Vigilante <br>☠️ <span class="mention">@666𝓥𝓲𝓬𝓥𝓸𝓷𝓥𝓪𝓷𝓲𝓽𝔂</span> - Doctor <br>☠️ <span class="mention">@Supa Hot Fire</span> - Farmer <br>☠️ <span class="mention">@Furiyasa Darkness</span> - Lawyer <br>☠️ <span class="mention">@z</span> - Link <br>☠️ <span class="mention">@Snowzy (22 iq maf player)</span> - Judge</div></div></div><div class="embed-footer"><span>W Mafia L others</span></div></div></div></div></div></div></div></body></html>
