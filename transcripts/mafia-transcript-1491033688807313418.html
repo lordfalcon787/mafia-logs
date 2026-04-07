@@ -1,0 +1,396 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Transcript - #mafia</title>
+        <style>
+            * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+            }
+            
+            body {
+                font-family: Whitney, "Helvetica Neue", Helvetica, Arial, sans-serif;
+                background-color: #36393f;
+                color: #dcddde;
+                padding: 20px;
+                line-height: 1.5;
+            }
+            
+            .transcript-container {
+                max-width: 980px;
+                margin: 0 auto;
+                background-color: #36393f;
+                border-radius: 8px;
+                overflow: hidden;
+            }
+            
+            .header {
+                background-color: #2f3136;
+                padding: 16px 20px;
+                border-bottom: 1px solid #202225;
+                display: flex;
+                align-items: center;
+                gap: 12px;
+            }
+            
+            .header-icon {
+                width: 40px;
+                height: 40px;
+                border-radius: 50%;
+                background-color: #5865f2;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 20px;
+                font-weight: bold;
+            }
+            
+            .header-info h1 {
+                font-size: 20px;
+                font-weight: 600;
+                margin-bottom: 4px;
+            }
+            
+            .header-info p {
+                font-size: 14px;
+                color: #b9bbbe;
+            }
+            
+            .messages-container {
+                padding: 20px;
+            }
+            
+            .message {
+                display: flex;
+                padding: 4px 0;
+                margin: 8px 0;
+                position: relative;
+            }
+            
+            .message:hover {
+                background-color: #32353b;
+                border-radius: 4px;
+            }
+            
+            .message-avatar {
+                width: 40px;
+                height: 40px;
+                border-radius: 50%;
+                margin-right: 16px;
+                flex-shrink: 0;
+                background-color: #5865f2;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-weight: 600;
+                color: white;
+            }
+            
+            .message-avatar img {
+                width: 100%;
+                height: 100%;
+                border-radius: 50%;
+                object-fit: cover;
+            }
+            
+            .message-content {
+                flex: 1;
+                min-width: 0;
+            }
+            
+            .message-header {
+                display: flex;
+                align-items: baseline;
+                gap: 8px;
+                margin-bottom: 4px;
+            }
+            
+            .message-author {
+                font-weight: 600;
+                font-size: 16px;
+                color: #ffffff;
+            }
+            
+            .message-timestamp {
+                font-size: 12px;
+                color: #72767d;
+            }
+            
+            .message-text {
+                color: #dcddde;
+                font-size: 16px;
+                line-height: 1.375;
+                word-wrap: break-word;
+            }
+            
+            .message-text a {
+                color: #00b0f4;
+                text-decoration: none;
+            }
+            
+            .message-text a:hover {
+                text-decoration: underline;
+            }
+            
+            .message-attachments {
+                margin-top: 8px;
+            }
+            
+            .attachment {
+                display: inline-block;
+                margin: 4px 0;
+            }
+            
+            .attachment img {
+                max-width: 400px;
+                max-height: 300px;
+                border-radius: 8px;
+                cursor: pointer;
+            }
+            
+            .attachment-file {
+                background-color: #2f3136;
+                border: 1px solid #202225;
+                border-radius: 8px;
+                padding: 10px 16px;
+                display: inline-flex;
+                align-items: center;
+                gap: 8px;
+                text-decoration: none;
+                color: #00b0f4;
+            }
+            
+            .attachment-file:hover {
+                background-color: #393c43;
+            }
+            
+            .embed {
+                margin-top: 8px;
+                max-width: 520px;
+                border-radius: 4px;
+                background-color: #2f3136;
+                display: flex;
+                overflow: hidden;
+            }
+            
+            .embed-color-bar {
+                width: 4px;
+                flex-shrink: 0;
+                background-color: #5865f2;
+            }
+            
+            .embed-content {
+                padding: 16px;
+                flex: 1;
+            }
+            
+            .embed-author {
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                margin-bottom: 8px;
+                font-size: 14px;
+                font-weight: 600;
+            }
+            
+            .embed-author img {
+                width: 24px;
+                height: 24px;
+                border-radius: 50%;
+            }
+            
+            .embed-title {
+                font-size: 16px;
+                font-weight: 600;
+                margin-bottom: 8px;
+                color: #00b0f4;
+            }
+            
+            .embed-description {
+                font-size: 14px;
+                line-height: 1.5;
+                margin-bottom: 12px;
+                white-space: pre-wrap;
+            }
+            
+            .embed-fields {
+                display: grid;
+                gap: 8px;
+            }
+            
+            .embed-field {
+                min-width: 0;
+            }
+            
+            .embed-field-inline {
+                display: inline-block;
+                width: calc(33.33% - 8px);
+                vertical-align: top;
+            }
+            
+            .embed-field-name {
+                font-size: 14px;
+                font-weight: 600;
+                margin-bottom: 2px;
+                color: #ffffff;
+            }
+            
+            .embed-field-value {
+                font-size: 14px;
+                line-height: 1.5;
+                white-space: pre-wrap;
+            }
+            
+            .embed-thumbnail {
+                margin-left: 16px;
+                flex-shrink: 0;
+            }
+            
+            .embed-thumbnail img {
+                max-width: 80px;
+                max-height: 80px;
+                border-radius: 4px;
+            }
+            
+            .embed-image {
+                margin-top: 12px;
+            }
+            
+            .embed-image img {
+                max-width: 100%;
+                border-radius: 4px;
+            }
+            
+            .embed-footer {
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                margin-top: 12px;
+                font-size: 12px;
+                color: #72767d;
+            }
+            
+            .embed-footer img {
+                width: 20px;
+                height: 20px;
+                border-radius: 50%;
+            }
+            
+            .reactions {
+                display: flex;
+                gap: 4px;
+                margin-top: 8px;
+                flex-wrap: wrap;
+            }
+            
+            .reaction {
+                background-color: #2f3136;
+                border: 1px solid #2f3136;
+                border-radius: 8px;
+                padding: 4px 8px;
+                display: flex;
+                align-items: center;
+                gap: 4px;
+                font-size: 14px;
+                cursor: pointer;
+            }
+            
+            .reaction:hover {
+                border-color: #4f545c;
+            }
+            
+            .reaction-emoji {
+                width: 16px;
+                height: 16px;
+            }
+            
+            .reaction-count {
+                color: #b9bbbe;
+                font-weight: 500;
+            }
+            
+            .system-message {
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                padding: 8px 16px;
+                margin: 16px 0;
+                color: #72767d;
+                font-size: 14px;
+            }
+            
+            .system-message-icon {
+                width: 16px;
+                height: 16px;
+                flex-shrink: 0;
+            }
+            
+            .mention {
+                background-color: rgba(88, 101, 242, 0.3);
+                color: #dee0fc;
+                padding: 0 2px;
+                border-radius: 3px;
+                font-weight: 500;
+            }
+            
+            .mention:hover {
+                background-color: #5865f2;
+                color: #ffffff;
+            }
+            
+            .code-inline {
+                background-color: #2f3136;
+                padding: 2px 4px;
+                border-radius: 3px;
+                font-family: Consolas, "Andale Mono WT", "Andale Mono", "Lucida Console", monospace;
+                font-size: 14px;
+            }
+            
+            .code-block {
+                background-color: #2f3136;
+                border: 1px solid #202225;
+                border-radius: 4px;
+                padding: 12px;
+                margin: 8px 0;
+                font-family: Consolas, "Andale Mono WT", "Andale Mono", "Lucida Console", monospace;
+                font-size: 14px;
+                overflow-x: auto;
+            }
+            
+            .spoiler {
+                background-color: #202225;
+                color: transparent;
+                padding: 0 2px;
+                border-radius: 3px;
+                cursor: pointer;
+                transition: all 0.1s;
+            }
+            
+            .spoiler:hover {
+                background-color: rgba(255, 255, 255, 0.1);
+                color: #dcddde;
+            }
+            
+            .divider {
+                display: flex;
+                align-items: center;
+                margin: 20px 0;
+                color: #72767d;
+                font-size: 12px;
+                font-weight: 600;
+                text-transform: uppercase;
+            }
+            
+            .divider::before,
+            .divider::after {
+                content: "";
+                flex: 1;
+                height: 1px;
+                background-color: #4f545c;
+            }
+            
+            .divider-text {
+                padding: 0 16px;
+            }
+        </style>
+        </head><body><div class="transcript-container"><div class="header"><div class="header-icon">#</div><div class="header-info"><h1>#mafia</h1><p>105 messages • Generated on April 07, 2026 at 11:20 AM</p></div></div><div class="messages-container"><div class="divider"><span class="divider-text">April 07, 2026</span></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/758999095070687284/70e18007dbd33933f77d901a0db8eb19.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Mafia Remastered</span><span class="message-timestamp">04/07/2026 11:15 AM</span></div><div class="message-text"><span class="mention">@Joe Biden</span> <span class="mention">@Stars🇵🇸</span> <span class="mention">@Twink for sale</span> <span class="mention">@dani</span> <span class="mention">@Samoosa 🇹🇷</span> <span class="mention">@Shruti Sharma</span> <span class="mention">@Faulrin</span> <span class="mention">@Legends | Atharva</span></div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/758999095070687284/70e18007dbd33933f77d901a0db8eb19.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Mafia Remastered</span><span class="message-timestamp">04/07/2026 11:15 AM</span></div><div class="embed"><div class="embed-color-bar" style="background-color: #9c59b6;"></div><div class="embed-content"><div class="embed-title">🖐️ Welcome to Mafia!</div><div class="embed-description">📕 If you haven&#x27;t read the rules yet, please type &lt;/game:1042058961274282025&gt; to view them!</div><div class="embed-fields"><div class="embed-field "><div class="embed-field-name">❗ HEY LISTEN UP</div><div class="embed-field-value">💢 Please do not type in this chat unless instructed to do so. Admins please don&#x27;t abuse your godly powers and talk when other people can&#x27;t. Thank you.</div></div><div class="embed-field "><div class="embed-field-name">💀 To those who are dead:</div><div class="embed-field-value">Please do not talk. I know it&#x27;s hard to grasp but dead people can&#x27;t talk.</div></div><div class="embed-field "><div class="embed-field-name">👀 Some important rules:</div><div class="embed-field-value">🚫 Screenshots are not permitted and would only ruin the game. However, you CAN claim roles to either coordinate among yourselves or trick other people. Just NO SCREENSHOTS (unless you are a mafia showing results to other mafias).</div></div><div class="embed-field "><div class="embed-field-name">🗣️ Some useful commands:</div><div class="embed-field-value">&lt;/reset:1133666068360077378&gt;, &lt;/help:1042058961274282026&gt;, &lt;/game:1042058961274282025&gt;</div></div></div><div class="embed-footer"><span>Note: Parts of the game can be customized with the /config command! To view the current settings, use /settings</span></div></div></div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/758999095070687284/70e18007dbd33933f77d901a0db8eb19.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Mafia Remastered</span><span class="message-timestamp">04/07/2026 11:15 AM</span></div><div class="embed"><div class="embed-color-bar" style="background-color: #15826c;"></div><div class="embed-content"><div class="embed-title">Anomalies are enabled</div><div class="embed-description">Throughout the game, there is a 40% chance of anomalies happening. Let the crazy begin!</div><div class="embed-footer"><span>Hope you manage to survive this.</span></div></div></div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/758999095070687284/70e18007dbd33933f77d901a0db8eb19.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Mafia Remastered</span><span class="message-timestamp">04/07/2026 11:15 AM</span></div><div class="embed"><div class="embed-color-bar" style="background-color: #972f25;"></div><div class="embed-content"><div class="embed-author"><img src="https://cdn.discordapp.com/avatars/758999095070687284/70e18007dbd33933f77d901a0db8eb19.webp" alt=""><span>MafiaBot</span></div><div class="embed-description">Alright! Let the game begin!</div></div></div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/758999095070687284/70e18007dbd33933f77d901a0db8eb19.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Mafia Remastered</span><span class="message-timestamp">04/07/2026 11:15 AM</span></div><div class="embed"><div class="embed-color-bar" style="background-color: #3498db;"></div><div class="embed-content"><div class="embed-title">Night 1</div><div class="embed-fields"><div class="embed-field embed-field-inline"><div class="embed-field-name">Currently Alive</div><div class="embed-field-value">🙂 <span class="mention">@Joe Biden</span><br><br>🙂 <span class="mention">@Stars🇵🇸</span><br><br>🙂 <span class="mention">@Twink for sale</span><br><br>🙂 <span class="mention">@dani</span><br><br>🙂 <span class="mention">@Samoosa 🇹🇷</span><br><br>🙂 <span class="mention">@Shruti Sharma</span><br><br>🙂 <span class="mention">@Faulrin</span><br><br>🙂 <span class="mention">@Legends | Atharva</span></div></div><div class="embed-field embed-field-inline"><div class="embed-field-name">Currently Dead</div><div class="embed-field-value">No one is dead yet...</div></div></div></div></div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/758999095070687284/70e18007dbd33933f77d901a0db8eb19.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Mafia Remastered</span><span class="message-timestamp">04/07/2026 11:15 AM</span></div><div class="embed"><div class="embed-color-bar" style="background-color: #3498db;"></div><div class="embed-content"><div class="embed-title">To do your action tonight, click the Action button below.</div><div class="embed-description">To cancel your action, just click the &#x27;Cancel&#x27; button.</div><div class="embed-footer"><span>Night 1</span></div></div></div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/758999095070687284/70e18007dbd33933f77d901a0db8eb19.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Mafia Remastered</span><span class="message-timestamp">04/07/2026 11:16 AM</span></div><div class="embed"><div class="embed-color-bar" style="background-color: #972f25;"></div><div class="embed-content"><div class="embed-author"><img src="https://cdn.discordapp.com/avatars/758999095070687284/70e18007dbd33933f77d901a0db8eb19.webp" alt=""><span>Mafia Remastered</span></div><div class="embed-description">Alright everybody, get your butts back here. It&#x27;s storytime.</div></div></div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/758999095070687284/70e18007dbd33933f77d901a0db8eb19.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Mafia Remastered</span><span class="message-timestamp">04/07/2026 11:16 AM</span></div><div class="embed"><div class="embed-color-bar" style="background-color: #972f25;"></div><div class="embed-content"><div class="embed-title">black\_devil764 was attacked by the Mafia :(</div><div class="embed-description">black<em>devil764 went on a scuba diving trip with their friend. Little did they know, their friend was the Mafia and the oxygen tank wasn&#x27;t filled with oxygen at all. black</em>devil764 died from suffocation.</div><div class="embed-image"><img src="https://res.cloudinary.com/dkpraixbv/image/upload/misc/youdied-default.png" alt=""></div></div></div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/758999095070687284/70e18007dbd33933f77d901a0db8eb19.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Mafia Remastered</span><span class="message-timestamp">04/07/2026 11:16 AM</span></div><div class="embed"><div class="embed-color-bar" style="background-color: #2ebb6a;"></div><div class="embed-content"><div class="embed-title">🧐 The mayor has been revealed!!!</div><div class="embed-description"><span class="mention">@Twink for sale</span> is the mayor!</div></div><div class="embed-thumbnail"><img src="https://res.cloudinary.com/dkpraixbv/image/upload/w_100/abilities/reveal.png" alt=""></div></div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/758999095070687284/70e18007dbd33933f77d901a0db8eb19.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Mafia Remastered</span><span class="message-timestamp">04/07/2026 11:16 AM</span></div><div class="embed"><div class="embed-color-bar" style="background-color: #972f25;"></div><div class="embed-content"><div class="embed-title">Day 1</div><div class="embed-description">## Currently Dead<br>💀 <span class="mention">@Shruti Sharma</span> - Oracle</div></div><div class="embed-thumbnail"><img src="https://media.discordapp.net/attachments/923932323710398495/1046292063358029925/Screenshot_2022-11-27-13-10-29-43_680d03679600f7af0b4c700c6b270fe7.jpg?ex=69d5e36b&is=69d491eb&hm=327d1558de876c305819c922a6a46ddf9bf445fe294d29af6f423694e35fb3fa&" alt=""></div></div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/758999095070687284/70e18007dbd33933f77d901a0db8eb19.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Mafia Remastered</span><span class="message-timestamp">04/07/2026 11:16 AM</span></div><div class="embed"><div class="embed-color-bar" style="background-color: #3498db;"></div><div class="embed-content"><div class="embed-title">Currently Alive</div><div class="embed-description">◽ <span class="mention">@Joe Biden</span><br><br>◽ <span class="mention">@Stars🇵🇸</span><br><br>◽ <span class="mention">@Twink for sale</span><br><br>◽ <span class="mention">@dani</span><br><br>◽ <span class="mention">@Samoosa 🇹🇷</span><br><br>◽ <span class="mention">@Faulrin</span><br><br>◽ <span class="mention">@Legends | Atharva</span></div><div class="embed-footer"><span>Have fun!</span></div></div></div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/361192028668821514/a_3c8caca3b2eb8f57b98ba0582475ff34.gif?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Faulrin</span><span class="message-timestamp">04/07/2026 11:16 AM</span></div><div class="message-text">Oh</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/897883731057070110/db1021f45a59126450777b2ff52ed56e.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Legends | Atharva</span><span class="message-timestamp">04/07/2026 11:16 AM</span></div><div class="message-text">Rip</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/737336231188496446/9a5b0a9ce2f974705885f283ba0c20da.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Twink for sale</span><span class="message-timestamp">04/07/2026 11:16 AM</span></div><div class="message-text">ON JOE</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/862212071810400278/2d5693389466d69f68fcccd0fcd773b0.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Joe Biden</span><span class="message-timestamp">04/07/2026 11:16 AM</span></div><div class="message-text">Thats a fire name</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/737336231188496446/9a5b0a9ce2f974705885f283ba0c20da.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Twink for sale</span><span class="message-timestamp">04/07/2026 11:17 AM</span></div><div class="message-text">ON HOE VIA MAYOR</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/862212071810400278/2d5693389466d69f68fcccd0fcd773b0.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Joe Biden</span><span class="message-timestamp">04/07/2026 11:17 AM</span></div><div class="message-text">Via?</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/1000783009546510417/2a591c588c5211482dd4a63fc11d8b13.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">dani</span><span class="message-timestamp">04/07/2026 11:17 AM</span></div><div class="message-text">on who</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/1151390888132624409/1f9e96301b6fa97c41a3ab08bec556a2.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Stars🇵🇸</span><span class="message-timestamp">04/07/2026 11:17 AM</span></div><div class="message-text">info</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/1000783009546510417/2a591c588c5211482dd4a63fc11d8b13.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">dani</span><span class="message-timestamp">04/07/2026 11:17 AM</span></div><div class="message-text">ok</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/897883731057070110/db1021f45a59126450777b2ff52ed56e.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Legends | Atharva</span><span class="message-timestamp">04/07/2026 11:17 AM</span></div><div class="message-text">Via?</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/737336231188496446/9a5b0a9ce2f974705885f283ba0c20da.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Twink for sale</span><span class="message-timestamp">04/07/2026 11:17 AM</span></div><div class="message-text">ON JOE VIA MAYOR</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/1000783009546510417/2a591c588c5211482dd4a63fc11d8b13.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">dani</span><span class="message-timestamp">04/07/2026 11:17 AM</span></div><div class="message-text">on joe ig</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/862212071810400278/2d5693389466d69f68fcccd0fcd773b0.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Joe Biden</span><span class="message-timestamp">04/07/2026 11:17 AM</span></div><div class="message-text">mayor an useless role🙏💔</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/897883731057070110/db1021f45a59126450777b2ff52ed56e.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Legends | Atharva</span><span class="message-timestamp">04/07/2026 11:17 AM</span></div><div class="message-text">Mayor wtf &lt;:bruh_cat:1342218817543082034&gt;</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/862212071810400278/2d5693389466d69f68fcccd0fcd773b0.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Joe Biden</span><span class="message-timestamp">04/07/2026 11:17 AM</span></div><div class="message-text">Mayor doesnt do shi</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/361192028668821514/a_3c8caca3b2eb8f57b98ba0582475ff34.gif?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Faulrin</span><span class="message-timestamp">04/07/2026 11:17 AM</span></div><div class="message-text">😭😭</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/737336231188496446/9a5b0a9ce2f974705885f283ba0c20da.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Twink for sale</span><span class="message-timestamp">04/07/2026 11:17 AM</span></div><div class="message-text">Trust</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/1151390888132624409/1f9e96301b6fa97c41a3ab08bec556a2.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Stars🇵🇸</span><span class="message-timestamp">04/07/2026 11:17 AM</span></div><div class="message-text">joe claim?</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/1151390888132624409/1f9e96301b6fa97c41a3ab08bec556a2.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Stars🇵🇸</span><span class="message-timestamp">04/07/2026 11:17 AM</span></div><div class="message-text">ig</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/897883731057070110/db1021f45a59126450777b2ff52ed56e.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Legends | Atharva</span><span class="message-timestamp">04/07/2026 11:17 AM</span></div><div class="message-text">Cap</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/737336231188496446/9a5b0a9ce2f974705885f283ba0c20da.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Twink for sale</span><span class="message-timestamp">04/07/2026 11:17 AM</span></div><div class="message-text">ON JOE</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/897883731057070110/db1021f45a59126450777b2ff52ed56e.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Legends | Atharva</span><span class="message-timestamp">04/07/2026 11:17 AM</span></div><div class="message-text">Na</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/1000783009546510417/2a591c588c5211482dd4a63fc11d8b13.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">dani</span><span class="message-timestamp">04/07/2026 11:17 AM</span></div><div class="message-text">alr</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/862212071810400278/2d5693389466d69f68fcccd0fcd773b0.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Joe Biden</span><span class="message-timestamp">04/07/2026 11:17 AM</span></div><div class="message-text">Im gonna die if i claim trust</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/897883731057070110/db1021f45a59126450777b2ff52ed56e.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Legends | Atharva</span><span class="message-timestamp">04/07/2026 11:17 AM</span></div><div class="message-text">Don&#x27;t</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/758999095070687284/70e18007dbd33933f77d901a0db8eb19.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Mafia Remastered</span><span class="message-timestamp">04/07/2026 11:17 AM</span></div><div class="embed"><div class="embed-color-bar" style="background-color: #a94300;"></div><div class="embed-content"><div class="embed-title">Now it is time to nominate! Vote the player you want by pressing the button below on who should be put on trial!
+Minimum votes required: 4</div><div class="embed-description">◽ <span class="mention">@Joe Biden</span><br>◽ <span class="mention">@Stars🇵🇸</span><br>◽ <span class="mention">@Twink for sale</span><br>◽ <span class="mention">@dani</span><br>◽ <span class="mention">@Samoosa 🇹🇷</span><br>◽ <span class="mention">@Faulrin</span><br>◽ <span class="mention">@Legends | Atharva</span></div><div class="embed-footer"><span>Day 1 | You have 30 seconds to nominate...</span></div></div></div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/361192028668821514/a_3c8caca3b2eb8f57b98ba0582475ff34.gif?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Faulrin</span><span class="message-timestamp">04/07/2026 11:17 AM</span></div><div class="message-text">I mean alr</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/897883731057070110/db1021f45a59126450777b2ff52ed56e.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Legends | Atharva</span><span class="message-timestamp">04/07/2026 11:17 AM</span></div><div class="message-text"><span class="mention">@Joe Biden</span> claim</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/862212071810400278/2d5693389466d69f68fcccd0fcd773b0.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Joe Biden</span><span class="message-timestamp">04/07/2026 11:17 AM</span></div><div class="message-text">Not on me</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/1151390888132624409/1f9e96301b6fa97c41a3ab08bec556a2.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Stars🇵🇸</span><span class="message-timestamp">04/07/2026 11:17 AM</span></div><div class="message-text">well youre going to get voted out anyway nothing we can do</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/737336231188496446/9a5b0a9ce2f974705885f283ba0c20da.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Twink for sale</span><span class="message-timestamp">04/07/2026 11:17 AM</span></div><div class="message-text">VOTE JOE</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/737336231188496446/9a5b0a9ce2f974705885f283ba0c20da.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Twink for sale</span><span class="message-timestamp">04/07/2026 11:17 AM</span></div><div class="message-text">ON JOE</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/862212071810400278/2d5693389466d69f68fcccd0fcd773b0.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Joe Biden</span><span class="message-timestamp">04/07/2026 11:17 AM</span></div><div class="message-text">Ill claim if i get on stand</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/897883731057070110/db1021f45a59126450777b2ff52ed56e.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Legends | Atharva</span><span class="message-timestamp">04/07/2026 11:17 AM</span></div><div class="message-text">Hm</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/897883731057070110/db1021f45a59126450777b2ff52ed56e.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Legends | Atharva</span><span class="message-timestamp">04/07/2026 11:17 AM</span></div><div class="message-text">Probably neut</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/862212071810400278/2d5693389466d69f68fcccd0fcd773b0.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Joe Biden</span><span class="message-timestamp">04/07/2026 11:17 AM</span></div><div class="message-text">Nope</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/737336231188496446/9a5b0a9ce2f974705885f283ba0c20da.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Twink for sale</span><span class="message-timestamp">04/07/2026 11:17 AM</span></div><div class="message-text">NAH</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/862212071810400278/2d5693389466d69f68fcccd0fcd773b0.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Joe Biden</span><span class="message-timestamp">04/07/2026 11:17 AM</span></div><div class="message-text">Im not even maf</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/758999095070687284/70e18007dbd33933f77d901a0db8eb19.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Mafia Remastered</span><span class="message-timestamp">04/07/2026 11:17 AM</span></div><div class="embed"><div class="embed-color-bar" style="background-color: #c67c1c;"></div><div class="embed-content"><div class="embed-title">Nomination results</div><div class="embed-description">All votes are hidden. If someone is on trial, it will be announced.</div><div class="embed-footer"><span>Minimum votes to put someone on stand: 4</span></div></div></div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/758999095070687284/70e18007dbd33933f77d901a0db8eb19.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Mafia Remastered</span><span class="message-timestamp">04/07/2026 11:17 AM</span></div><div class="embed"><div class="embed-color-bar" style="background-color: #972f25;"></div><div class="embed-content"><div class="embed-title">The town wasn&#x27;t able to decide on who to lynch so no one was nominated...</div><div class="embed-description">Better work together next time...</div></div></div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/758999095070687284/70e18007dbd33933f77d901a0db8eb19.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Mafia Remastered</span><span class="message-timestamp">04/07/2026 11:18 AM</span></div><div class="embed"><div class="embed-color-bar" style="background-color: #972f25;"></div><div class="embed-content"><div class="embed-author"><img src="https://cdn.discordapp.com/avatars/758999095070687284/70e18007dbd33933f77d901a0db8eb19.webp" alt=""><span>Mafia Remastered</span></div><div class="embed-description">No one was hanged.</div></div></div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/862212071810400278/2d5693389466d69f68fcccd0fcd773b0.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Joe Biden</span><span class="message-timestamp">04/07/2026 11:18 AM</span></div><div class="message-text">Good</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/737336231188496446/9a5b0a9ce2f974705885f283ba0c20da.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Twink for sale</span><span class="message-timestamp">04/07/2026 11:18 AM</span></div><div class="message-text">Town?</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/737336231188496446/9a5b0a9ce2f974705885f283ba0c20da.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Twink for sale</span><span class="message-timestamp">04/07/2026 11:18 AM</span></div><div class="message-text">Are we fr rn?</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/758999095070687284/70e18007dbd33933f77d901a0db8eb19.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Mafia Remastered</span><span class="message-timestamp">04/07/2026 11:18 AM</span></div><div class="embed"><div class="embed-color-bar" style="background-color: #3498db;"></div><div class="embed-content"><div class="embed-title">Night 2</div><div class="embed-fields"><div class="embed-field embed-field-inline"><div class="embed-field-name">Currently Alive</div><div class="embed-field-value">🙂 <span class="mention">@Joe Biden</span><br><br>🙂 <span class="mention">@Stars🇵🇸</span><br><br>🙂 <span class="mention">@Twink for sale</span><br><br>🙂 <span class="mention">@dani</span><br><br>🙂 <span class="mention">@Samoosa 🇹🇷</span><br><br>🙂 <span class="mention">@Faulrin</span><br><br>🙂 <span class="mention">@Legends | Atharva</span></div></div><div class="embed-field embed-field-inline"><div class="embed-field-name">Currently Dead</div><div class="embed-field-value">💀 <span class="mention">@Shruti Sharma</span> - Oracle</div></div></div></div></div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/758999095070687284/70e18007dbd33933f77d901a0db8eb19.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Mafia Remastered</span><span class="message-timestamp">04/07/2026 11:18 AM</span></div><div class="embed"><div class="embed-color-bar" style="background-color: #3498db;"></div><div class="embed-content"><div class="embed-title">To do your action tonight, click the Action button below.</div><div class="embed-description">To cancel your action, just click the &#x27;Cancel&#x27; button.</div><div class="embed-footer"><span>Night 2</span></div></div></div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/758999095070687284/70e18007dbd33933f77d901a0db8eb19.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Mafia Remastered</span><span class="message-timestamp">04/07/2026 11:19 AM</span></div><div class="embed"><div class="embed-color-bar" style="background-color: #972f25;"></div><div class="embed-content"><div class="embed-author"><img src="https://cdn.discordapp.com/avatars/758999095070687284/70e18007dbd33933f77d901a0db8eb19.webp" alt=""><span>Mafia Remastered</span></div><div class="embed-description">Alright everybody, get your butts back here. It&#x27;s storytime.</div></div></div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/758999095070687284/70e18007dbd33933f77d901a0db8eb19.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Mafia Remastered</span><span class="message-timestamp">04/07/2026 11:19 AM</span></div><div class="embed"><div class="embed-color-bar" style="background-color: #972f25;"></div><div class="embed-content"><div class="embed-title">starsszo was attacked by the Mafia :(</div><div class="embed-description">starred at the stars for too long</div><div class="embed-image"><img src="https://res.cloudinary.com/dkpraixbv/image/upload/misc/youdied-default.png" alt=""></div></div></div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/758999095070687284/70e18007dbd33933f77d901a0db8eb19.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Mafia Remastered</span><span class="message-timestamp">04/07/2026 11:19 AM</span></div><div class="embed"><div class="embed-color-bar" style="background-color: #2ebb6a;"></div><div class="embed-content"><div class="embed-title">🧐 The mayor has been revealed!!!</div><div class="embed-description"><span class="mention">@Twink for sale</span> is the mayor!</div></div><div class="embed-thumbnail"><img src="https://res.cloudinary.com/dkpraixbv/image/upload/w_100/abilities/reveal.png" alt=""></div></div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/758999095070687284/70e18007dbd33933f77d901a0db8eb19.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Mafia Remastered</span><span class="message-timestamp">04/07/2026 11:19 AM</span></div><div class="embed"><div class="embed-color-bar" style="background-color: #972f25;"></div><div class="embed-content"><div class="embed-title">Day 2</div><div class="embed-description">## Currently Dead<br>💀 <span class="mention">@Stars🇵🇸</span> - Doctor<br><br>💀 <span class="mention">@Shruti Sharma</span> - Oracle</div></div><div class="embed-thumbnail"><img src="https://media.discordapp.net/attachments/923932323710398495/1046292063358029925/Screenshot_2022-11-27-13-10-29-43_680d03679600f7af0b4c700c6b270fe7.jpg?ex=69d5e36b&is=69d491eb&hm=327d1558de876c305819c922a6a46ddf9bf445fe294d29af6f423694e35fb3fa&" alt=""></div></div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/758999095070687284/70e18007dbd33933f77d901a0db8eb19.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Mafia Remastered</span><span class="message-timestamp">04/07/2026 11:19 AM</span></div><div class="embed"><div class="embed-color-bar" style="background-color: #3498db;"></div><div class="embed-content"><div class="embed-title">Currently Alive</div><div class="embed-description">◽ <span class="mention">@Joe Biden</span><br><br>◽ <span class="mention">@Twink for sale</span><br><br>◽ <span class="mention">@dani</span><br><br>◽ <span class="mention">@Samoosa 🇹🇷</span><br><br>◽ <span class="mention">@Faulrin</span><br><br>◽ <span class="mention">@Legends | Atharva</span></div><div class="embed-footer"><span>Have fun!</span></div></div></div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/862212071810400278/2d5693389466d69f68fcccd0fcd773b0.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Joe Biden</span><span class="message-timestamp">04/07/2026 11:19 AM</span></div><div class="message-text">Samoosa legends and dani via mort info</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/897883731057070110/db1021f45a59126450777b2ff52ed56e.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Legends | Atharva</span><span class="message-timestamp">04/07/2026 11:19 AM</span></div><div class="message-text">Bro</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/862212071810400278/2d5693389466d69f68fcccd0fcd773b0.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Joe Biden</span><span class="message-timestamp">04/07/2026 11:19 AM</span></div><div class="message-text">Pick one</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/897883731057070110/db1021f45a59126450777b2ff52ed56e.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Legends | Atharva</span><span class="message-timestamp">04/07/2026 11:19 AM</span></div><div class="message-text">I&#x27;m judge</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/862212071810400278/2d5693389466d69f68fcccd0fcd773b0.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Joe Biden</span><span class="message-timestamp">04/07/2026 11:19 AM</span></div><div class="message-text">Good</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/897883731057070110/db1021f45a59126450777b2ff52ed56e.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Legends | Atharva</span><span class="message-timestamp">04/07/2026 11:19 AM</span></div><div class="message-text">Samoosa</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/1000783009546510417/2a591c588c5211482dd4a63fc11d8b13.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">dani</span><span class="message-timestamp">04/07/2026 11:19 AM</span></div><div class="message-text">lmao im mort he&#x27;s not mort</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/862212071810400278/2d5693389466d69f68fcccd0fcd773b0.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Joe Biden</span><span class="message-timestamp">04/07/2026 11:19 AM</span></div><div class="message-text"><span class="mention">@Samoosa 🇹🇷</span> claim</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/1000783009546510417/2a591c588c5211482dd4a63fc11d8b13.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">dani</span><span class="message-timestamp">04/07/2026 11:19 AM</span></div><div class="message-text">get joe</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/862212071810400278/2d5693389466d69f68fcccd0fcd773b0.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Joe Biden</span><span class="message-timestamp">04/07/2026 11:19 AM</span></div><div class="message-text">Pros this guy</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/897883731057070110/db1021f45a59126450777b2ff52ed56e.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Legends | Atharva</span><span class="message-timestamp">04/07/2026 11:19 AM</span></div><div class="message-text">Bro</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/758999095070687284/70e18007dbd33933f77d901a0db8eb19.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Mafia Remastered</span><span class="message-timestamp">04/07/2026 11:19 AM</span></div><div class="embed"><div class="embed-color-bar" style="background-color: #a94300;"></div><div class="embed-content"><div class="embed-title">Now it is time to nominate! Vote the player you want by pressing the button below on who should be put on trial!
+Minimum votes required: 3</div><div class="embed-description">◽ <span class="mention">@Joe Biden</span><br>◽ <span class="mention">@Twink for sale</span><br>◽ <span class="mention">@dani</span><br>◽ <span class="mention">@Samoosa 🇹🇷</span><br>◽ <span class="mention">@Faulrin</span><br>◽ <span class="mention">@Legends | Atharva</span></div><div class="embed-footer"><span>Day 2 | You have 30 seconds to nominate...</span></div></div></div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/1000783009546510417/2a591c588c5211482dd4a63fc11d8b13.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">dani</span><span class="message-timestamp">04/07/2026 11:19 AM</span></div><div class="message-text">i claimed to mayor bro</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/737336231188496446/9a5b0a9ce2f974705885f283ba0c20da.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Twink for sale</span><span class="message-timestamp">04/07/2026 11:19 AM</span></div><div class="message-text">Dani is clear</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/1000783009546510417/2a591c588c5211482dd4a63fc11d8b13.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">dani</span><span class="message-timestamp">04/07/2026 11:19 AM</span></div><div class="message-text">n1 i claimed</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/361192028668821514/a_3c8caca3b2eb8f57b98ba0582475ff34.gif?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Faulrin</span><span class="message-timestamp">04/07/2026 11:19 AM</span></div><div class="message-text">Joe out here pinning</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/737336231188496446/9a5b0a9ce2f974705885f283ba0c20da.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Twink for sale</span><span class="message-timestamp">04/07/2026 11:19 AM</span></div><div class="message-text">ON HJOE</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/1000783009546510417/2a591c588c5211482dd4a63fc11d8b13.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">dani</span><span class="message-timestamp">04/07/2026 11:19 AM</span></div><div class="message-text">pros joe</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/862212071810400278/2d5693389466d69f68fcccd0fcd773b0.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Joe Biden</span><span class="message-timestamp">04/07/2026 11:20 AM</span></div><div class="message-text">Bruh💔🙏</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/651279417213190146/24ec341d8bb0d2f3d841ea7ccdea25af.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Samoosa 🇹🇷</span><span class="message-timestamp">04/07/2026 11:20 AM</span></div><div class="message-text">daniel is mafia</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/862212071810400278/2d5693389466d69f68fcccd0fcd773b0.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Joe Biden</span><span class="message-timestamp">04/07/2026 11:20 AM</span></div><div class="message-text">Its literally dani</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/737336231188496446/9a5b0a9ce2f974705885f283ba0c20da.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Twink for sale</span><span class="message-timestamp">04/07/2026 11:20 AM</span></div><div class="message-text">Hes clear</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/758999095070687284/70e18007dbd33933f77d901a0db8eb19.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Mafia Remastered</span><span class="message-timestamp">04/07/2026 11:20 AM</span></div><div class="embed"><div class="embed-color-bar" style="background-color: #9c59b6;"></div><div class="embed-content"><div class="embed-title">A PROSECUTION IS HAPPENING!</div><div class="embed-description">The Judge has decided to put <strong>supreme.joe</strong> on prosecution!</div><div class="embed-footer"><span>You guys better hope that the Judge is right...</span></div></div></div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/862212071810400278/2d5693389466d69f68fcccd0fcd773b0.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Joe Biden</span><span class="message-timestamp">04/07/2026 11:20 AM</span></div><div class="message-text">Claim</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/897883731057070110/db1021f45a59126450777b2ff52ed56e.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Legends | Atharva</span><span class="message-timestamp">04/07/2026 11:20 AM</span></div><div class="message-text">&lt;:bruh_cat:1342218817543082034&gt;</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/862212071810400278/2d5693389466d69f68fcccd0fcd773b0.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Joe Biden</span><span class="message-timestamp">04/07/2026 11:20 AM</span></div><div class="message-text">Fucking dumbass</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/651279417213190146/24ec341d8bb0d2f3d841ea7ccdea25af.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Samoosa 🇹🇷</span><span class="message-timestamp">04/07/2026 11:20 AM</span></div><div class="message-text">Bro</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/651279417213190146/24ec341d8bb0d2f3d841ea7ccdea25af.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Samoosa 🇹🇷</span><span class="message-timestamp">04/07/2026 11:20 AM</span></div><div class="message-text">im det</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/651279417213190146/24ec341d8bb0d2f3d841ea7ccdea25af.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Samoosa 🇹🇷</span><span class="message-timestamp">04/07/2026 11:20 AM</span></div><div class="message-text">Its DANI</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/862212071810400278/2d5693389466d69f68fcccd0fcd773b0.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Joe Biden</span><span class="message-timestamp">04/07/2026 11:20 AM</span></div><div class="message-text">💔</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/862212071810400278/2d5693389466d69f68fcccd0fcd773b0.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Joe Biden</span><span class="message-timestamp">04/07/2026 11:20 AM</span></div><div class="message-text">Fucking mayor</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/897883731057070110/db1021f45a59126450777b2ff52ed56e.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Legends | Atharva</span><span class="message-timestamp">04/07/2026 11:20 AM</span></div><div class="message-text">If it&#x27;s not dani</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/758999095070687284/70e18007dbd33933f77d901a0db8eb19.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Mafia Remastered</span><span class="message-timestamp">04/07/2026 11:20 AM</span></div><div class="embed"><div class="embed-color-bar" style="background-color: #972f25;"></div><div class="embed-content"><div class="embed-author"><img src="https://cdn.discordapp.com/avatars/758999095070687284/70e18007dbd33933f77d901a0db8eb19.webp" alt=""><span>Mafia Remastered</span></div><div class="embed-description">supreme.joe&#x27;s role was <strong>&lt;:mortician:1187117191150190736&gt; Mortician</strong>.</div></div></div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/758999095070687284/70e18007dbd33933f77d901a0db8eb19.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Mafia Remastered</span><span class="message-timestamp">04/07/2026 11:20 AM</span></div><div class="embed"><div class="embed-color-bar" style="background-color: #972f25;"></div><div class="embed-content"><div class="embed-author"><img src="https://cdn.discordapp.com/avatars/758999095070687284/70e18007dbd33933f77d901a0db8eb19.webp" alt=""><span>Mafia Remastered</span></div><div class="embed-description">&lt;:prosecute:1163699862496362517&gt; <strong>legends0069 (&lt;:judge:1171449992590938124&gt; Judge)</strong> decided it was a good idea to prosecute <strong>supreme.joe (&lt;:mortician:1187117191150190736&gt; Mortician)</strong> but they were wrong, so the Hangman has taken it&#x27;s authority to kill <strong>legends0069</strong>.</div></div></div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/897883731057070110/db1021f45a59126450777b2ff52ed56e.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Legends | Atharva</span><span class="message-timestamp">04/07/2026 11:20 AM</span></div><div class="message-text">I&#x27;m crashing</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/862212071810400278/2d5693389466d69f68fcccd0fcd773b0.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Joe Biden</span><span class="message-timestamp">04/07/2026 11:20 AM</span></div><div class="message-text">Dumbass</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/897883731057070110/db1021f45a59126450777b2ff52ed56e.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Legends | Atharva</span><span class="message-timestamp">04/07/2026 11:20 AM</span></div><div class="message-text">Bro</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/737336231188496446/9a5b0a9ce2f974705885f283ba0c20da.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Twink for sale</span><span class="message-timestamp">04/07/2026 11:20 AM</span></div><div class="message-text">Oh</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/737336231188496446/9a5b0a9ce2f974705885f283ba0c20da.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Twink for sale</span><span class="message-timestamp">04/07/2026 11:20 AM</span></div><div class="message-text">Its dani</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/651279417213190146/24ec341d8bb0d2f3d841ea7ccdea25af.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Samoosa 🇹🇷</span><span class="message-timestamp">04/07/2026 11:20 AM</span></div><div class="message-text">judge is actually a dumbass</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/651279417213190146/24ec341d8bb0d2f3d841ea7ccdea25af.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Samoosa 🇹🇷</span><span class="message-timestamp">04/07/2026 11:20 AM</span></div><div class="message-text">whoever u are</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/758999095070687284/70e18007dbd33933f77d901a0db8eb19.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Mafia Remastered</span><span class="message-timestamp">04/07/2026 11:20 AM</span></div><div class="embed"><div class="embed-color-bar" style="background-color: #972f25;"></div><div class="embed-content"><div class="embed-title">Game Over - Mafia won the match!</div><div class="embed-fields"><div class="embed-field embed-field-inline"><div class="embed-field-name">🎊 Winners</div><div class="embed-field-value"><strong><em></em>Main winners<em></em></strong><br>👼 <span class="mention">@dani</span> - Godfather <br>👼 <span class="mention">@Faulrin</span> - Goose</div></div><div class="embed-field embed-field-inline"><div class="embed-field-name">🗡️ Losers</div><div class="embed-field-value">👼 <span class="mention">@Twink for sale</span> - Mayor <br>👼 <span class="mention">@Samoosa 🇹🇷</span> - Detective <br>☠️ <span class="mention">@Joe Biden</span> - Mortician <br>☠️ <span class="mention">@Stars🇵🇸</span> - Doctor <br>☠️ <span class="mention">@Shruti Sharma</span> - Oracle <br>☠️ <span class="mention">@Legends | Atharva</span> - Judge</div></div></div><div class="embed-footer"><span>W Mafia L others</span></div></div></div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/1000783009546510417/2a591c588c5211482dd4a63fc11d8b13.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">dani</span><span class="message-timestamp">04/07/2026 11:20 AM</span></div><div class="message-text">gg</div></div></div></div></div></body></html>
