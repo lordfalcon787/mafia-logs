@@ -1,0 +1,394 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Transcript - #mafia</title>
+        <style>
+            * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+            }
+            
+            body {
+                font-family: Whitney, "Helvetica Neue", Helvetica, Arial, sans-serif;
+                background-color: #36393f;
+                color: #dcddde;
+                padding: 20px;
+                line-height: 1.5;
+            }
+            
+            .transcript-container {
+                max-width: 980px;
+                margin: 0 auto;
+                background-color: #36393f;
+                border-radius: 8px;
+                overflow: hidden;
+            }
+            
+            .header {
+                background-color: #2f3136;
+                padding: 16px 20px;
+                border-bottom: 1px solid #202225;
+                display: flex;
+                align-items: center;
+                gap: 12px;
+            }
+            
+            .header-icon {
+                width: 40px;
+                height: 40px;
+                border-radius: 50%;
+                background-color: #5865f2;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 20px;
+                font-weight: bold;
+            }
+            
+            .header-info h1 {
+                font-size: 20px;
+                font-weight: 600;
+                margin-bottom: 4px;
+            }
+            
+            .header-info p {
+                font-size: 14px;
+                color: #b9bbbe;
+            }
+            
+            .messages-container {
+                padding: 20px;
+            }
+            
+            .message {
+                display: flex;
+                padding: 4px 0;
+                margin: 8px 0;
+                position: relative;
+            }
+            
+            .message:hover {
+                background-color: #32353b;
+                border-radius: 4px;
+            }
+            
+            .message-avatar {
+                width: 40px;
+                height: 40px;
+                border-radius: 50%;
+                margin-right: 16px;
+                flex-shrink: 0;
+                background-color: #5865f2;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-weight: 600;
+                color: white;
+            }
+            
+            .message-avatar img {
+                width: 100%;
+                height: 100%;
+                border-radius: 50%;
+                object-fit: cover;
+            }
+            
+            .message-content {
+                flex: 1;
+                min-width: 0;
+            }
+            
+            .message-header {
+                display: flex;
+                align-items: baseline;
+                gap: 8px;
+                margin-bottom: 4px;
+            }
+            
+            .message-author {
+                font-weight: 600;
+                font-size: 16px;
+                color: #ffffff;
+            }
+            
+            .message-timestamp {
+                font-size: 12px;
+                color: #72767d;
+            }
+            
+            .message-text {
+                color: #dcddde;
+                font-size: 16px;
+                line-height: 1.375;
+                word-wrap: break-word;
+            }
+            
+            .message-text a {
+                color: #00b0f4;
+                text-decoration: none;
+            }
+            
+            .message-text a:hover {
+                text-decoration: underline;
+            }
+            
+            .message-attachments {
+                margin-top: 8px;
+            }
+            
+            .attachment {
+                display: inline-block;
+                margin: 4px 0;
+            }
+            
+            .attachment img {
+                max-width: 400px;
+                max-height: 300px;
+                border-radius: 8px;
+                cursor: pointer;
+            }
+            
+            .attachment-file {
+                background-color: #2f3136;
+                border: 1px solid #202225;
+                border-radius: 8px;
+                padding: 10px 16px;
+                display: inline-flex;
+                align-items: center;
+                gap: 8px;
+                text-decoration: none;
+                color: #00b0f4;
+            }
+            
+            .attachment-file:hover {
+                background-color: #393c43;
+            }
+            
+            .embed {
+                margin-top: 8px;
+                max-width: 520px;
+                border-radius: 4px;
+                background-color: #2f3136;
+                display: flex;
+                overflow: hidden;
+            }
+            
+            .embed-color-bar {
+                width: 4px;
+                flex-shrink: 0;
+                background-color: #5865f2;
+            }
+            
+            .embed-content {
+                padding: 16px;
+                flex: 1;
+            }
+            
+            .embed-author {
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                margin-bottom: 8px;
+                font-size: 14px;
+                font-weight: 600;
+            }
+            
+            .embed-author img {
+                width: 24px;
+                height: 24px;
+                border-radius: 50%;
+            }
+            
+            .embed-title {
+                font-size: 16px;
+                font-weight: 600;
+                margin-bottom: 8px;
+                color: #00b0f4;
+            }
+            
+            .embed-description {
+                font-size: 14px;
+                line-height: 1.5;
+                margin-bottom: 12px;
+                white-space: pre-wrap;
+            }
+            
+            .embed-fields {
+                display: grid;
+                gap: 8px;
+            }
+            
+            .embed-field {
+                min-width: 0;
+            }
+            
+            .embed-field-inline {
+                display: inline-block;
+                width: calc(33.33% - 8px);
+                vertical-align: top;
+            }
+            
+            .embed-field-name {
+                font-size: 14px;
+                font-weight: 600;
+                margin-bottom: 2px;
+                color: #ffffff;
+            }
+            
+            .embed-field-value {
+                font-size: 14px;
+                line-height: 1.5;
+                white-space: pre-wrap;
+            }
+            
+            .embed-thumbnail {
+                margin-left: 16px;
+                flex-shrink: 0;
+            }
+            
+            .embed-thumbnail img {
+                max-width: 80px;
+                max-height: 80px;
+                border-radius: 4px;
+            }
+            
+            .embed-image {
+                margin-top: 12px;
+            }
+            
+            .embed-image img {
+                max-width: 100%;
+                border-radius: 4px;
+            }
+            
+            .embed-footer {
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                margin-top: 12px;
+                font-size: 12px;
+                color: #72767d;
+            }
+            
+            .embed-footer img {
+                width: 20px;
+                height: 20px;
+                border-radius: 50%;
+            }
+            
+            .reactions {
+                display: flex;
+                gap: 4px;
+                margin-top: 8px;
+                flex-wrap: wrap;
+            }
+            
+            .reaction {
+                background-color: #2f3136;
+                border: 1px solid #2f3136;
+                border-radius: 8px;
+                padding: 4px 8px;
+                display: flex;
+                align-items: center;
+                gap: 4px;
+                font-size: 14px;
+                cursor: pointer;
+            }
+            
+            .reaction:hover {
+                border-color: #4f545c;
+            }
+            
+            .reaction-emoji {
+                width: 16px;
+                height: 16px;
+            }
+            
+            .reaction-count {
+                color: #b9bbbe;
+                font-weight: 500;
+            }
+            
+            .system-message {
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                padding: 8px 16px;
+                margin: 16px 0;
+                color: #72767d;
+                font-size: 14px;
+            }
+            
+            .system-message-icon {
+                width: 16px;
+                height: 16px;
+                flex-shrink: 0;
+            }
+            
+            .mention {
+                background-color: rgba(88, 101, 242, 0.3);
+                color: #dee0fc;
+                padding: 0 2px;
+                border-radius: 3px;
+                font-weight: 500;
+            }
+            
+            .mention:hover {
+                background-color: #5865f2;
+                color: #ffffff;
+            }
+            
+            .code-inline {
+                background-color: #2f3136;
+                padding: 2px 4px;
+                border-radius: 3px;
+                font-family: Consolas, "Andale Mono WT", "Andale Mono", "Lucida Console", monospace;
+                font-size: 14px;
+            }
+            
+            .code-block {
+                background-color: #2f3136;
+                border: 1px solid #202225;
+                border-radius: 4px;
+                padding: 12px;
+                margin: 8px 0;
+                font-family: Consolas, "Andale Mono WT", "Andale Mono", "Lucida Console", monospace;
+                font-size: 14px;
+                overflow-x: auto;
+            }
+            
+            .spoiler {
+                background-color: #202225;
+                color: transparent;
+                padding: 0 2px;
+                border-radius: 3px;
+                cursor: pointer;
+                transition: all 0.1s;
+            }
+            
+            .spoiler:hover {
+                background-color: rgba(255, 255, 255, 0.1);
+                color: #dcddde;
+            }
+            
+            .divider {
+                display: flex;
+                align-items: center;
+                margin: 20px 0;
+                color: #72767d;
+                font-size: 12px;
+                font-weight: 600;
+                text-transform: uppercase;
+            }
+            
+            .divider::before,
+            .divider::after {
+                content: "";
+                flex: 1;
+                height: 1px;
+                background-color: #4f545c;
+            }
+            
+            .divider-text {
+                padding: 0 16px;
+            }
+        </style>
+        </head><body><div class="transcript-container"><div class="header"><div class="header-icon">#</div><div class="header-info"><h1>#mafia</h1><p>122 messages • Generated on May 01, 2026 at 11:03 PM</p></div></div><div class="messages-container"><div class="divider"><span class="divider-text">May 01, 2026</span></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/758999095070687284/70e18007dbd33933f77d901a0db8eb19.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">red thingy [ / ]</span><span class="message-timestamp">05/01/2026 10:56 PM</span></div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/758999095070687284/70e18007dbd33933f77d901a0db8eb19.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">red thingy [ / ]</span><span class="message-timestamp">05/01/2026 10:56 PM</span></div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/758999095070687284/70e18007dbd33933f77d901a0db8eb19.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">red thingy [ / ]</span><span class="message-timestamp">05/01/2026 10:56 PM</span></div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/758999095070687284/70e18007dbd33933f77d901a0db8eb19.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">red thingy [ / ]</span><span class="message-timestamp">05/01/2026 10:57 PM</span></div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/758999095070687284/70e18007dbd33933f77d901a0db8eb19.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">red thingy [ / ]</span><span class="message-timestamp">05/01/2026 10:57 PM</span></div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/758999095070687284/70e18007dbd33933f77d901a0db8eb19.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">red thingy [ / ]</span><span class="message-timestamp">05/01/2026 10:57 PM</span></div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/758999095070687284/70e18007dbd33933f77d901a0db8eb19.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">red thingy [ / ]</span><span class="message-timestamp">05/01/2026 10:57 PM</span></div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/758999095070687284/70e18007dbd33933f77d901a0db8eb19.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">red thingy [ / ]</span><span class="message-timestamp">05/01/2026 10:58 PM</span></div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/758999095070687284/70e18007dbd33933f77d901a0db8eb19.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">red thingy [ / ]</span><span class="message-timestamp">05/01/2026 10:58 PM</span></div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/758999095070687284/70e18007dbd33933f77d901a0db8eb19.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">red thingy [ / ]</span><span class="message-timestamp">05/01/2026 10:58 PM</span></div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/758999095070687284/70e18007dbd33933f77d901a0db8eb19.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">red thingy [ / ]</span><span class="message-timestamp">05/01/2026 10:58 PM</span></div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/931885363084009482/52a0eead7889372bf2384a92f1fb4d87.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">crptd</span><span class="message-timestamp">05/01/2026 10:58 PM</span></div><div class="message-text">hi guys</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/739136309762850836/8aae7a95c1ad9e243bad76f837679666.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Food (#1 neko fan)</span><span class="message-timestamp">05/01/2026 10:58 PM</span></div><div class="message-text"><span class="mention">@crptd</span> clear</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/1149672049980227585/27630dd736feb29ab3ca9888a7501ce5.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Retro :3</span><span class="message-timestamp">05/01/2026 10:58 PM</span></div><div class="message-text">headache</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/836347954947686402/7c2316a4b34fdf7444c76d6d9d3253fe.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Snowzy (beeg food)</span><span class="message-timestamp">05/01/2026 10:58 PM</span></div><div class="message-text">I swear there&#x27;s a curse on pi and det</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/1149672049980227585/27630dd736feb29ab3ca9888a7501ce5.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Retro :3</span><span class="message-timestamp">05/01/2026 10:58 PM</span></div><div class="message-text">via?</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/739136309762850836/8aae7a95c1ad9e243bad76f837679666.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Food (#1 neko fan)</span><span class="message-timestamp">05/01/2026 10:58 PM</span></div><div class="message-text">ik his role</div><div class="reactions"><div class="reaction"><span class="reaction-emoji">💀</span><span class="reaction-count">1</span></div></div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/739136309762850836/8aae7a95c1ad9e243bad76f837679666.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Food (#1 neko fan)</span><span class="message-timestamp">05/01/2026 10:58 PM</span></div><div class="message-text">so hes clear</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/931885363084009482/52a0eead7889372bf2384a92f1fb4d87.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">crptd</span><span class="message-timestamp">05/01/2026 10:58 PM</span></div><div class="message-text">everyone claim</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/836347954947686402/7c2316a4b34fdf7444c76d6d9d3253fe.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Snowzy (beeg food)</span><span class="message-timestamp">05/01/2026 10:58 PM</span></div><div class="message-text">crptd is clear either way</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/836347954947686402/7c2316a4b34fdf7444c76d6d9d3253fe.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Snowzy (beeg food)</span><span class="message-timestamp">05/01/2026 10:58 PM</span></div><div class="message-text">god I hate my role</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/978728890480611368/46f5c79b7d4bcb3a02c38547f78d315a.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Manas Ciel</span><span class="message-timestamp">05/01/2026 10:58 PM</span></div><div class="message-text">Snow clear via my info</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/758999095070687284/70e18007dbd33933f77d901a0db8eb19.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">red thingy [ / ]</span><span class="message-timestamp">05/01/2026 10:58 PM</span></div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/739136309762850836/8aae7a95c1ad9e243bad76f837679666.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Food (#1 neko fan)</span><span class="message-timestamp">05/01/2026 10:58 PM</span></div><div class="message-text">yeah hes clear because if i was town i wouldnt clear gf</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/931885363084009482/52a0eead7889372bf2384a92f1fb4d87.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">crptd</span><span class="message-timestamp">05/01/2026 10:58 PM</span></div><div class="message-text">just claim</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/739136309762850836/8aae7a95c1ad9e243bad76f837679666.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Food (#1 neko fan)</span><span class="message-timestamp">05/01/2026 10:58 PM</span></div><div class="message-text">and if i was gf</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/739136309762850836/8aae7a95c1ad9e243bad76f837679666.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Food (#1 neko fan)</span><span class="message-timestamp">05/01/2026 10:58 PM</span></div><div class="message-text">he would be town</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/931885363084009482/52a0eead7889372bf2384a92f1fb4d87.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">crptd</span><span class="message-timestamp">05/01/2026 10:58 PM</span></div><div class="message-text">stop gatekeeping</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/836347954947686402/7c2316a4b34fdf7444c76d6d9d3253fe.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Snowzy (beeg food)</span><span class="message-timestamp">05/01/2026 10:58 PM</span></div><div class="message-text">so me and crptd hard clear</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/739136309762850836/8aae7a95c1ad9e243bad76f837679666.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Food (#1 neko fan)</span><span class="message-timestamp">05/01/2026 10:58 PM</span></div><div class="message-text">how is snowzy clear</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/1149672049980227585/27630dd736feb29ab3ca9888a7501ce5.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Retro :3</span><span class="message-timestamp">05/01/2026 10:58 PM</span></div><div class="message-text">wait a fucking second</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/1149672049980227585/27630dd736feb29ab3ca9888a7501ce5.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Retro :3</span><span class="message-timestamp">05/01/2026 10:59 PM</span></div><div class="message-text">someone is def lying</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/1149672049980227585/27630dd736feb29ab3ca9888a7501ce5.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Retro :3</span><span class="message-timestamp">05/01/2026 10:59 PM</span></div><div class="message-text"><span class="mention">@Snowzy (beeg food)</span> and sipzi which info roles</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/836347954947686402/7c2316a4b34fdf7444c76d6d9d3253fe.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Snowzy (beeg food)</span><span class="message-timestamp">05/01/2026 10:59 PM</span></div><div class="message-text">even if manas is maf</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/758999095070687284/70e18007dbd33933f77d901a0db8eb19.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">red thingy [ / ]</span><span class="message-timestamp">05/01/2026 10:59 PM</span></div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/758999095070687284/70e18007dbd33933f77d901a0db8eb19.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">red thingy [ / ]</span><span class="message-timestamp">05/01/2026 10:59 PM</span></div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/758999095070687284/70e18007dbd33933f77d901a0db8eb19.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">red thingy [ / ]</span><span class="message-timestamp">05/01/2026 10:59 PM</span></div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/739136309762850836/8aae7a95c1ad9e243bad76f837679666.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Food (#1 neko fan)</span><span class="message-timestamp">05/01/2026 10:59 PM</span></div><div class="message-text"><span class="mention">@crptd</span> im gonna do what u did</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/836347954947686402/7c2316a4b34fdf7444c76d6d9d3253fe.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Snowzy (beeg food)</span><span class="message-timestamp">05/01/2026 10:59 PM</span></div><div class="message-text">im not info</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/739136309762850836/8aae7a95c1ad9e243bad76f837679666.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Food (#1 neko fan)</span><span class="message-timestamp">05/01/2026 10:59 PM</span></div><div class="message-text">:D</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/758999095070687284/70e18007dbd33933f77d901a0db8eb19.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">red thingy [ / ]</span><span class="message-timestamp">05/01/2026 10:59 PM</span></div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/758999095070687284/70e18007dbd33933f77d901a0db8eb19.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">red thingy [ / ]</span><span class="message-timestamp">05/01/2026 10:59 PM</span></div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/758999095070687284/70e18007dbd33933f77d901a0db8eb19.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">red thingy [ / ]</span><span class="message-timestamp">05/01/2026 11:00 PM</span></div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/758999095070687284/70e18007dbd33933f77d901a0db8eb19.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">red thingy [ / ]</span><span class="message-timestamp">05/01/2026 11:00 PM</span></div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/758999095070687284/70e18007dbd33933f77d901a0db8eb19.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">red thingy [ / ]</span><span class="message-timestamp">05/01/2026 11:00 PM</span></div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/758999095070687284/70e18007dbd33933f77d901a0db8eb19.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">red thingy [ / ]</span><span class="message-timestamp">05/01/2026 11:00 PM</span></div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/739136309762850836/8aae7a95c1ad9e243bad76f837679666.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Food (#1 neko fan)</span><span class="message-timestamp">05/01/2026 11:00 PM</span></div><div class="message-text">💀</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/1149672049980227585/27630dd736feb29ab3ca9888a7501ce5.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Retro :3</span><span class="message-timestamp">05/01/2026 11:00 PM</span></div><div class="message-text">well <span class="mention">@crptd</span> and <span class="mention">@Snowzy (beeg food)</span> r clear and im vig</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/1149672049980227585/27630dd736feb29ab3ca9888a7501ce5.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Retro :3</span><span class="message-timestamp">05/01/2026 11:00 PM</span></div><div class="message-text">we skip and ill shoot to prove</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/1149672049980227585/27630dd736feb29ab3ca9888a7501ce5.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Retro :3</span><span class="message-timestamp">05/01/2026 11:00 PM</span></div><div class="message-text">gg</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/739136309762850836/8aae7a95c1ad9e243bad76f837679666.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Food (#1 neko fan)</span><span class="message-timestamp">05/01/2026 11:00 PM</span></div><div class="message-text">how is snowzy clear</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/836347954947686402/7c2316a4b34fdf7444c76d6d9d3253fe.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Snowzy (beeg food)</span><span class="message-timestamp">05/01/2026 11:00 PM</span></div><div class="message-text">so its sipzi 💀</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/739136309762850836/8aae7a95c1ad9e243bad76f837679666.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Food (#1 neko fan)</span><span class="message-timestamp">05/01/2026 11:00 PM</span></div><div class="message-text">im alc</div><div class="reactions"><div class="reaction"><span class="reaction-emoji">💀</span><span class="reaction-count">1</span></div></div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/836347954947686402/7c2316a4b34fdf7444c76d6d9d3253fe.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Snowzy (beeg food)</span><span class="message-timestamp">05/01/2026 11:00 PM</span></div><div class="message-text">det cleraed me</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/1149672049980227585/27630dd736feb29ab3ca9888a7501ce5.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Retro :3</span><span class="message-timestamp">05/01/2026 11:00 PM</span></div><div class="message-text">via <span class="mention">@Manas Ciel</span></div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/739136309762850836/8aae7a95c1ad9e243bad76f837679666.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Food (#1 neko fan)</span><span class="message-timestamp">05/01/2026 11:00 PM</span></div><div class="message-text">necro det is on</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/739136309762850836/8aae7a95c1ad9e243bad76f837679666.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Food (#1 neko fan)</span><span class="message-timestamp">05/01/2026 11:00 PM</span></div><div class="message-text">bro</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/931885363084009482/52a0eead7889372bf2384a92f1fb4d87.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">crptd</span><span class="message-timestamp">05/01/2026 11:00 PM</span></div><div class="message-text">I genuinely had to go on my phone and use mobile data</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/739136309762850836/8aae7a95c1ad9e243bad76f837679666.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Food (#1 neko fan)</span><span class="message-timestamp">05/01/2026 11:00 PM</span></div><div class="message-text">💀</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/1149672049980227585/27630dd736feb29ab3ca9888a7501ce5.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Retro :3</span><span class="message-timestamp">05/01/2026 11:00 PM</span></div><div class="message-text">anyone got truthed?</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/931885363084009482/52a0eead7889372bf2384a92f1fb4d87.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">crptd</span><span class="message-timestamp">05/01/2026 11:00 PM</span></div><div class="message-text">This neywork is insane</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/836347954947686402/7c2316a4b34fdf7444c76d6d9d3253fe.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Snowzy (beeg food)</span><span class="message-timestamp">05/01/2026 11:00 PM</span></div><div class="message-text">oh 💀</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/739136309762850836/8aae7a95c1ad9e243bad76f837679666.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Food (#1 neko fan)</span><span class="message-timestamp">05/01/2026 11:01 PM</span></div><div class="message-text">i visited  crptd n1</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/1149672049980227585/27630dd736feb29ab3ca9888a7501ce5.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Retro :3</span><span class="message-timestamp">05/01/2026 11:01 PM</span></div><div class="message-text"><span class="mention">@crptd</span> u got truthed?</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/758999095070687284/70e18007dbd33933f77d901a0db8eb19.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">red thingy [ / ]</span><span class="message-timestamp">05/01/2026 11:01 PM</span></div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/739136309762850836/8aae7a95c1ad9e243bad76f837679666.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Food (#1 neko fan)</span><span class="message-timestamp">05/01/2026 11:01 PM</span></div><div class="message-text">he was invis</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/836347954947686402/7c2316a4b34fdf7444c76d6d9d3253fe.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Snowzy (beeg food)</span><span class="message-timestamp">05/01/2026 11:01 PM</span></div><div class="message-text">why is netro det on</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/1149672049980227585/27630dd736feb29ab3ca9888a7501ce5.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Retro :3</span><span class="message-timestamp">05/01/2026 11:01 PM</span></div><div class="message-text">ok so its snow</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/739136309762850836/8aae7a95c1ad9e243bad76f837679666.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Food (#1 neko fan)</span><span class="message-timestamp">05/01/2026 11:01 PM</span></div><div class="message-text">on snowzy</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/836347954947686402/7c2316a4b34fdf7444c76d6d9d3253fe.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Snowzy (beeg food)</span><span class="message-timestamp">05/01/2026 11:01 PM</span></div><div class="message-text">nuh</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/931885363084009482/52a0eead7889372bf2384a92f1fb4d87.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">crptd</span><span class="message-timestamp">05/01/2026 11:01 PM</span></div><div class="message-text">i wasnt truthed</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/836347954947686402/7c2316a4b34fdf7444c76d6d9d3253fe.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Snowzy (beeg food)</span><span class="message-timestamp">05/01/2026 11:01 PM</span></div><div class="message-text">see</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/1149672049980227585/27630dd736feb29ab3ca9888a7501ce5.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Retro :3</span><span class="message-timestamp">05/01/2026 11:01 PM</span></div><div class="message-text">well crpdt is oracle</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/739136309762850836/8aae7a95c1ad9e243bad76f837679666.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Food (#1 neko fan)</span><span class="message-timestamp">05/01/2026 11:01 PM</span></div><div class="message-text">ill lethal retro if game doesnt end</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/1149672049980227585/27630dd736feb29ab3ca9888a7501ce5.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Retro :3</span><span class="message-timestamp">05/01/2026 11:01 PM</span></div><div class="message-text">go right ahead</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/739136309762850836/8aae7a95c1ad9e243bad76f837679666.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Food (#1 neko fan)</span><span class="message-timestamp">05/01/2026 11:01 PM</span></div><div class="message-text">CUZ U SELF INVIS</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/739136309762850836/8aae7a95c1ad9e243bad76f837679666.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Food (#1 neko fan)</span><span class="message-timestamp">05/01/2026 11:01 PM</span></div><div class="message-text">💀</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/836347954947686402/7c2316a4b34fdf7444c76d6d9d3253fe.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Snowzy (beeg food)</span><span class="message-timestamp">05/01/2026 11:01 PM</span></div><div class="message-text">bro</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/836347954947686402/7c2316a4b34fdf7444c76d6d9d3253fe.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Snowzy (beeg food)</span><span class="message-timestamp">05/01/2026 11:01 PM</span></div><div class="message-text">6 player mafia</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/836347954947686402/7c2316a4b34fdf7444c76d6d9d3253fe.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Snowzy (beeg food)</span><span class="message-timestamp">05/01/2026 11:01 PM</span></div><div class="message-text">is actually</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/1149672049980227585/27630dd736feb29ab3ca9888a7501ce5.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Retro :3</span><span class="message-timestamp">05/01/2026 11:01 PM</span></div><div class="message-text"><span class="mention">@crptd</span> r u oracle</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/836347954947686402/7c2316a4b34fdf7444c76d6d9d3253fe.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Snowzy (beeg food)</span><span class="message-timestamp">05/01/2026 11:01 PM</span></div><div class="message-text">impossible to win</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/758999095070687284/70e18007dbd33933f77d901a0db8eb19.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">red thingy [ / ]</span><span class="message-timestamp">05/01/2026 11:01 PM</span></div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/758999095070687284/70e18007dbd33933f77d901a0db8eb19.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">red thingy [ / ]</span><span class="message-timestamp">05/01/2026 11:01 PM</span></div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/931885363084009482/52a0eead7889372bf2384a92f1fb4d87.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">crptd</span><span class="message-timestamp">05/01/2026 11:01 PM</span></div><div class="message-text">Yeah</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/836347954947686402/7c2316a4b34fdf7444c76d6d9d3253fe.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Snowzy (beeg food)</span><span class="message-timestamp">05/01/2026 11:01 PM</span></div><div class="message-text">what am I suposed to do</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/931885363084009482/52a0eead7889372bf2384a92f1fb4d87.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">crptd</span><span class="message-timestamp">05/01/2026 11:01 PM</span></div><div class="message-text">I self invised</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/1149672049980227585/27630dd736feb29ab3ca9888a7501ce5.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Retro :3</span><span class="message-timestamp">05/01/2026 11:01 PM</span></div><div class="message-text">they admitted it guilty</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/836347954947686402/7c2316a4b34fdf7444c76d6d9d3253fe.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Snowzy (beeg food)</span><span class="message-timestamp">05/01/2026 11:01 PM</span></div><div class="message-text">there&#x27;s a vigi and an alch</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/739136309762850836/8aae7a95c1ad9e243bad76f837679666.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Food (#1 neko fan)</span><span class="message-timestamp">05/01/2026 11:01 PM</span></div><div class="message-text">i mean tbh even if snowzy wasnt mafia just have oracle invis vigi</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/1149672049980227585/27630dd736feb29ab3ca9888a7501ce5.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Retro :3</span><span class="message-timestamp">05/01/2026 11:01 PM</span></div><div class="message-text">pi and det</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/836347954947686402/7c2316a4b34fdf7444c76d6d9d3253fe.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Snowzy (beeg food)</span><span class="message-timestamp">05/01/2026 11:01 PM</span></div><div class="message-text">I aint getting out of this</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/739136309762850836/8aae7a95c1ad9e243bad76f837679666.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Food (#1 neko fan)</span><span class="message-timestamp">05/01/2026 11:01 PM</span></div><div class="message-text">¯\<em>(ツ)</em>/¯</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/1149672049980227585/27630dd736feb29ab3ca9888a7501ce5.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Retro :3</span><span class="message-timestamp">05/01/2026 11:01 PM</span></div><div class="message-text">yea bruh</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/836347954947686402/7c2316a4b34fdf7444c76d6d9d3253fe.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Snowzy (beeg food)</span><span class="message-timestamp">05/01/2026 11:02 PM</span></div><div class="message-text">necro det</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/836347954947686402/7c2316a4b34fdf7444c76d6d9d3253fe.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Snowzy (beeg food)</span><span class="message-timestamp">05/01/2026 11:02 PM</span></div><div class="message-text">gotta be</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/1149672049980227585/27630dd736feb29ab3ca9888a7501ce5.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Retro :3</span><span class="message-timestamp">05/01/2026 11:02 PM</span></div><div class="message-text">i shot <span class="mention">@Manas Ciel</span> btw but like</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/836347954947686402/7c2316a4b34fdf7444c76d6d9d3253fe.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Snowzy (beeg food)</span><span class="message-timestamp">05/01/2026 11:02 PM</span></div><div class="message-text">the most useless role</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/1149672049980227585/27630dd736feb29ab3ca9888a7501ce5.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Retro :3</span><span class="message-timestamp">05/01/2026 11:02 PM</span></div><div class="message-text">they ded already</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/931885363084009482/52a0eead7889372bf2384a92f1fb4d87.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">crptd</span><span class="message-timestamp">05/01/2026 11:02 PM</span></div><div class="message-text">Det doesnt have necro</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/836347954947686402/7c2316a4b34fdf7444c76d6d9d3253fe.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Snowzy (beeg food)</span><span class="message-timestamp">05/01/2026 11:02 PM</span></div><div class="message-text">FRICK SHOULDNT HAVE KILLED</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/739136309762850836/8aae7a95c1ad9e243bad76f837679666.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Food (#1 neko fan)</span><span class="message-timestamp">05/01/2026 11:02 PM</span></div><div class="message-text">it does</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/739136309762850836/8aae7a95c1ad9e243bad76f837679666.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Food (#1 neko fan)</span><span class="message-timestamp">05/01/2026 11:02 PM</span></div><div class="message-text">check after</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/758999095070687284/70e18007dbd33933f77d901a0db8eb19.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">red thingy [ / ]</span><span class="message-timestamp">05/01/2026 11:02 PM</span></div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/931885363084009482/52a0eead7889372bf2384a92f1fb4d87.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">crptd</span><span class="message-timestamp">05/01/2026 11:02 PM</span></div><div class="message-text">New addition</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/739136309762850836/8aae7a95c1ad9e243bad76f837679666.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Food (#1 neko fan)</span><span class="message-timestamp">05/01/2026 11:02 PM</span></div><div class="message-text">eyed was necro det yesterday</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/836347954947686402/7c2316a4b34fdf7444c76d6d9d3253fe.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Snowzy (beeg food)</span><span class="message-timestamp">05/01/2026 11:02 PM</span></div><div class="message-text">I wanted to clear her</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/836347954947686402/7c2316a4b34fdf7444c76d6d9d3253fe.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Snowzy (beeg food)</span><span class="message-timestamp">05/01/2026 11:02 PM</span></div><div class="message-text">so Id be clear</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/1149672049980227585/27630dd736feb29ab3ca9888a7501ce5.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Retro :3</span><span class="message-timestamp">05/01/2026 11:02 PM</span></div><div class="message-text">it woulda been u, sipzi, and crpdt</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/836347954947686402/7c2316a4b34fdf7444c76d6d9d3253fe.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Snowzy (beeg food)</span><span class="message-timestamp">05/01/2026 11:02 PM</span></div><div class="message-text">I didnt know necro det was on</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/836347954947686402/7c2316a4b34fdf7444c76d6d9d3253fe.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Snowzy (beeg food)</span><span class="message-timestamp">05/01/2026 11:02 PM</span></div><div class="message-text">I thought she jus mistyped</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/739136309762850836/8aae7a95c1ad9e243bad76f837679666.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Food (#1 neko fan)</span><span class="message-timestamp">05/01/2026 11:02 PM</span></div><div class="message-text">but i cleared crptd</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/1149672049980227585/27630dd736feb29ab3ca9888a7501ce5.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Retro :3</span><span class="message-timestamp">05/01/2026 11:02 PM</span></div><div class="message-text">crpdt was oracle and sipzi knew that</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/739136309762850836/8aae7a95c1ad9e243bad76f837679666.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Food (#1 neko fan)</span><span class="message-timestamp">05/01/2026 11:02 PM</span></div><div class="message-text">so he cant be mafia</div><div class="reactions"><div class="reaction"><span class="reaction-emoji">✅</span><span class="reaction-count">1</span></div></div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/1149672049980227585/27630dd736feb29ab3ca9888a7501ce5.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Retro :3</span><span class="message-timestamp">05/01/2026 11:03 PM</span></div><div class="message-text">snowzy woulda lost either way</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/758999095070687284/70e18007dbd33933f77d901a0db8eb19.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">red thingy [ / ]</span><span class="message-timestamp">05/01/2026 11:03 PM</span></div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/758999095070687284/70e18007dbd33933f77d901a0db8eb19.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">red thingy [ / ]</span><span class="message-timestamp">05/01/2026 11:03 PM</span></div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/1149672049980227585/27630dd736feb29ab3ca9888a7501ce5.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Retro :3</span><span class="message-timestamp">05/01/2026 11:03 PM</span></div><div class="message-text">gg</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/931885363084009482/52a0eead7889372bf2384a92f1fb4d87.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">crptd</span><span class="message-timestamp">05/01/2026 11:03 PM</span></div><div class="message-text">And solar is clear because he knew i was oracle</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/758999095070687284/70e18007dbd33933f77d901a0db8eb19.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">red thingy [ / ]</span><span class="message-timestamp">05/01/2026 11:03 PM</span></div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/836347954947686402/7c2316a4b34fdf7444c76d6d9d3253fe.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Snowzy (beeg food)</span><span class="message-timestamp">05/01/2026 11:03 PM</span></div><div class="message-text">rip</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/758999095070687284/70e18007dbd33933f77d901a0db8eb19.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">red thingy [ / ]</span><span class="message-timestamp">05/01/2026 11:03 PM</span></div></div></div></div></div></body></html>
