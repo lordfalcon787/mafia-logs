@@ -1,0 +1,394 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Transcript - #mafia</title>
+        <style>
+            * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+            }
+            
+            body {
+                font-family: Whitney, "Helvetica Neue", Helvetica, Arial, sans-serif;
+                background-color: #36393f;
+                color: #dcddde;
+                padding: 20px;
+                line-height: 1.5;
+            }
+            
+            .transcript-container {
+                max-width: 980px;
+                margin: 0 auto;
+                background-color: #36393f;
+                border-radius: 8px;
+                overflow: hidden;
+            }
+            
+            .header {
+                background-color: #2f3136;
+                padding: 16px 20px;
+                border-bottom: 1px solid #202225;
+                display: flex;
+                align-items: center;
+                gap: 12px;
+            }
+            
+            .header-icon {
+                width: 40px;
+                height: 40px;
+                border-radius: 50%;
+                background-color: #5865f2;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 20px;
+                font-weight: bold;
+            }
+            
+            .header-info h1 {
+                font-size: 20px;
+                font-weight: 600;
+                margin-bottom: 4px;
+            }
+            
+            .header-info p {
+                font-size: 14px;
+                color: #b9bbbe;
+            }
+            
+            .messages-container {
+                padding: 20px;
+            }
+            
+            .message {
+                display: flex;
+                padding: 4px 0;
+                margin: 8px 0;
+                position: relative;
+            }
+            
+            .message:hover {
+                background-color: #32353b;
+                border-radius: 4px;
+            }
+            
+            .message-avatar {
+                width: 40px;
+                height: 40px;
+                border-radius: 50%;
+                margin-right: 16px;
+                flex-shrink: 0;
+                background-color: #5865f2;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-weight: 600;
+                color: white;
+            }
+            
+            .message-avatar img {
+                width: 100%;
+                height: 100%;
+                border-radius: 50%;
+                object-fit: cover;
+            }
+            
+            .message-content {
+                flex: 1;
+                min-width: 0;
+            }
+            
+            .message-header {
+                display: flex;
+                align-items: baseline;
+                gap: 8px;
+                margin-bottom: 4px;
+            }
+            
+            .message-author {
+                font-weight: 600;
+                font-size: 16px;
+                color: #ffffff;
+            }
+            
+            .message-timestamp {
+                font-size: 12px;
+                color: #72767d;
+            }
+            
+            .message-text {
+                color: #dcddde;
+                font-size: 16px;
+                line-height: 1.375;
+                word-wrap: break-word;
+            }
+            
+            .message-text a {
+                color: #00b0f4;
+                text-decoration: none;
+            }
+            
+            .message-text a:hover {
+                text-decoration: underline;
+            }
+            
+            .message-attachments {
+                margin-top: 8px;
+            }
+            
+            .attachment {
+                display: inline-block;
+                margin: 4px 0;
+            }
+            
+            .attachment img {
+                max-width: 400px;
+                max-height: 300px;
+                border-radius: 8px;
+                cursor: pointer;
+            }
+            
+            .attachment-file {
+                background-color: #2f3136;
+                border: 1px solid #202225;
+                border-radius: 8px;
+                padding: 10px 16px;
+                display: inline-flex;
+                align-items: center;
+                gap: 8px;
+                text-decoration: none;
+                color: #00b0f4;
+            }
+            
+            .attachment-file:hover {
+                background-color: #393c43;
+            }
+            
+            .embed {
+                margin-top: 8px;
+                max-width: 520px;
+                border-radius: 4px;
+                background-color: #2f3136;
+                display: flex;
+                overflow: hidden;
+            }
+            
+            .embed-color-bar {
+                width: 4px;
+                flex-shrink: 0;
+                background-color: #5865f2;
+            }
+            
+            .embed-content {
+                padding: 16px;
+                flex: 1;
+            }
+            
+            .embed-author {
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                margin-bottom: 8px;
+                font-size: 14px;
+                font-weight: 600;
+            }
+            
+            .embed-author img {
+                width: 24px;
+                height: 24px;
+                border-radius: 50%;
+            }
+            
+            .embed-title {
+                font-size: 16px;
+                font-weight: 600;
+                margin-bottom: 8px;
+                color: #00b0f4;
+            }
+            
+            .embed-description {
+                font-size: 14px;
+                line-height: 1.5;
+                margin-bottom: 12px;
+                white-space: pre-wrap;
+            }
+            
+            .embed-fields {
+                display: grid;
+                gap: 8px;
+            }
+            
+            .embed-field {
+                min-width: 0;
+            }
+            
+            .embed-field-inline {
+                display: inline-block;
+                width: calc(33.33% - 8px);
+                vertical-align: top;
+            }
+            
+            .embed-field-name {
+                font-size: 14px;
+                font-weight: 600;
+                margin-bottom: 2px;
+                color: #ffffff;
+            }
+            
+            .embed-field-value {
+                font-size: 14px;
+                line-height: 1.5;
+                white-space: pre-wrap;
+            }
+            
+            .embed-thumbnail {
+                margin-left: 16px;
+                flex-shrink: 0;
+            }
+            
+            .embed-thumbnail img {
+                max-width: 80px;
+                max-height: 80px;
+                border-radius: 4px;
+            }
+            
+            .embed-image {
+                margin-top: 12px;
+            }
+            
+            .embed-image img {
+                max-width: 100%;
+                border-radius: 4px;
+            }
+            
+            .embed-footer {
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                margin-top: 12px;
+                font-size: 12px;
+                color: #72767d;
+            }
+            
+            .embed-footer img {
+                width: 20px;
+                height: 20px;
+                border-radius: 50%;
+            }
+            
+            .reactions {
+                display: flex;
+                gap: 4px;
+                margin-top: 8px;
+                flex-wrap: wrap;
+            }
+            
+            .reaction {
+                background-color: #2f3136;
+                border: 1px solid #2f3136;
+                border-radius: 8px;
+                padding: 4px 8px;
+                display: flex;
+                align-items: center;
+                gap: 4px;
+                font-size: 14px;
+                cursor: pointer;
+            }
+            
+            .reaction:hover {
+                border-color: #4f545c;
+            }
+            
+            .reaction-emoji {
+                width: 16px;
+                height: 16px;
+            }
+            
+            .reaction-count {
+                color: #b9bbbe;
+                font-weight: 500;
+            }
+            
+            .system-message {
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                padding: 8px 16px;
+                margin: 16px 0;
+                color: #72767d;
+                font-size: 14px;
+            }
+            
+            .system-message-icon {
+                width: 16px;
+                height: 16px;
+                flex-shrink: 0;
+            }
+            
+            .mention {
+                background-color: rgba(88, 101, 242, 0.3);
+                color: #dee0fc;
+                padding: 0 2px;
+                border-radius: 3px;
+                font-weight: 500;
+            }
+            
+            .mention:hover {
+                background-color: #5865f2;
+                color: #ffffff;
+            }
+            
+            .code-inline {
+                background-color: #2f3136;
+                padding: 2px 4px;
+                border-radius: 3px;
+                font-family: Consolas, "Andale Mono WT", "Andale Mono", "Lucida Console", monospace;
+                font-size: 14px;
+            }
+            
+            .code-block {
+                background-color: #2f3136;
+                border: 1px solid #202225;
+                border-radius: 4px;
+                padding: 12px;
+                margin: 8px 0;
+                font-family: Consolas, "Andale Mono WT", "Andale Mono", "Lucida Console", monospace;
+                font-size: 14px;
+                overflow-x: auto;
+            }
+            
+            .spoiler {
+                background-color: #202225;
+                color: transparent;
+                padding: 0 2px;
+                border-radius: 3px;
+                cursor: pointer;
+                transition: all 0.1s;
+            }
+            
+            .spoiler:hover {
+                background-color: rgba(255, 255, 255, 0.1);
+                color: #dcddde;
+            }
+            
+            .divider {
+                display: flex;
+                align-items: center;
+                margin: 20px 0;
+                color: #72767d;
+                font-size: 12px;
+                font-weight: 600;
+                text-transform: uppercase;
+            }
+            
+            .divider::before,
+            .divider::after {
+                content: "";
+                flex: 1;
+                height: 1px;
+                background-color: #4f545c;
+            }
+            
+            .divider-text {
+                padding: 0 16px;
+            }
+        </style>
+        </head><body><div class="transcript-container"><div class="header"><div class="header-icon">#</div><div class="header-info"><h1>#mafia</h1><p>138 messages • Generated on May 03, 2026 at 08:36 AM</p></div></div><div class="messages-container"><div class="divider"><span class="divider-text">May 03, 2026</span></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/758999095070687284/70e18007dbd33933f77d901a0db8eb19.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">red thingy [ / ]</span><span class="message-timestamp">05/03/2026 08:26 AM</span></div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/758999095070687284/70e18007dbd33933f77d901a0db8eb19.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">red thingy [ / ]</span><span class="message-timestamp">05/03/2026 08:26 AM</span></div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/758999095070687284/70e18007dbd33933f77d901a0db8eb19.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">red thingy [ / ]</span><span class="message-timestamp">05/03/2026 08:26 AM</span></div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/758999095070687284/70e18007dbd33933f77d901a0db8eb19.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">red thingy [ / ]</span><span class="message-timestamp">05/03/2026 08:26 AM</span></div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/758999095070687284/70e18007dbd33933f77d901a0db8eb19.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">red thingy [ / ]</span><span class="message-timestamp">05/03/2026 08:26 AM</span></div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/758999095070687284/70e18007dbd33933f77d901a0db8eb19.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">red thingy [ / ]</span><span class="message-timestamp">05/03/2026 08:26 AM</span></div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/758999095070687284/70e18007dbd33933f77d901a0db8eb19.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">red thingy [ / ]</span><span class="message-timestamp">05/03/2026 08:27 AM</span></div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/758999095070687284/70e18007dbd33933f77d901a0db8eb19.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">red thingy [ / ]</span><span class="message-timestamp">05/03/2026 08:27 AM</span></div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/758999095070687284/70e18007dbd33933f77d901a0db8eb19.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">red thingy [ / ]</span><span class="message-timestamp">05/03/2026 08:27 AM</span></div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/758999095070687284/70e18007dbd33933f77d901a0db8eb19.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">red thingy [ / ]</span><span class="message-timestamp">05/03/2026 08:27 AM</span></div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/758999095070687284/70e18007dbd33933f77d901a0db8eb19.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">red thingy [ / ]</span><span class="message-timestamp">05/03/2026 08:27 AM</span></div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/758999095070687284/70e18007dbd33933f77d901a0db8eb19.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">red thingy [ / ]</span><span class="message-timestamp">05/03/2026 08:27 AM</span></div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/1318136065827278848/1b99272492c2f16e9a354aee9807229c.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">jester✨</span><span class="message-timestamp">05/03/2026 08:27 AM</span></div><div class="message-text">any infi=o?</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/1045285939615907900/7d88078808ca04041e963eeed4660a31.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Gamma</span><span class="message-timestamp">05/03/2026 08:27 AM</span></div><div class="message-text">Just pub atp</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/1318136065827278848/1b99272492c2f16e9a354aee9807229c.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">jester✨</span><span class="message-timestamp">05/03/2026 08:27 AM</span></div><div class="message-text">info*</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/1318136065827278848/1b99272492c2f16e9a354aee9807229c.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">jester✨</span><span class="message-timestamp">05/03/2026 08:27 AM</span></div><div class="message-text">wow</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/1045285939615907900/7d88078808ca04041e963eeed4660a31.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Gamma</span><span class="message-timestamp">05/03/2026 08:27 AM</span></div><div class="message-text">&lt;:goober:1266790057034125495&gt;</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/925033181990756392/65398307c75dfb3f0f26b8b2702f4004.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">eepie / boobevil&#x27;s wifey</span><span class="message-timestamp">05/03/2026 08:28 AM</span></div><div class="message-text">oh gamma</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/758999095070687284/70e18007dbd33933f77d901a0db8eb19.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">red thingy [ / ]</span><span class="message-timestamp">05/03/2026 08:28 AM</span></div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/925033181990756392/65398307c75dfb3f0f26b8b2702f4004.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">eepie / boobevil&#x27;s wifey</span><span class="message-timestamp">05/03/2026 08:28 AM</span></div><div class="message-text">I thought ts was gh</div><div class="reactions"><div class="reaction"><span class="reaction-emoji">😭</span><span class="reaction-count">1</span></div></div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/1045285939615907900/7d88078808ca04041e963eeed4660a31.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Gamma</span><span class="message-timestamp">05/03/2026 08:28 AM</span></div><div class="message-text">Haha😭</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/1045285939615907900/7d88078808ca04041e963eeed4660a31.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Gamma</span><span class="message-timestamp">05/03/2026 08:28 AM</span></div><div class="message-text">No info🔥</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/758999095070687284/70e18007dbd33933f77d901a0db8eb19.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">red thingy [ / ]</span><span class="message-timestamp">05/03/2026 08:28 AM</span></div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/758999095070687284/70e18007dbd33933f77d901a0db8eb19.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">red thingy [ / ]</span><span class="message-timestamp">05/03/2026 08:28 AM</span></div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/758999095070687284/70e18007dbd33933f77d901a0db8eb19.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">red thingy [ / ]</span><span class="message-timestamp">05/03/2026 08:28 AM</span></div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/758999095070687284/70e18007dbd33933f77d901a0db8eb19.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">red thingy [ / ]</span><span class="message-timestamp">05/03/2026 08:28 AM</span></div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/758999095070687284/70e18007dbd33933f77d901a0db8eb19.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">red thingy [ / ]</span><span class="message-timestamp">05/03/2026 08:28 AM</span></div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/758999095070687284/70e18007dbd33933f77d901a0db8eb19.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">red thingy [ / ]</span><span class="message-timestamp">05/03/2026 08:29 AM</span></div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/758999095070687284/70e18007dbd33933f77d901a0db8eb19.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">red thingy [ / ]</span><span class="message-timestamp">05/03/2026 08:29 AM</span></div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/758999095070687284/70e18007dbd33933f77d901a0db8eb19.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">red thingy [ / ]</span><span class="message-timestamp">05/03/2026 08:29 AM</span></div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/758999095070687284/70e18007dbd33933f77d901a0db8eb19.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">red thingy [ / ]</span><span class="message-timestamp">05/03/2026 08:29 AM</span></div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/758999095070687284/70e18007dbd33933f77d901a0db8eb19.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">red thingy [ / ]</span><span class="message-timestamp">05/03/2026 08:29 AM</span></div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/758999095070687284/70e18007dbd33933f77d901a0db8eb19.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">red thingy [ / ]</span><span class="message-timestamp">05/03/2026 08:29 AM</span></div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/758999095070687284/70e18007dbd33933f77d901a0db8eb19.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">red thingy [ / ]</span><span class="message-timestamp">05/03/2026 08:29 AM</span></div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/758999095070687284/70e18007dbd33933f77d901a0db8eb19.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">red thingy [ / ]</span><span class="message-timestamp">05/03/2026 08:30 AM</span></div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/758999095070687284/70e18007dbd33933f77d901a0db8eb19.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">red thingy [ / ]</span><span class="message-timestamp">05/03/2026 08:30 AM</span></div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/758999095070687284/70e18007dbd33933f77d901a0db8eb19.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">red thingy [ / ]</span><span class="message-timestamp">05/03/2026 08:30 AM</span></div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/758999095070687284/70e18007dbd33933f77d901a0db8eb19.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">red thingy [ / ]</span><span class="message-timestamp">05/03/2026 08:30 AM</span></div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/758999095070687284/70e18007dbd33933f77d901a0db8eb19.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">red thingy [ / ]</span><span class="message-timestamp">05/03/2026 08:30 AM</span></div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/758999095070687284/70e18007dbd33933f77d901a0db8eb19.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">red thingy [ / ]</span><span class="message-timestamp">05/03/2026 08:31 AM</span></div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/1045285939615907900/7d88078808ca04041e963eeed4660a31.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Gamma</span><span class="message-timestamp">05/03/2026 08:31 AM</span></div><div class="message-text">&lt;:goober:1266790057034125495&gt;</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/896190315025813574/9dda798b316e3aa751f9c751c982c810.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">sYlvrin</span><span class="message-timestamp">05/03/2026 08:31 AM</span></div><div class="message-text">on eppie</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/1318136065827278848/1b99272492c2f16e9a354aee9807229c.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">jester✨</span><span class="message-timestamp">05/03/2026 08:31 AM</span></div><div class="message-text">sooo i claim dusk</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/925033181990756392/65398307c75dfb3f0f26b8b2702f4004.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">eepie / boobevil&#x27;s wifey</span><span class="message-timestamp">05/03/2026 08:31 AM</span></div><div class="message-text">jello was invised by moi n2</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/1318136065827278848/1b99272492c2f16e9a354aee9807229c.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">jester✨</span><span class="message-timestamp">05/03/2026 08:31 AM</span></div><div class="message-text">via?</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/896190315025813574/9dda798b316e3aa751f9c751c982c810.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">sYlvrin</span><span class="message-timestamp">05/03/2026 08:31 AM</span></div><div class="message-text">det</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/1318136065827278848/1b99272492c2f16e9a354aee9807229c.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">jester✨</span><span class="message-timestamp">05/03/2026 08:31 AM</span></div><div class="message-text">is det necro on</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/758999095070687284/70e18007dbd33933f77d901a0db8eb19.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">red thingy [ / ]</span><span class="message-timestamp">05/03/2026 08:31 AM</span></div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/818094711167909898/30e9525160e80943e3afa195a1b87732.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Xenon</span><span class="message-timestamp">05/03/2026 08:31 AM</span></div><div class="message-text">well</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/896190315025813574/9dda798b316e3aa751f9c751c982c810.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">sYlvrin</span><span class="message-timestamp">05/03/2026 08:31 AM</span></div><div class="message-text"><span class="mention">@alox #BroMuted</span> on eepie</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/1437322018101002382/7a926bdd03d03a22bf4b7bd0e98a68d6.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Compass [ / ]</span><span class="message-timestamp">05/03/2026 08:31 AM</span></div><div class="message-text">&lt;:bruh_cat:1342218817543082034&gt;</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/925033181990756392/65398307c75dfb3f0f26b8b2702f4004.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">eepie / boobevil&#x27;s wifey</span><span class="message-timestamp">05/03/2026 08:31 AM</span></div><div class="message-text">2 nexro?</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/925033181990756392/65398307c75dfb3f0f26b8b2702f4004.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">eepie / boobevil&#x27;s wifey</span><span class="message-timestamp">05/03/2026 08:31 AM</span></div><div class="message-text">ure fake</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/925033181990756392/65398307c75dfb3f0f26b8b2702f4004.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">eepie / boobevil&#x27;s wifey</span><span class="message-timestamp">05/03/2026 08:31 AM</span></div><div class="message-text">det fake</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/925033181990756392/65398307c75dfb3f0f26b8b2702f4004.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">eepie / boobevil&#x27;s wifey</span><span class="message-timestamp">05/03/2026 08:31 AM</span></div><div class="message-text">on, syl</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/896190315025813574/9dda798b316e3aa751f9c751c982c810.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">sYlvrin</span><span class="message-timestamp">05/03/2026 08:31 AM</span></div><div class="message-text">i am not</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/1042526807586508871/35a4ff16f42b06a2f3a03388eabd6148.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">alox #BroMuted</span><span class="message-timestamp">05/03/2026 08:31 AM</span></div><div class="message-text">Im mort.</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/896190315025813574/9dda798b316e3aa751f9c751c982c810.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">sYlvrin</span><span class="message-timestamp">05/03/2026 08:31 AM</span></div><div class="message-text">i am detective</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/925033181990756392/65398307c75dfb3f0f26b8b2702f4004.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">eepie / boobevil&#x27;s wifey</span><span class="message-timestamp">05/03/2026 08:31 AM</span></div><div class="message-text">det necro u will nvr find gf</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/818094711167909898/30e9525160e80943e3afa195a1b87732.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Xenon</span><span class="message-timestamp">05/03/2026 08:31 AM</span></div><div class="message-text">vote <span class="mention">@Food (#1 neko fan)</span></div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/925033181990756392/65398307c75dfb3f0f26b8b2702f4004.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">eepie / boobevil&#x27;s wifey</span><span class="message-timestamp">05/03/2026 08:31 AM</span></div><div class="message-text">plus I&#x27;m alc</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/818094711167909898/30e9525160e80943e3afa195a1b87732.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Xenon</span><span class="message-timestamp">05/03/2026 08:31 AM</span></div><div class="message-text">U can</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/925033181990756392/65398307c75dfb3f0f26b8b2702f4004.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">eepie / boobevil&#x27;s wifey</span><span class="message-timestamp">05/03/2026 08:31 AM</span></div><div class="message-text">I&#x27;m lethaling u now</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/896190315025813574/9dda798b316e3aa751f9c751c982c810.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">sYlvrin</span><span class="message-timestamp">05/03/2026 08:32 AM</span></div><div class="message-text">not ale</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/758999095070687284/70e18007dbd33933f77d901a0db8eb19.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">red thingy [ / ]</span><span class="message-timestamp">05/03/2026 08:32 AM</span></div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/758999095070687284/70e18007dbd33933f77d901a0db8eb19.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">red thingy [ / ]</span><span class="message-timestamp">05/03/2026 08:32 AM</span></div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/896190315025813574/9dda798b316e3aa751f9c751c982c810.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">sYlvrin</span><span class="message-timestamp">05/03/2026 08:32 AM</span></div><div class="message-text">not alex</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/758999095070687284/70e18007dbd33933f77d901a0db8eb19.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">red thingy [ / ]</span><span class="message-timestamp">05/03/2026 08:32 AM</span></div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/896190315025813574/9dda798b316e3aa751f9c751c982c810.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">sYlvrin</span><span class="message-timestamp">05/03/2026 08:32 AM</span></div><div class="message-text">it is not jello</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/896190315025813574/9dda798b316e3aa751f9c751c982c810.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">sYlvrin</span><span class="message-timestamp">05/03/2026 08:32 AM</span></div><div class="message-text">it is u</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/758999095070687284/70e18007dbd33933f77d901a0db8eb19.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">red thingy [ / ]</span><span class="message-timestamp">05/03/2026 08:32 AM</span></div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/758999095070687284/70e18007dbd33933f77d901a0db8eb19.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">red thingy [ / ]</span><span class="message-timestamp">05/03/2026 08:32 AM</span></div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/758999095070687284/70e18007dbd33933f77d901a0db8eb19.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">red thingy [ / ]</span><span class="message-timestamp">05/03/2026 08:33 AM</span></div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/758999095070687284/70e18007dbd33933f77d901a0db8eb19.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">red thingy [ / ]</span><span class="message-timestamp">05/03/2026 08:33 AM</span></div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/758999095070687284/70e18007dbd33933f77d901a0db8eb19.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">red thingy [ / ]</span><span class="message-timestamp">05/03/2026 08:33 AM</span></div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/758999095070687284/70e18007dbd33933f77d901a0db8eb19.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">red thingy [ / ]</span><span class="message-timestamp">05/03/2026 08:33 AM</span></div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/925033181990756392/65398307c75dfb3f0f26b8b2702f4004.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">eepie / boobevil&#x27;s wifey</span><span class="message-timestamp">05/03/2026 08:33 AM</span></div><div class="message-text">SYL ON TRUTH</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/896190315025813574/9dda798b316e3aa751f9c751c982c810.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">sYlvrin</span><span class="message-timestamp">05/03/2026 08:33 AM</span></div><div class="message-text">on eepie</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/925033181990756392/65398307c75dfb3f0f26b8b2702f4004.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">eepie / boobevil&#x27;s wifey</span><span class="message-timestamp">05/03/2026 08:33 AM</span></div><div class="message-text">n2 I invised jello</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/925033181990756392/65398307c75dfb3f0f26b8b2702f4004.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">eepie / boobevil&#x27;s wifey</span><span class="message-timestamp">05/03/2026 08:33 AM</span></div><div class="message-text">so no kill</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/1318136065827278848/1b99272492c2f16e9a354aee9807229c.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">jester✨</span><span class="message-timestamp">05/03/2026 08:33 AM</span></div><div class="message-text">hmmm</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/896190315025813574/9dda798b316e3aa751f9c751c982c810.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">sYlvrin</span><span class="message-timestamp">05/03/2026 08:33 AM</span></div><div class="message-text"><span class="mention">@jester✨</span></div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/925033181990756392/65398307c75dfb3f0f26b8b2702f4004.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">eepie / boobevil&#x27;s wifey</span><span class="message-timestamp">05/03/2026 08:33 AM</span></div><div class="message-text">they were on jello lol</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/925033181990756392/65398307c75dfb3f0f26b8b2702f4004.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">eepie / boobevil&#x27;s wifey</span><span class="message-timestamp">05/03/2026 08:33 AM</span></div><div class="message-text">JELLO I ALWAYS SAVE U N2</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/896190315025813574/9dda798b316e3aa751f9c751c982c810.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">sYlvrin</span><span class="message-timestamp">05/03/2026 08:33 AM</span></div><div class="message-text">IS EEPIE</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/896190315025813574/9dda798b316e3aa751f9c751c982c810.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">sYlvrin</span><span class="message-timestamp">05/03/2026 08:33 AM</span></div><div class="message-text">i am detective</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/925033181990756392/65398307c75dfb3f0f26b8b2702f4004.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">eepie / boobevil&#x27;s wifey</span><span class="message-timestamp">05/03/2026 08:33 AM</span></div><div class="message-text">cuz lowkey u keep dying</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/758999095070687284/70e18007dbd33933f77d901a0db8eb19.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">red thingy [ / ]</span><span class="message-timestamp">05/03/2026 08:33 AM</span></div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/896190315025813574/9dda798b316e3aa751f9c751c982c810.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">sYlvrin</span><span class="message-timestamp">05/03/2026 08:33 AM</span></div><div class="message-text"><span class="mention">@jester✨</span> on eepie</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/925033181990756392/65398307c75dfb3f0f26b8b2702f4004.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">eepie / boobevil&#x27;s wifey</span><span class="message-timestamp">05/03/2026 08:33 AM</span></div><div class="message-text">bro ur necro is on</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/1318136065827278848/1b99272492c2f16e9a354aee9807229c.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">jester✨</span><span class="message-timestamp">05/03/2026 08:33 AM</span></div><div class="message-text">wow ty</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/925033181990756392/65398307c75dfb3f0f26b8b2702f4004.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">eepie / boobevil&#x27;s wifey</span><span class="message-timestamp">05/03/2026 08:33 AM</span></div><div class="message-text">how can u catch me</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/896190315025813574/9dda798b316e3aa751f9c751c982c810.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">sYlvrin</span><span class="message-timestamp">05/03/2026 08:34 AM</span></div><div class="message-text">way before probly</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/896190315025813574/9dda798b316e3aa751f9c751c982c810.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">sYlvrin</span><span class="message-timestamp">05/03/2026 08:34 AM</span></div><div class="message-text">ON EEPIE</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/925033181990756392/65398307c75dfb3f0f26b8b2702f4004.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">eepie / boobevil&#x27;s wifey</span><span class="message-timestamp">05/03/2026 08:34 AM</span></div><div class="message-text">det necro u can&#x27;t find gf</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/925033181990756392/65398307c75dfb3f0f26b8b2702f4004.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">eepie / boobevil&#x27;s wifey</span><span class="message-timestamp">05/03/2026 08:34 AM</span></div><div class="message-text">😭</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/925033181990756392/65398307c75dfb3f0f26b8b2702f4004.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">eepie / boobevil&#x27;s wifey</span><span class="message-timestamp">05/03/2026 08:34 AM</span></div><div class="message-text">IM ALC GNG</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/896190315025813574/9dda798b316e3aa751f9c751c982c810.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">sYlvrin</span><span class="message-timestamp">05/03/2026 08:34 AM</span></div><div class="message-text"><span class="mention">@jester✨</span> are u dusk right?</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/758999095070687284/70e18007dbd33933f77d901a0db8eb19.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">red thingy [ / ]</span><span class="message-timestamp">05/03/2026 08:34 AM</span></div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/758999095070687284/70e18007dbd33933f77d901a0db8eb19.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">red thingy [ / ]</span><span class="message-timestamp">05/03/2026 08:34 AM</span></div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/925033181990756392/65398307c75dfb3f0f26b8b2702f4004.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">eepie / boobevil&#x27;s wifey</span><span class="message-timestamp">05/03/2026 08:34 AM</span></div><div class="message-text">ON SYL VIA TRUTH</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/925033181990756392/65398307c75dfb3f0f26b8b2702f4004.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">eepie / boobevil&#x27;s wifey</span><span class="message-timestamp">05/03/2026 08:34 AM</span></div><div class="message-text">bruh</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/925033181990756392/65398307c75dfb3f0f26b8b2702f4004.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">eepie / boobevil&#x27;s wifey</span><span class="message-timestamp">05/03/2026 08:34 AM</span></div><div class="message-text">jello inno I will lethal</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/925033181990756392/65398307c75dfb3f0f26b8b2702f4004.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">eepie / boobevil&#x27;s wifey</span><span class="message-timestamp">05/03/2026 08:34 AM</span></div><div class="message-text">Alex got TRUTHED</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/896190315025813574/9dda798b316e3aa751f9c751c982c810.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">sYlvrin</span><span class="message-timestamp">05/03/2026 08:34 AM</span></div><div class="message-text">neh</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/1318136065827278848/1b99272492c2f16e9a354aee9807229c.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">jester✨</span><span class="message-timestamp">05/03/2026 08:34 AM</span></div><div class="message-text">if this is inno, maf would win tbh</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/896190315025813574/9dda798b316e3aa751f9c751c982c810.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">sYlvrin</span><span class="message-timestamp">05/03/2026 08:34 AM</span></div><div class="message-text">guilty</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/925033181990756392/65398307c75dfb3f0f26b8b2702f4004.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">eepie / boobevil&#x27;s wifey</span><span class="message-timestamp">05/03/2026 08:34 AM</span></div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/896190315025813574/9dda798b316e3aa751f9c751c982c810.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">sYlvrin</span><span class="message-timestamp">05/03/2026 08:34 AM</span></div><div class="message-text">im gonna cry if it is u</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/925033181990756392/65398307c75dfb3f0f26b8b2702f4004.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">eepie / boobevil&#x27;s wifey</span><span class="message-timestamp">05/03/2026 08:34 AM</span></div><div class="message-text">how to see on det bruh</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/896190315025813574/9dda798b316e3aa751f9c751c982c810.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">sYlvrin</span><span class="message-timestamp">05/03/2026 08:34 AM</span></div><div class="message-text">idk? i did on u on necro so idk</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/1318136065827278848/1b99272492c2f16e9a354aee9807229c.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">jester✨</span><span class="message-timestamp">05/03/2026 08:34 AM</span></div><div class="message-text">NOBODY CCED DUSK</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/896190315025813574/9dda798b316e3aa751f9c751c982c810.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">sYlvrin</span><span class="message-timestamp">05/03/2026 08:35 AM</span></div><div class="message-text">but it is not me</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/758999095070687284/70e18007dbd33933f77d901a0db8eb19.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">red thingy [ / ]</span><span class="message-timestamp">05/03/2026 08:35 AM</span></div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/925033181990756392/65398307c75dfb3f0f26b8b2702f4004.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">eepie / boobevil&#x27;s wifey</span><span class="message-timestamp">05/03/2026 08:35 AM</span></div><div class="message-text">alc priority</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/896190315025813574/9dda798b316e3aa751f9c751c982c810.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">sYlvrin</span><span class="message-timestamp">05/03/2026 08:35 AM</span></div><div class="message-text">guilty</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/925033181990756392/65398307c75dfb3f0f26b8b2702f4004.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">eepie / boobevil&#x27;s wifey</span><span class="message-timestamp">05/03/2026 08:35 AM</span></div><div class="message-text">alc priority</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/925033181990756392/65398307c75dfb3f0f26b8b2702f4004.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">eepie / boobevil&#x27;s wifey</span><span class="message-timestamp">05/03/2026 08:35 AM</span></div><div class="message-text">INNO BRO LEMME LETHAL</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/1318136065827278848/1b99272492c2f16e9a354aee9807229c.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">jester✨</span><span class="message-timestamp">05/03/2026 08:35 AM</span></div><div class="message-text">hmm</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/925033181990756392/65398307c75dfb3f0f26b8b2702f4004.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">eepie / boobevil&#x27;s wifey</span><span class="message-timestamp">05/03/2026 08:35 AM</span></div><div class="message-text">ure sealing ur fate here</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/1318136065827278848/1b99272492c2f16e9a354aee9807229c.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">jester✨</span><span class="message-timestamp">05/03/2026 08:35 AM</span></div><div class="message-text">dw inno for u</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/925033181990756392/65398307c75dfb3f0f26b8b2702f4004.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">eepie / boobevil&#x27;s wifey</span><span class="message-timestamp">05/03/2026 08:35 AM</span></div><div class="message-text">oki</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/896190315025813574/9dda798b316e3aa751f9c751c982c810.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">sYlvrin</span><span class="message-timestamp">05/03/2026 08:35 AM</span></div><div class="message-text">GUILTY</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/925033181990756392/65398307c75dfb3f0f26b8b2702f4004.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">eepie / boobevil&#x27;s wifey</span><span class="message-timestamp">05/03/2026 08:35 AM</span></div><div class="message-text">I think ure lying</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/925033181990756392/65398307c75dfb3f0f26b8b2702f4004.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">eepie / boobevil&#x27;s wifey</span><span class="message-timestamp">05/03/2026 08:35 AM</span></div><div class="message-text">but issok jello</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/925033181990756392/65398307c75dfb3f0f26b8b2702f4004.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">eepie / boobevil&#x27;s wifey</span><span class="message-timestamp">05/03/2026 08:35 AM</span></div><div class="message-text">&lt;:Cute:1429433653875838997&gt;</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/1318136065827278848/1b99272492c2f16e9a354aee9807229c.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">jester✨</span><span class="message-timestamp">05/03/2026 08:35 AM</span></div><div class="message-text">&lt;:angel:1238238945968656405&gt;</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/896190315025813574/9dda798b316e3aa751f9c751c982c810.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">sYlvrin</span><span class="message-timestamp">05/03/2026 08:35 AM</span></div><div class="message-text">&lt;:angel:1238238945968656405&gt;</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/925033181990756392/65398307c75dfb3f0f26b8b2702f4004.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">eepie / boobevil&#x27;s wifey</span><span class="message-timestamp">05/03/2026 08:35 AM</span></div><div class="message-text">we r staying up tbh</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/925033181990756392/65398307c75dfb3f0f26b8b2702f4004.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">eepie / boobevil&#x27;s wifey</span><span class="message-timestamp">05/03/2026 08:35 AM</span></div><div class="message-text">I bet dusk did that</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/758999095070687284/70e18007dbd33933f77d901a0db8eb19.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">red thingy [ / ]</span><span class="message-timestamp">05/03/2026 08:35 AM</span></div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/758999095070687284/70e18007dbd33933f77d901a0db8eb19.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">red thingy [ / ]</span><span class="message-timestamp">05/03/2026 08:35 AM</span></div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/925033181990756392/65398307c75dfb3f0f26b8b2702f4004.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">eepie / boobevil&#x27;s wifey</span><span class="message-timestamp">05/03/2026 08:35 AM</span></div><div class="message-text">&lt;:farm_xhKekw:673743955472678912&gt;</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/896190315025813574/9dda798b316e3aa751f9c751c982c810.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">sYlvrin</span><span class="message-timestamp">05/03/2026 08:35 AM</span></div><div class="message-text">guilty</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/758999095070687284/70e18007dbd33933f77d901a0db8eb19.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">red thingy [ / ]</span><span class="message-timestamp">05/03/2026 08:35 AM</span></div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/1318136065827278848/1b99272492c2f16e9a354aee9807229c.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">jester✨</span><span class="message-timestamp">05/03/2026 08:35 AM</span></div><div class="message-text">W</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/896190315025813574/9dda798b316e3aa751f9c751c982c810.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">sYlvrin</span><span class="message-timestamp">05/03/2026 08:35 AM</span></div><div class="message-text">lmao</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/758999095070687284/70e18007dbd33933f77d901a0db8eb19.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">red thingy [ / ]</span><span class="message-timestamp">05/03/2026 08:35 AM</span></div></div></div></div></div></body></html>
