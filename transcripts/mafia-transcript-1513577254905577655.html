@@ -1,0 +1,580 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Transcript - #mafia</title>
+        <style>
+            * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+            }
+            
+            body {
+                font-family: "gg sans", "Noto Sans", Whitney, "Helvetica Neue", Helvetica, Arial, sans-serif;
+                background-color: #313338;
+                color: #dbdee1;
+                padding: 0;
+                line-height: 1.5;
+            }
+            
+            .transcript-container {
+                max-width: 1180px;
+                margin: 0 auto;
+                background-color: #313338;
+                overflow: hidden;
+            }
+            
+            .header {
+                background-color: #2b2d31;
+                padding: 16px 20px;
+                border-bottom: 1px solid #1f2023;
+                display: flex;
+                align-items: center;
+                gap: 12px;
+                position: sticky;
+                top: 0;
+                z-index: 2;
+            }
+            
+            .header-icon {
+                width: 40px;
+                height: 40px;
+                border-radius: 50%;
+                background-color: #5865f2;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 20px;
+                font-weight: bold;
+            }
+            
+            .header-info h1 {
+                font-size: 20px;
+                font-weight: 600;
+                margin-bottom: 4px;
+            }
+            
+            .header-info p {
+                font-size: 14px;
+                color: #b9bbbe;
+            }
+            
+            .messages-container {
+                padding: 16px 0 32px;
+            }
+            
+            .message {
+                display: flex;
+                padding: 2px 48px 2px 16px;
+                margin: 0;
+                position: relative;
+            }
+            
+            .message:hover {
+                background-color: #2e3035;
+            }
+
+            .message-compact {
+                padding-top: 0;
+                padding-bottom: 0;
+            }
+            
+            .message-avatar {
+                width: 40px;
+                height: 40px;
+                border-radius: 50%;
+                margin-right: 16px;
+                margin-top: 2px;
+                flex-shrink: 0;
+                background-color: #5865f2;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-weight: 600;
+                color: white;
+            }
+
+            .message-compact .message-avatar {
+                background: transparent;
+                color: #949ba4;
+                font-size: 11px;
+                font-weight: 500;
+                opacity: 0;
+            }
+
+            .message-compact:hover .message-avatar {
+                opacity: 1;
+            }
+            
+            .message-avatar img {
+                width: 100%;
+                height: 100%;
+                border-radius: 50%;
+                object-fit: cover;
+            }
+            
+            .message-content {
+                flex: 1;
+                min-width: 0;
+            }
+            
+            .message-header {
+                display: flex;
+                align-items: baseline;
+                gap: 8px;
+                margin-bottom: 0;
+            }
+
+            .message-compact .message-header {
+                display: none;
+            }
+            
+            .message-author {
+                font-weight: 600;
+                font-size: 16px;
+                color: #ffffff;
+            }
+
+            .bot-tag {
+                background-color: #5865f2;
+                border-radius: 3px;
+                color: #ffffff;
+                font-size: 10px;
+                font-weight: 700;
+                line-height: 15px;
+                padding: 0 4px;
+                text-transform: uppercase;
+            }
+            
+            .message-timestamp {
+                font-size: 12px;
+                color: #949ba4;
+            }
+            
+            .message-text {
+                color: #dbdee1;
+                font-size: 16px;
+                line-height: 1.375;
+                word-wrap: break-word;
+                white-space: normal;
+            }
+            
+            .message-text a {
+                color: #00b0f4;
+                text-decoration: none;
+            }
+
+            .custom-emoji {
+                height: 1.375em;
+                object-fit: contain;
+                vertical-align: -0.25em;
+                width: 1.375em;
+            }
+            
+            .message-text a:hover {
+                text-decoration: underline;
+            }
+            
+            .message-attachments {
+                margin-top: 8px;
+            }
+            
+            .attachment {
+                display: inline-block;
+                margin: 4px 0;
+            }
+            
+            .attachment img {
+                max-width: 400px;
+                max-height: 300px;
+                border-radius: 4px;
+                cursor: pointer;
+            }
+            
+            .attachment-file {
+                background-color: #2b2d31;
+                border: 1px solid #1f2023;
+                border-radius: 4px;
+                padding: 10px 16px;
+                display: inline-flex;
+                align-items: center;
+                gap: 8px;
+                text-decoration: none;
+                color: #00b0f4;
+            }
+            
+            .attachment-file:hover {
+                background-color: #393c43;
+            }
+            
+            .embed {
+                margin-top: 8px;
+                max-width: 520px;
+                border-radius: 4px;
+                background-color: #2b2d31;
+                display: flex;
+                overflow: hidden;
+            }
+            
+            .embed-color-bar {
+                width: 4px;
+                flex-shrink: 0;
+                background-color: #5865f2;
+            }
+            
+            .embed-content {
+                padding: 16px;
+                flex: 1;
+            }
+            
+            .embed-author {
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                margin-bottom: 8px;
+                font-size: 14px;
+                font-weight: 600;
+            }
+            
+            .embed-author img {
+                width: 24px;
+                height: 24px;
+                border-radius: 50%;
+            }
+            
+            .embed-title {
+                font-size: 16px;
+                font-weight: 600;
+                margin-bottom: 8px;
+                color: #00b0f4;
+            }
+            
+            .embed-description {
+                font-size: 14px;
+                line-height: 1.5;
+                margin-bottom: 12px;
+                white-space: pre-wrap;
+            }
+
+            .components {
+                margin-top: 4px;
+                max-width: 720px;
+            }
+
+            .component-container {
+                background-color: #2b2d31;
+                border: 1px solid #1f2023;
+                border-left: 4px solid #4e5058;
+                border-radius: 4px;
+                margin-top: 8px;
+                max-width: 720px;
+                padding: 12px 16px;
+            }
+
+            .component-text {
+                color: #dbdee1;
+                font-size: 16px;
+                line-height: 1.375;
+                margin: 4px 0;
+                white-space: normal;
+                word-wrap: break-word;
+            }
+
+            .component-text h1,
+            .component-text h2,
+            .component-text h3 {
+                color: #f2f3f5;
+                font-weight: 700;
+                line-height: 1.25;
+                margin: 4px 0 8px;
+            }
+
+            .component-text h1 {
+                font-size: 24px;
+            }
+
+            .component-text h2 {
+                font-size: 20px;
+            }
+
+            .component-text h3 {
+                font-size: 16px;
+            }
+
+            .component-section {
+                display: flex;
+                gap: 16px;
+                margin: 4px 0;
+            }
+
+            .component-section-content {
+                flex: 1;
+                min-width: 0;
+            }
+
+            .component-section-accessory {
+                flex-shrink: 0;
+            }
+
+            .component-thumbnail {
+                display: block;
+                max-height: 80px;
+                max-width: 80px;
+                border-radius: 4px;
+                object-fit: cover;
+            }
+
+            .component-media-gallery {
+                display: grid;
+                gap: 4px;
+                grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+                margin-top: 8px;
+                max-width: 560px;
+            }
+
+            .component-media-gallery img,
+            .component-media-gallery video {
+                background-color: #1e1f22;
+                border-radius: 4px;
+                display: block;
+                max-height: 360px;
+                max-width: 100%;
+                object-fit: cover;
+                width: 100%;
+            }
+
+            .component-separator {
+                border-top: 1px solid #3f4147;
+                height: 1px;
+                margin: 10px 0;
+            }
+
+            .component-separator-spacer {
+                border-top: 0;
+                height: 8px;
+            }
+
+            .component-action-row {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 8px;
+                margin-top: 8px;
+            }
+
+            .component-button,
+            .component-select {
+                align-items: center;
+                border: 0;
+                border-radius: 3px;
+                color: #ffffff;
+                display: inline-flex;
+                font-size: 14px;
+                font-weight: 500;
+                gap: 6px;
+                min-height: 32px;
+                padding: 2px 16px;
+                text-decoration: none;
+            }
+
+            .component-button-primary { background-color: #5865f2; }
+            .component-button-secondary,
+            .component-select { background-color: #4e5058; }
+            .component-button-success { background-color: #248046; }
+            .component-button-danger { background-color: #da373c; }
+            .component-button-link { background-color: #4e5058; }
+            .component-button-disabled {
+                cursor: not-allowed;
+                opacity: 0.55;
+            }
+
+            .component-file {
+                align-items: center;
+                background-color: #2b2d31;
+                border: 1px solid #1f2023;
+                border-radius: 4px;
+                color: #00a8fc;
+                display: inline-flex;
+                gap: 8px;
+                margin-top: 8px;
+                padding: 10px 12px;
+                text-decoration: none;
+            }
+            
+            .embed-fields {
+                display: grid;
+                gap: 8px;
+            }
+            
+            .embed-field {
+                min-width: 0;
+            }
+            
+            .embed-field-inline {
+                display: inline-block;
+                width: calc(33.33% - 8px);
+                vertical-align: top;
+            }
+            
+            .embed-field-name {
+                font-size: 14px;
+                font-weight: 600;
+                margin-bottom: 2px;
+                color: #ffffff;
+            }
+            
+            .embed-field-value {
+                font-size: 14px;
+                line-height: 1.5;
+                white-space: pre-wrap;
+            }
+            
+            .embed-thumbnail {
+                margin-left: 16px;
+                flex-shrink: 0;
+            }
+            
+            .embed-thumbnail img {
+                max-width: 80px;
+                max-height: 80px;
+                border-radius: 4px;
+            }
+            
+            .embed-image {
+                margin-top: 12px;
+            }
+            
+            .embed-image img {
+                max-width: 100%;
+                border-radius: 4px;
+            }
+            
+            .embed-footer {
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                margin-top: 12px;
+                font-size: 12px;
+                color: #72767d;
+            }
+            
+            .embed-footer img {
+                width: 20px;
+                height: 20px;
+                border-radius: 50%;
+            }
+            
+            .reactions {
+                display: flex;
+                gap: 4px;
+                margin-top: 8px;
+                flex-wrap: wrap;
+            }
+            
+            .reaction {
+                background-color: #2f3136;
+                border: 1px solid #2f3136;
+                border-radius: 8px;
+                padding: 4px 8px;
+                display: flex;
+                align-items: center;
+                gap: 4px;
+                font-size: 14px;
+                cursor: pointer;
+            }
+            
+            .reaction:hover {
+                border-color: #4f545c;
+            }
+            
+            .reaction-emoji {
+                width: 16px;
+                height: 16px;
+            }
+            
+            .reaction-count {
+                color: #b9bbbe;
+                font-weight: 500;
+            }
+            
+            .system-message {
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                padding: 8px 16px;
+                margin: 16px 0;
+                color: #72767d;
+                font-size: 14px;
+            }
+            
+            .system-message-icon {
+                width: 16px;
+                height: 16px;
+                flex-shrink: 0;
+            }
+            
+            .mention {
+                background-color: rgba(88, 101, 242, 0.3);
+                color: #dee0fc;
+                padding: 0 2px;
+                border-radius: 3px;
+                font-weight: 500;
+            }
+            
+            .mention:hover {
+                background-color: #5865f2;
+                color: #ffffff;
+            }
+            
+            .code-inline {
+                background-color: #2f3136;
+                padding: 2px 4px;
+                border-radius: 3px;
+                font-family: Consolas, "Andale Mono WT", "Andale Mono", "Lucida Console", monospace;
+                font-size: 14px;
+            }
+            
+            .code-block {
+                background-color: #2f3136;
+                border: 1px solid #202225;
+                border-radius: 4px;
+                padding: 12px;
+                margin: 8px 0;
+                font-family: Consolas, "Andale Mono WT", "Andale Mono", "Lucida Console", monospace;
+                font-size: 14px;
+                overflow-x: auto;
+            }
+            
+            .spoiler {
+                background-color: #202225;
+                color: transparent;
+                padding: 0 2px;
+                border-radius: 3px;
+                cursor: pointer;
+                transition: all 0.1s;
+            }
+            
+            .spoiler:hover {
+                background-color: rgba(255, 255, 255, 0.1);
+                color: #dcddde;
+            }
+            
+            .divider {
+                display: flex;
+                align-items: center;
+                margin: 20px 0;
+                color: #72767d;
+                font-size: 12px;
+                font-weight: 600;
+                text-transform: uppercase;
+            }
+            
+            .divider::before,
+            .divider::after {
+                content: "";
+                flex: 1;
+                height: 1px;
+                background-color: #4f545c;
+            }
+            
+            .divider-text {
+                padding: 0 16px;
+            }
+        </style>
+        </head><body><div class="transcript-container"><div class="header"><div class="header-icon">#</div><div class="header-info"><h1>#mafia</h1><p>171 messages • Generated on June 08, 2026 at 04:25 PM</p></div></div><div class="messages-container"><div class="divider"><span class="divider-text">June 08, 2026</span></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/758999095070687284/70e18007dbd33933f77d901a0db8eb19.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Bugged Remastered</span><span class="bot-tag">BOT</span><span class="message-timestamp">06/08/2026 04:15 PM</span></div><div class="components"><div class="component-text"><span class="mention">@I love Yuno.fan and the KOG</span> <span class="mention">@Soap</span> <span class="mention">@Your Uncle 🇵🇸</span> <span class="mention">@guora</span> <span class="mention">@ꨄ𝐅𝐑𝐎𝐆𝐆𝐈𝐄ꨄ</span> <span class="mention">@Manas Ciel (Queen of Idiots)</span> <span class="mention">@ibuprofen</span> <span class="mention">@TRUEGAMER😎😎</span> <span class="mention">@Harmony</span> <span class="mention">@Stars🇵🇸</span> <span class="mention">@Jeffery “yuno.fan” Epstein</span></div></div></div></div><div class="message message-compact"><div class="message-avatar">4:15 PM</div><div class="message-content"><div class="message-header"><span class="message-author">Bugged Remastered</span><span class="bot-tag">BOT</span><span class="message-timestamp">06/08/2026 04:15 PM</span></div><div class="components"><div class="component-container" style="border-left-color: #9c59b6;"><div class="component-text"><h3>🖐️ Welcome to Mafia!</h3></div><div class="component-text">📕 If you haven&#x27;t read the rules yet, please type &lt;/game:1042058961274282025&gt; to view them!</div><div class="component-separator"></div><div class="component-text"><strong>❗ HEY LISTEN UP</strong></div><div class="component-text">💢 Please do not type in this chat unless instructed to do so. Admins please don&#x27;t abuse your godly powers and talk when other people can&#x27;t. Thank you.</div><div class="component-separator"></div><div class="component-text"><strong>💀 To those who are dead:</strong></div><div class="component-text">Please do not talk. I know it&#x27;s hard to grasp but dead people can&#x27;t talk.</div><div class="component-separator"></div><div class="component-text"><strong>👀 Some important rules:</strong></div><div class="component-text">🚫 Screenshots are not permitted and would only ruin the game. However, you CAN claim roles to either coordinate among yourselves or trick other people. Just NO SCREENSHOTS (unless you are a mafia showing results to other mafias).</div><div class="component-separator"></div><div class="component-text"><strong>🗣️ Some useful commands:</strong></div><div class="component-text">&lt;/reset:1133666068360077378&gt;, &lt;/help:1042058961274282026&gt;, &lt;/game:1042058961274282025&gt;</div><div class="component-separator"></div><div class="component-text">-# Note: Parts of the game can be customized using the /config command! To view the current settings, use &lt;/settings:1164534455780782215&gt;.</div></div></div></div></div><div class="message message-compact"><div class="message-avatar">4:15 PM</div><div class="message-content"><div class="message-header"><span class="message-author">Bugged Remastered</span><span class="bot-tag">BOT</span><span class="message-timestamp">06/08/2026 04:15 PM</span></div><div class="components"><div class="component-container" style="border-left-color: #15826c;"><div class="component-text"><h3>Anomalies are enabled!</h3></div><div class="component-text">Throughout the game, there is a 40% chance of anomalies happening. Let the crazy begin!</div><div class="component-separator"></div><div class="component-text">-# Hope you manage to survive this.</div></div></div></div></div><div class="message message-compact"><div class="message-avatar">4:15 PM</div><div class="message-content"><div class="message-header"><span class="message-author">Bugged Remastered</span><span class="bot-tag">BOT</span><span class="message-timestamp">06/08/2026 04:15 PM</span></div><div class="components"><div class="component-container" style="border-left-color: #972f25;"><div class="component-text"><strong><img class="custom-emoji" alt=":animated_logo:" src="https://cdn.discordapp.com/emojis/1368198731878498385.gif"> Mafia Remastered</strong></div><div class="component-text">Alright! Let the game begin!</div></div></div></div></div><div class="message message-compact"><div class="message-avatar">4:16 PM</div><div class="message-content"><div class="message-header"><span class="message-author">Bugged Remastered</span><span class="bot-tag">BOT</span><span class="message-timestamp">06/08/2026 04:16 PM</span></div><div class="components"><div class="component-container" style="border-left-color: #4e5058;"><div class="component-text"><h3>Night 1</h3></div><div class="component-separator"></div><div class="component-text"><strong>Currently Alive:</strong></div><div class="component-text">🙂 <span class="mention">@I love Yuno.fan and the KOG</span><br><br>🙂 <span class="mention">@Soap</span><br><br>🙂 <span class="mention">@Your Uncle 🇵🇸</span><br><br>🙂 <span class="mention">@guora</span><br><br>🙂 <span class="mention">@ꨄ𝐅𝐑𝐎𝐆𝐆𝐈𝐄ꨄ</span><br><br>🙂 <span class="mention">@Manas Ciel (Queen of Idiots)</span><br><br>🙂 <span class="mention">@ibuprofen</span><br><br>🙂 <span class="mention">@TRUEGAMER😎😎</span><br><br>🙂 <span class="mention">@Harmony</span><br><br>🙂 <span class="mention">@Stars🇵🇸</span><br><br>🙂 <span class="mention">@Jeffery “yuno.fan” Epstein</span></div><div class="component-separator"></div><div class="component-text"><strong>Currently Dead:</strong></div><div class="component-text">No one is dead yet...</div></div></div></div></div><div class="message message-compact"><div class="message-avatar">4:16 PM</div><div class="message-content"><div class="message-header"><span class="message-author">Bugged Remastered</span><span class="bot-tag">BOT</span><span class="message-timestamp">06/08/2026 04:16 PM</span></div><div class="components"><div class="component-container" style="border-left-color: #3498db;"><div class="component-text"><h3>To do your action tonight, click the Action button below.</h3></div><div class="component-text">You can choose not to do anything tonight by clicking the red button.</div><div class="component-separator"></div><div class="component-action-row"><span class="component-button component-button-success">Action</span></div></div></div></div></div><div class="message message-compact"><div class="message-avatar">4:16 PM</div><div class="message-content"><div class="message-header"><span class="message-author">Bugged Remastered</span><span class="bot-tag">BOT</span><span class="message-timestamp">06/08/2026 04:16 PM</span></div><div class="components"><div class="component-container" style="border-left-color: #972f25;"><div class="component-text"><strong><img class="custom-emoji" alt=":animated_logo:" src="https://cdn.discordapp.com/emojis/1368198731878498385.gif"> Mafia Remastered</strong></div><div class="component-text">Alright everybody, get your butts back here. It&#x27;s storytime.</div></div></div></div></div><div class="message message-compact"><div class="message-avatar">4:16 PM</div><div class="message-content"><div class="message-header"><span class="message-author">Bugged Remastered</span><span class="bot-tag">BOT</span><span class="message-timestamp">06/08/2026 04:16 PM</span></div><div class="components"><div class="component-container" style="border-left-color: #972f25;"><div class="component-text"><h3>The Mafia were too busy arguing about which movie is best</h3></div></div></div></div></div><div class="message message-compact"><div class="message-avatar">4:17 PM</div><div class="message-content"><div class="message-header"><span class="message-author">Bugged Remastered</span><span class="bot-tag">BOT</span><span class="message-timestamp">06/08/2026 04:17 PM</span></div><div class="components"><div class="component-container" style="border-left-color: #972f25;"><div class="component-section"><div class="component-section-content"><div class="component-text"><h3>Day 1</h3></div><div class="component-text">-# The list below shows dead players. The alive player list will be shown later.</div><div class="component-text"><h2>Currently Dead</h2></div></div><div class="component-section-accessory"><img class="component-thumbnail" src="https://media.discordapp.net/attachments/923932323710398495/1046292063358029925/Screenshot_2022-11-27-13-10-29-43_680d03679600f7af0b4c700c6b270fe7.jpg?ex=6a27a06b&amp;is=6a264eeb&amp;hm=f980971925b0cd21ab385054d49cfb6d2c239db4659f9ec1dbb4cef9b2911d61&amp;" alt="None"></div></div><div class="component-text">No one is dead yet...</div></div></div></div></div><div class="message message-compact"><div class="message-avatar">4:17 PM</div><div class="message-content"><div class="message-header"><span class="message-author">Bugged Remastered</span><span class="bot-tag">BOT</span><span class="message-timestamp">06/08/2026 04:17 PM</span></div><div class="components"><div class="component-container" style="border-left-color: #3498db;"><div class="component-text"><h3>Currently Alive</h3></div><div class="component-text">◽ <span class="mention">@I love Yuno.fan and the KOG</span><br><br>◽ <span class="mention">@Soap</span><br><br>◽ <span class="mention">@Your Uncle 🇵🇸</span><br><br>◽ <span class="mention">@guora</span><br><br>◽ <span class="mention">@ꨄ𝐅𝐑𝐎𝐆𝐆𝐈𝐄ꨄ</span><br><br>◽ <span class="mention">@Manas Ciel (Queen of Idiots)</span><br><br>◽ <span class="mention">@ibuprofen</span><br><br>◽ <span class="mention">@TRUEGAMER😎😎</span><br><br>◽ <span class="mention">@Harmony</span><br><br>◽ <span class="mention">@Stars🇵🇸</span><br><br>◽ <span class="mention">@Jeffery “yuno.fan” Epstein</span></div><div class="component-separator"></div><div class="component-text">-# Have fun!</div></div></div></div></div><div class="message message-compact"><div class="message-avatar">4:17 PM</div><div class="message-content"><div class="message-header"><span class="message-author">Bugged Remastered</span><span class="bot-tag">BOT</span><span class="message-timestamp">06/08/2026 04:17 PM</span></div><div class="components"><div class="component-container" style="border-left-color: #4e5058;"><div class="component-text"><h3>Random player list:</h3></div><div class="component-text"><span class="mention">@I love Yuno.fan and the KOG</span> - <strong>Random Player 1</strong></div><div class="component-text"><span class="mention">@TRUEGAMER😎😎</span> - <strong>Random Player 2</strong></div><div class="component-text"><span class="mention">@Stars🇵🇸</span> - <strong>Random Player 3</strong></div><div class="component-text"><span class="mention">@Jeffery “yuno.fan” Epstein</span> - <strong>Random Player 4</strong></div><div class="component-text"><span class="mention">@ꨄ𝐅𝐑𝐎𝐆𝐆𝐈𝐄ꨄ</span> - <strong>Random Player 5</strong></div><div class="component-text"><span class="mention">@guora</span> - <strong>Random Player 6</strong></div><div class="component-text"><span class="mention">@Manas Ciel (Queen of Idiots)</span> - <strong>Random Player 7</strong></div><div class="component-text"><span class="mention">@Soap</span> - <strong>Random Player 8</strong></div><div class="component-text"><span class="mention">@ibuprofen</span> - <strong>Random Player 9</strong></div><div class="component-text"><span class="mention">@Your Uncle 🇵🇸</span> - <strong>Random Player 10</strong></div><div class="component-text"><span class="mention">@Harmony</span> - <strong>Random Player 11</strong></div></div></div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/944916264353136660/c7e52e5ee8dbb183eeeb093258042448.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Soap</span><span class="message-timestamp">06/08/2026 04:17 PM</span></div><div class="message-text">hmm</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/926789636393680906/b92bb4d913379e43a6eae7beff7d5e12.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">guora</span><span class="message-timestamp">06/08/2026 04:17 PM</span></div><div class="message-text">huh</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/1199573769107288225/a_b5db3de2db78940b802683a7ebef6a3b.gif?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">ꨄ𝐅𝐑𝐎𝐆𝐆𝐈𝐄ꨄ</span><span class="message-timestamp">06/08/2026 04:17 PM</span></div><div class="message-text">Dist?</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/944916264353136660/c7e52e5ee8dbb183eeeb093258042448.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Soap</span><span class="message-timestamp">06/08/2026 04:17 PM</span></div><div class="message-text">I got disted but I am not godfather</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/926789636393680906/b92bb4d913379e43a6eae7beff7d5e12.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">guora</span><span class="message-timestamp">06/08/2026 04:17 PM</span></div><div class="message-text">afk maf?</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/1199573769107288225/a_b5db3de2db78940b802683a7ebef6a3b.gif?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">ꨄ𝐅𝐑𝐎𝐆𝐆𝐈𝐄ꨄ</span><span class="message-timestamp">06/08/2026 04:17 PM</span></div><div class="message-text">Brodie</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/1018393914518024193/49bc139efb26e72401c9b865f2863593.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Jeffery “yuno.fan” Epstein</span><span class="message-timestamp">06/08/2026 04:17 PM</span></div><div class="message-text"><h1>TUNGSTEN AND STARZO NOT SAME SIDE VIA PI</h1></div></div></div><div class="message message-compact"><div class="message-avatar">4:17 PM</div><div class="message-content"><div class="message-header"><span class="message-author">Jeffery “yuno.fan” Epstein</span><span class="message-timestamp">06/08/2026 04:17 PM</span></div><div class="message-text"><h1>TUNGSTEN AND STARZO NOT SAME SIDE VIA PI</h1></div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/819776532213006386/6e1d1ff0625fb460bb9536eb2abf65b4.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Your Uncle 🇵🇸</span><span class="message-timestamp">06/08/2026 04:17 PM</span></div><div class="message-text"><img class="custom-emoji" alt=":bruh_cat:" src="https://cdn.discordapp.com/emojis/1342218817543082034.png"></div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/711472626832375829/1ee290e1e314eeb59e51686ec4821c79.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">ibuprofen</span><span class="message-timestamp">06/08/2026 04:17 PM</span></div><div class="message-text">oh</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/1018393914518024193/49bc139efb26e72401c9b865f2863593.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Jeffery “yuno.fan” Epstein</span><span class="message-timestamp">06/08/2026 04:17 PM</span></div><div class="message-text"><h1>TUNGSTEN AND STARZO NOT SAME SIDE VIA PI</h1></div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/711472626832375829/1ee290e1e314eeb59e51686ec4821c79.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">ibuprofen</span><span class="message-timestamp">06/08/2026 04:17 PM</span></div><div class="message-text">both claim</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/1199573769107288225/a_b5db3de2db78940b802683a7ebef6a3b.gif?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">ꨄ𝐅𝐑𝐎𝐆𝐆𝐈𝐄ꨄ</span><span class="message-timestamp">06/08/2026 04:17 PM</span></div><div class="message-text">Idk get star</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/912474210889257010/9045439d47edbc254e75598e64197e54.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">I love Yuno.fan and the KOG</span><span class="message-timestamp">06/08/2026 04:17 PM</span></div><div class="message-text">Stop yelling</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/758999095070687284/70e18007dbd33933f77d901a0db8eb19.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Bugged Remastered</span><span class="bot-tag">BOT</span><span class="message-timestamp">06/08/2026 04:17 PM</span></div><div class="components"><div class="component-container" style="border-left-color: #a94300;"><div class="component-text"><h3>Now it is time to nominate! Vote the player you want by pressing the button below on who should be put on trial!</h3></div><div class="component-text">Minimum votes required: 6</div><div class="component-separator"></div><div class="component-text"><em></em>- <span class="mention">@I love Yuno.fan and the KOG</span><br>- <span class="mention">@Soap</span><br>- <span class="mention">@Your Uncle 🇵🇸</span><br>- <span class="mention">@guora</span><br>- <span class="mention">@ꨄ𝐅𝐑𝐎𝐆𝐆𝐈𝐄ꨄ</span><br>- <span class="mention">@Manas Ciel (Queen of Idiots)</span><br>- <span class="mention">@ibuprofen</span><br>- <span class="mention">@TRUEGAMER😎😎</span><br>- <span class="mention">@Harmony</span><br>- <span class="mention">@Stars🇵🇸</span><br>- <span class="mention">@Jeffery “yuno.fan” Epstein</span><em></em></div><div class="component-separator"></div><div class="component-action-row"><span class="component-button component-button-success">Vote</span></div><div class="component-text">-# You have 45 seconds to nominate someone...</div></div></div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/1151390888132624409/1f9e96301b6fa97c41a3ab08bec556a2.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Stars🇵🇸</span><span class="message-timestamp">06/08/2026 04:17 PM</span></div><div class="message-text">On tung</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/944916264353136660/c7e52e5ee8dbb183eeeb093258042448.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Soap</span><span class="message-timestamp">06/08/2026 04:17 PM</span></div><div class="message-text">Why doesn&#x27;t the dist say he disted me tho</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/1151390888132624409/1f9e96301b6fa97c41a3ab08bec556a2.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Stars🇵🇸</span><span class="message-timestamp">06/08/2026 04:17 PM</span></div><div class="message-text"><h1>on tung</h1></div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/711472626832375829/1ee290e1e314eeb59e51686ec4821c79.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">ibuprofen</span><span class="message-timestamp">06/08/2026 04:17 PM</span></div><div class="message-text">Both claim</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/912474210889257010/9045439d47edbc254e75598e64197e54.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">I love Yuno.fan and the KOG</span><span class="message-timestamp">06/08/2026 04:17 PM</span></div><div class="message-text">Im the guardian</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/1151390888132624409/1f9e96301b6fa97c41a3ab08bec556a2.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Stars🇵🇸</span><span class="message-timestamp">06/08/2026 04:17 PM</span></div><div class="message-text"><h1>im mayor</h1></div><div class="reactions"><div class="reaction"><span class="reaction-emoji">💀</span><span class="reaction-count">1</span></div></div></div></div><div class="message message-compact"><div class="message-avatar">4:17 PM</div><div class="message-content"><div class="message-header"><span class="message-author">Stars🇵🇸</span><span class="message-timestamp">06/08/2026 04:17 PM</span></div><div class="message-text"><h1>on tung</h1></div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/1199573769107288225/a_b5db3de2db78940b802683a7ebef6a3b.gif?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">ꨄ𝐅𝐑𝐎𝐆𝐆𝐈𝐄ꨄ</span><span class="message-timestamp">06/08/2026 04:17 PM</span></div><div class="message-text">They would get killed</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/912474210889257010/9045439d47edbc254e75598e64197e54.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">I love Yuno.fan and the KOG</span><span class="message-timestamp">06/08/2026 04:18 PM</span></div><div class="message-text">Wait a round then</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/711472626832375829/1ee290e1e314eeb59e51686ec4821c79.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">ibuprofen</span><span class="message-timestamp">06/08/2026 04:18 PM</span></div><div class="message-text">Stars reveal tomorrow and if so we vote tungsten</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/1151390888132624409/1f9e96301b6fa97c41a3ab08bec556a2.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Stars🇵🇸</span><span class="message-timestamp">06/08/2026 04:18 PM</span></div><div class="message-text">you&#x27;re dead after i pub</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/912474210889257010/9045439d47edbc254e75598e64197e54.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">I love Yuno.fan and the KOG</span><span class="message-timestamp">06/08/2026 04:18 PM</span></div><div class="message-text">Lets see stars</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/1199573769107288225/a_b5db3de2db78940b802683a7ebef6a3b.gif?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">ꨄ𝐅𝐑𝐎𝐆𝐆𝐈𝐄ꨄ</span><span class="message-timestamp">06/08/2026 04:18 PM</span></div><div class="message-text">Wait a round ig</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/926789636393680906/b92bb4d913379e43a6eae7beff7d5e12.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">guora</span><span class="message-timestamp">06/08/2026 04:18 PM</span></div><div class="message-text">why can&#x27;t pis just reveal info after getting 2 nsss?</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/912474210889257010/9045439d47edbc254e75598e64197e54.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">I love Yuno.fan and the KOG</span><span class="message-timestamp">06/08/2026 04:18 PM</span></div><div class="message-text">Go ahead</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/711472626832375829/1ee290e1e314eeb59e51686ec4821c79.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">ibuprofen</span><span class="message-timestamp">06/08/2026 04:18 PM</span></div><div class="message-text">If stars doesn’t reveal we murder him</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/758999095070687284/70e18007dbd33933f77d901a0db8eb19.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Bugged Remastered</span><span class="bot-tag">BOT</span><span class="message-timestamp">06/08/2026 04:18 PM</span></div><div class="components"><div class="component-container" style="border-left-color: #c67c1c;"><div class="component-text"><h3>Nomination results</h3></div><div class="component-separator"></div><div class="component-text">All votes are hidden. If someone is on trial, it will be announced.</div><div class="component-separator"></div><div class="component-text">-# Minimum votes to put someone on stand: 6</div></div></div></div></div><div class="message message-compact"><div class="message-avatar">4:18 PM</div><div class="message-content"><div class="message-header"><span class="message-author">Bugged Remastered</span><span class="bot-tag">BOT</span><span class="message-timestamp">06/08/2026 04:18 PM</span></div><div class="components"><div class="component-container" style="border-left-color: #972f25;"><div class="component-text"><h3>The town wasn&#x27;t able to decide on who to hang so no one was nominated...</h3></div><div class="component-text">Better work together next time...</div></div></div></div></div><div class="message message-compact"><div class="message-avatar">4:18 PM</div><div class="message-content"><div class="message-header"><span class="message-author">Bugged Remastered</span><span class="bot-tag">BOT</span><span class="message-timestamp">06/08/2026 04:18 PM</span></div><div class="components"><div class="component-container" style="border-left-color: #972f25;"><div class="component-text"><strong><img class="custom-emoji" alt=":animated_logo:" src="https://cdn.discordapp.com/emojis/1368198731878498385.gif"> Mafia Remastered</strong></div><div class="component-text">No one was hanged.</div></div></div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/944916264353136660/c7e52e5ee8dbb183eeeb093258042448.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Soap</span><span class="message-timestamp">06/08/2026 04:18 PM</span></div><div class="message-text">ya but they should at least try to lynch me, as mafia didn&#x27;t kill and I got disted</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/1018393914518024193/49bc139efb26e72401c9b865f2863593.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Jeffery “yuno.fan” Epstein</span><span class="message-timestamp">06/08/2026 04:18 PM</span></div><div class="message-text">If I die get Tung</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/758999095070687284/70e18007dbd33933f77d901a0db8eb19.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Bugged Remastered</span><span class="bot-tag">BOT</span><span class="message-timestamp">06/08/2026 04:18 PM</span></div><div class="components"><div class="component-container" style="border-left-color: #4e5058;"><div class="component-text"><h3>Night 2</h3></div><div class="component-separator"></div><div class="component-text"><strong>Currently Alive:</strong></div><div class="component-text">🙂 <span class="mention">@I love Yuno.fan and the KOG</span><br><br>🙂 <span class="mention">@Soap</span><br><br>🙂 <span class="mention">@Your Uncle 🇵🇸</span><br><br>🙂 <span class="mention">@guora</span><br><br>🙂 <span class="mention">@ꨄ𝐅𝐑𝐎𝐆𝐆𝐈𝐄ꨄ</span><br><br>🙂 <span class="mention">@Manas Ciel (Queen of Idiots)</span><br><br>🙂 <span class="mention">@ibuprofen</span><br><br>🙂 <span class="mention">@TRUEGAMER😎😎</span><br><br>🙂 <span class="mention">@Harmony</span><br><br>🙂 <span class="mention">@Stars🇵🇸</span><br><br>🙂 <span class="mention">@Jeffery “yuno.fan” Epstein</span></div><div class="component-separator"></div><div class="component-text"><strong>Currently Dead:</strong></div><div class="component-text">No one is dead yet...</div></div></div></div></div><div class="message message-compact"><div class="message-avatar">4:18 PM</div><div class="message-content"><div class="message-header"><span class="message-author">Bugged Remastered</span><span class="bot-tag">BOT</span><span class="message-timestamp">06/08/2026 04:18 PM</span></div><div class="components"><div class="component-container" style="border-left-color: #3498db;"><div class="component-text"><h3>To do your action tonight, click the Action button below.</h3></div><div class="component-text">You can choose not to do anything tonight by clicking the red button.</div><div class="component-separator"></div><div class="component-action-row"><span class="component-button component-button-success">Action</span></div></div></div></div></div><div class="message message-compact"><div class="message-avatar">4:19 PM</div><div class="message-content"><div class="message-header"><span class="message-author">Bugged Remastered</span><span class="bot-tag">BOT</span><span class="message-timestamp">06/08/2026 04:19 PM</span></div><div class="components"><div class="component-container" style="border-left-color: #972f25;"><div class="component-text"><strong><img class="custom-emoji" alt=":animated_logo:" src="https://cdn.discordapp.com/emojis/1368198731878498385.gif"> Mafia Remastered</strong></div><div class="component-text">Alright everybody, get your butts back here. It&#x27;s storytime.</div></div></div></div></div><div class="message message-compact"><div class="message-avatar">4:19 PM</div><div class="message-content"><div class="message-header"><span class="message-author">Bugged Remastered</span><span class="bot-tag">BOT</span><span class="message-timestamp">06/08/2026 04:19 PM</span></div><div class="components"><div class="component-container" style="border-left-color: #972f25;"><div class="component-text"><h3>furous1 was attacked by the Mafia :(</h3></div><div class="component-text">“Misate yaro….boku no honto no chakraoe”</div><div class="component-media-gallery"><img src="https://res.cloudinary.com/dkpraixbv/image/upload/misc/youdied-default.png" alt="You died background"></div></div></div></div></div><div class="message message-compact"><div class="message-avatar">4:19 PM</div><div class="message-content"><div class="message-header"><span class="message-author">Bugged Remastered</span><span class="bot-tag">BOT</span><span class="message-timestamp">06/08/2026 04:19 PM</span></div><div class="components"><div class="component-container" style="border-left-color: #c67c1c;"><div class="component-text"><h3>Someone&#x27;s lover has died!</h3></div><div class="component-text"><strong>manas\<em>ciel0u0yt</strong> could not get over the loss of their lover, <strong>furous1</strong>! The grief was too large for them to handle, so <strong>manas\</em>ciel0u0yt</strong> has left the town in despair.</div><div class="component-separator"></div><div class="component-text">-# This is more of an L for the lovers. But yall better hope the cupid is gone</div></div></div></div></div><div class="message message-compact"><div class="message-avatar">4:19 PM</div><div class="message-content"><div class="message-header"><span class="message-author">Bugged Remastered</span><span class="bot-tag">BOT</span><span class="message-timestamp">06/08/2026 04:19 PM</span></div><div class="components"><div class="component-container" style="border-left-color: #972f25;"><div class="component-section"><div class="component-section-content"><div class="component-text"><h3>Day 2</h3></div><div class="component-text">-# The list below shows dead players. The alive player list will be shown later.</div><div class="component-text"><h2>Currently Dead</h2></div></div><div class="component-section-accessory"><img class="component-thumbnail" src="https://media.discordapp.net/attachments/923932323710398495/1046292063358029925/Screenshot_2022-11-27-13-10-29-43_680d03679600f7af0b4c700c6b270fe7.jpg?ex=6a27a06b&amp;is=6a264eeb&amp;hm=f980971925b0cd21ab385054d49cfb6d2c239db4659f9ec1dbb4cef9b2911d61&amp;" alt="None"></div></div><div class="component-text">💀 <span class="mention">@Your Uncle 🇵🇸</span> - <strong><img class="custom-emoji" alt=":jailor:" src="https://cdn.discordapp.com/emojis/1430453475040297100.png"> Jailor</strong><br><br>💀 <span class="mention">@Manas Ciel (Queen of Idiots)</span> - <strong><img class="custom-emoji" alt=":vendetta:" src="https://cdn.discordapp.com/emojis/1350864135973507206.png"> Vendetta</strong></div></div></div></div></div><div class="message message-compact"><div class="message-avatar">4:19 PM</div><div class="message-content"><div class="message-header"><span class="message-author">Bugged Remastered</span><span class="bot-tag">BOT</span><span class="message-timestamp">06/08/2026 04:19 PM</span></div><div class="components"><div class="component-container" style="border-left-color: #3498db;"><div class="component-text"><h3>Currently Alive</h3></div><div class="component-text">◽ <span class="mention">@I love Yuno.fan and the KOG</span><br><br>◽ <span class="mention">@Soap</span><br><br>◽ <span class="mention">@guora</span><br><br>◽ <span class="mention">@ꨄ𝐅𝐑𝐎𝐆𝐆𝐈𝐄ꨄ</span><br><br>◽ <span class="mention">@ibuprofen</span><br><br>◽ <span class="mention">@TRUEGAMER😎😎</span><br><br>◽ <span class="mention">@Harmony</span><br><br>◽ <span class="mention">@Stars🇵🇸</span><br><br>◽ <span class="mention">@Jeffery “yuno.fan” Epstein</span></div><div class="component-separator"></div><div class="component-text">-# Have fun!</div></div></div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/1199573769107288225/a_b5db3de2db78940b802683a7ebef6a3b.gif?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">ꨄ𝐅𝐑𝐎𝐆𝐆𝐈𝐄ꨄ</span><span class="message-timestamp">06/08/2026 04:19 PM</span></div><div class="message-text">LOL</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/926789636393680906/b92bb4d913379e43a6eae7beff7d5e12.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">guora</span><span class="message-timestamp">06/08/2026 04:19 PM</span></div><div class="message-text">w?</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/711472626832375829/1ee290e1e314eeb59e51686ec4821c79.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">ibuprofen</span><span class="message-timestamp">06/08/2026 04:19 PM</span></div><div class="message-text">On stars</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/705365758955356160/53caf20b1dc8756370581a501f3a668a.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">TRUEGAMER😎😎</span><span class="message-timestamp">06/08/2026 04:19 PM</span></div><div class="message-text">XD</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/944916264353136660/c7e52e5ee8dbb183eeeb093258042448.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Soap</span><span class="message-timestamp">06/08/2026 04:19 PM</span></div><div class="message-text">one maf remaining</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/711472626832375829/1ee290e1e314eeb59e51686ec4821c79.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">ibuprofen</span><span class="message-timestamp">06/08/2026 04:19 PM</span></div><div class="message-text">Stats didn’t reveal</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/926789636393680906/b92bb4d913379e43a6eae7beff7d5e12.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">guora</span><span class="message-timestamp">06/08/2026 04:19 PM</span></div><div class="message-text">w.</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/747497988028498023/c0166117576f7255841ec01a528850fc.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Harmony</span><span class="message-timestamp">06/08/2026 04:19 PM</span></div><div class="message-text">I was jailed n1</div></div></div><div class="message message-compact"><div class="message-avatar">4:19 PM</div><div class="message-content"><div class="message-header"><span class="message-author">Harmony</span><span class="message-timestamp">06/08/2026 04:19 PM</span></div><div class="message-text">On stars</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/1199573769107288225/a_b5db3de2db78940b802683a7ebef6a3b.gif?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">ꨄ𝐅𝐑𝐎𝐆𝐆𝐈𝐄ꨄ</span><span class="message-timestamp">06/08/2026 04:19 PM</span></div><div class="message-text">Dude vendetta is a rigged lover</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/912474210889257010/9045439d47edbc254e75598e64197e54.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">I love Yuno.fan and the KOG</span><span class="message-timestamp">06/08/2026 04:19 PM</span></div><div class="message-text">💀💀💀💀</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/711472626832375829/1ee290e1e314eeb59e51686ec4821c79.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">ibuprofen</span><span class="message-timestamp">06/08/2026 04:19 PM</span></div><div class="message-text"><h1>on stars no mayor reveal</h1></div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/944916264353136660/c7e52e5ee8dbb183eeeb093258042448.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Soap</span><span class="message-timestamp">06/08/2026 04:19 PM</span></div><div class="message-text">why didn&#x27;t the jailor kill tho</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/1199573769107288225/a_b5db3de2db78940b802683a7ebef6a3b.gif?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">ꨄ𝐅𝐑𝐎𝐆𝐆𝐈𝐄ꨄ</span><span class="message-timestamp">06/08/2026 04:20 PM</span></div><div class="message-text">U die to kill</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/912474210889257010/9045439d47edbc254e75598e64197e54.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">I love Yuno.fan and the KOG</span><span class="message-timestamp">06/08/2026 04:20 PM</span></div><div class="message-text"><h1>ON STARS</h1></div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/1199573769107288225/a_b5db3de2db78940b802683a7ebef6a3b.gif?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">ꨄ𝐅𝐑𝐎𝐆𝐆𝐈𝐄ꨄ</span><span class="message-timestamp">06/08/2026 04:20 PM</span></div><div class="message-text">So ur lover dies</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/705365758955356160/53caf20b1dc8756370581a501f3a668a.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">TRUEGAMER😎😎</span><span class="message-timestamp">06/08/2026 04:20 PM</span></div><div class="message-text">Hmm</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/711472626832375829/1ee290e1e314eeb59e51686ec4821c79.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">ibuprofen</span><span class="message-timestamp">06/08/2026 04:20 PM</span></div><div class="message-text"><span class="mention">@Stars🇵🇸</span></div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/1018393914518024193/49bc139efb26e72401c9b865f2863593.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Jeffery “yuno.fan” Epstein</span><span class="message-timestamp">06/08/2026 04:20 PM</span></div><div class="message-text"><h1>STARS AND FROGGIE ARE SAME SIDE BUT TUNG AND STARS NOT SAME SIDE GET TUNG OUT</h1></div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/747497988028498023/c0166117576f7255841ec01a528850fc.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Harmony</span><span class="message-timestamp">06/08/2026 04:20 PM</span></div><div class="message-text">I&#x27;m town side so they would have lost their charges</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/758999095070687284/70e18007dbd33933f77d901a0db8eb19.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Bugged Remastered</span><span class="bot-tag">BOT</span><span class="message-timestamp">06/08/2026 04:20 PM</span></div><div class="components"><div class="component-container" style="border-left-color: #a94300;"><div class="component-text"><h3>Now it is time to nominate! Vote the player you want by pressing the button below on who should be put on trial!</h3></div><div class="component-text">Minimum votes required: 5</div><div class="component-separator"></div><div class="component-text"><em></em>- <span class="mention">@I love Yuno.fan and the KOG</span><br>- <span class="mention">@Soap</span><br>- <span class="mention">@guora</span><br>- <span class="mention">@ꨄ𝐅𝐑𝐎𝐆𝐆𝐈𝐄ꨄ</span><br>- <span class="mention">@ibuprofen</span><br>- <span class="mention">@TRUEGAMER😎😎</span><br>- <span class="mention">@Harmony</span><br>- <span class="mention">@Stars🇵🇸</span><br>- <span class="mention">@Jeffery “yuno.fan” Epstein</span><em></em></div><div class="component-separator"></div><div class="component-action-row"><span class="component-button component-button-success">Vote</span></div><div class="component-text">-# You have 45 seconds to nominate someone...</div></div></div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/711472626832375829/1ee290e1e314eeb59e51686ec4821c79.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">ibuprofen</span><span class="message-timestamp">06/08/2026 04:20 PM</span></div><div class="message-text">Stars didn’t even reveal mayor</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/944916264353136660/c7e52e5ee8dbb183eeeb093258042448.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Soap</span><span class="message-timestamp">06/08/2026 04:20 PM</span></div><div class="message-text">no they are not bound to those rules</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/912474210889257010/9045439d47edbc254e75598e64197e54.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">I love Yuno.fan and the KOG</span><span class="message-timestamp">06/08/2026 04:20 PM</span></div><div class="message-text">Then its froggie and stars</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/1018393914518024193/49bc139efb26e72401c9b865f2863593.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Jeffery “yuno.fan” Epstein</span><span class="message-timestamp">06/08/2026 04:20 PM</span></div><div class="message-text"><h1>STARS AND FROGGIE ARE SAME SIDE BUT TUNG AND STARS NOT SAME SIDE</h1></div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/1199573769107288225/a_b5db3de2db78940b802683a7ebef6a3b.gif?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">ꨄ𝐅𝐑𝐎𝐆𝐆𝐈𝐄ꨄ</span><span class="message-timestamp">06/08/2026 04:20 PM</span></div><div class="message-text">Nope</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/747497988028498023/c0166117576f7255841ec01a528850fc.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Harmony</span><span class="message-timestamp">06/08/2026 04:20 PM</span></div><div class="message-text">On stars</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/912474210889257010/9045439d47edbc254e75598e64197e54.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">I love Yuno.fan and the KOG</span><span class="message-timestamp">06/08/2026 04:20 PM</span></div><div class="message-text">Why didnt stars reveal</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/944916264353136660/c7e52e5ee8dbb183eeeb093258042448.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Soap</span><span class="message-timestamp">06/08/2026 04:20 PM</span></div><div class="message-text">guys</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/747497988028498023/c0166117576f7255841ec01a528850fc.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Harmony</span><span class="message-timestamp">06/08/2026 04:20 PM</span></div><div class="message-text">On stars</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/912474210889257010/9045439d47edbc254e75598e64197e54.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">I love Yuno.fan and the KOG</span><span class="message-timestamp">06/08/2026 04:20 PM</span></div><div class="message-text">If he said he would</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/1018393914518024193/49bc139efb26e72401c9b865f2863593.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Jeffery “yuno.fan” Epstein</span><span class="message-timestamp">06/08/2026 04:20 PM</span></div><div class="message-text"><h1>ON STARS</h1></div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/711472626832375829/1ee290e1e314eeb59e51686ec4821c79.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">ibuprofen</span><span class="message-timestamp">06/08/2026 04:20 PM</span></div><div class="message-text">is stars even here??</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/1199573769107288225/a_b5db3de2db78940b802683a7ebef6a3b.gif?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">ꨄ𝐅𝐑𝐎𝐆𝐆𝐈𝐄ꨄ</span><span class="message-timestamp">06/08/2026 04:20 PM</span></div><div class="message-text">Or on stars ig</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/747497988028498023/c0166117576f7255841ec01a528850fc.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Harmony</span><span class="message-timestamp">06/08/2026 04:20 PM</span></div><div class="message-text">I&#x27;ll acquit</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/711472626832375829/1ee290e1e314eeb59e51686ec4821c79.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">ibuprofen</span><span class="message-timestamp">06/08/2026 04:20 PM</span></div><div class="message-text">Does blackmail block action</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/1199573769107288225/a_b5db3de2db78940b802683a7ebef6a3b.gif?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">ꨄ𝐅𝐑𝐎𝐆𝐆𝐈𝐄ꨄ</span><span class="message-timestamp">06/08/2026 04:20 PM</span></div><div class="message-text">Oo</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/944916264353136660/c7e52e5ee8dbb183eeeb093258042448.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Soap</span><span class="message-timestamp">06/08/2026 04:21 PM</span></div><div class="message-text">Stars and froggie can&#x27;t both be Mafias, because this is 2 maf game and one died</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/758999095070687284/70e18007dbd33933f77d901a0db8eb19.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Bugged Remastered</span><span class="bot-tag">BOT</span><span class="message-timestamp">06/08/2026 04:21 PM</span></div><div class="components"><div class="component-container" style="border-left-color: #c67c1c;"><div class="component-text"><h3>Nomination results</h3></div><div class="component-separator"></div><div class="component-text">All votes are hidden. If someone is on trial, it will be announced.</div><div class="component-separator"></div><div class="component-text">-# Minimum votes to put someone on stand: 5</div></div></div></div></div><div class="message message-compact"><div class="message-avatar">4:21 PM</div><div class="message-content"><div class="message-header"><span class="message-author">Bugged Remastered</span><span class="bot-tag">BOT</span><span class="message-timestamp">06/08/2026 04:21 PM</span></div><div class="components"><div class="component-container" style="border-left-color: #972f25;"><div class="component-text"><h3>The town wasn&#x27;t able to decide on who to hang so no one was nominated...</h3></div><div class="component-text">Better work together next time...</div></div></div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/1018393914518024193/49bc139efb26e72401c9b865f2863593.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Jeffery “yuno.fan” Epstein</span><span class="message-timestamp">06/08/2026 04:21 PM</span></div><div class="message-text">Wait stars probably got black,ailed</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/747497988028498023/c0166117576f7255841ec01a528850fc.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Harmony</span><span class="message-timestamp">06/08/2026 04:21 PM</span></div><div class="message-text">Oh</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/1199573769107288225/a_b5db3de2db78940b802683a7ebef6a3b.gif?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">ꨄ𝐅𝐑𝐎𝐆𝐆𝐈𝐄ꨄ</span><span class="message-timestamp">06/08/2026 04:21 PM</span></div><div class="message-text">That works too</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/912474210889257010/9045439d47edbc254e75598e64197e54.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">I love Yuno.fan and the KOG</span><span class="message-timestamp">06/08/2026 04:21 PM</span></div><div class="message-text">…</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/758999095070687284/70e18007dbd33933f77d901a0db8eb19.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Bugged Remastered</span><span class="bot-tag">BOT</span><span class="message-timestamp">06/08/2026 04:21 PM</span></div><div class="components"><div class="component-container" style="border-left-color: #972f25;"><div class="component-text"><strong><img class="custom-emoji" alt=":animated_logo:" src="https://cdn.discordapp.com/emojis/1368198731878498385.gif"> Mafia Remastered</strong></div><div class="component-text">No one was hanged.</div></div></div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/1018393914518024193/49bc139efb26e72401c9b865f2863593.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Jeffery “yuno.fan” Epstein</span><span class="message-timestamp">06/08/2026 04:21 PM</span></div><div class="message-text">Bitch</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/711472626832375829/1ee290e1e314eeb59e51686ec4821c79.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">ibuprofen</span><span class="message-timestamp">06/08/2026 04:21 PM</span></div><div class="message-text">oh my goddd</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/747497988028498023/c0166117576f7255841ec01a528850fc.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Harmony</span><span class="message-timestamp">06/08/2026 04:21 PM</span></div><div class="message-text">Guardian on pi</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/758999095070687284/70e18007dbd33933f77d901a0db8eb19.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Bugged Remastered</span><span class="bot-tag">BOT</span><span class="message-timestamp">06/08/2026 04:21 PM</span></div><div class="components"><div class="component-container" style="border-left-color: #4e5058;"><div class="component-text"><h3>Night 3</h3></div><div class="component-separator"></div><div class="component-text"><strong>Currently Alive:</strong></div><div class="component-text">🙂 <span class="mention">@I love Yuno.fan and the KOG</span><br><br>🙂 <span class="mention">@Soap</span><br><br>🙂 <span class="mention">@guora</span><br><br>🙂 <span class="mention">@ꨄ𝐅𝐑𝐎𝐆𝐆𝐈𝐄ꨄ</span><br><br>🙂 <span class="mention">@ibuprofen</span><br><br>🙂 <span class="mention">@TRUEGAMER😎😎</span><br><br>🙂 <span class="mention">@Harmony</span><br><br>🙂 <span class="mention">@Stars🇵🇸</span><br><br>🙂 <span class="mention">@Jeffery “yuno.fan” Epstein</span></div><div class="component-separator"></div><div class="component-text"><strong>Currently Dead:</strong></div><div class="component-text">💀 <span class="mention">@Your Uncle 🇵🇸</span> - <strong><img class="custom-emoji" alt=":jailor:" src="https://cdn.discordapp.com/emojis/1430453475040297100.png"> Jailor</strong><br><br>💀 <span class="mention">@Manas Ciel (Queen of Idiots)</span> - <strong><img class="custom-emoji" alt=":vendetta:" src="https://cdn.discordapp.com/emojis/1350864135973507206.png"> Vendetta</strong></div></div></div></div></div><div class="message message-compact"><div class="message-avatar">4:21 PM</div><div class="message-content"><div class="message-header"><span class="message-author">Bugged Remastered</span><span class="bot-tag">BOT</span><span class="message-timestamp">06/08/2026 04:21 PM</span></div><div class="components"><div class="component-container" style="border-left-color: #3498db;"><div class="component-text"><h3>To do your action tonight, click the Action button below.</h3></div><div class="component-text">You can choose not to do anything tonight by clicking the red button.</div><div class="component-separator"></div><div class="component-action-row"><span class="component-button component-button-success">Action</span></div></div></div></div></div><div class="message message-compact"><div class="message-avatar">4:22 PM</div><div class="message-content"><div class="message-header"><span class="message-author">Bugged Remastered</span><span class="bot-tag">BOT</span><span class="message-timestamp">06/08/2026 04:22 PM</span></div><div class="components"><div class="component-container" style="border-left-color: #972f25;"><div class="component-text"><strong><img class="custom-emoji" alt=":animated_logo:" src="https://cdn.discordapp.com/emojis/1368198731878498385.gif"> Mafia Remastered</strong></div><div class="component-text">Alright everybody, get your butts back here. It&#x27;s storytime.</div></div></div></div></div><div class="message message-compact"><div class="message-avatar">4:22 PM</div><div class="message-content"><div class="message-header"><span class="message-author">Bugged Remastered</span><span class="bot-tag">BOT</span><span class="message-timestamp">06/08/2026 04:22 PM</span></div><div class="components"><div class="component-container" style="border-left-color: #972f25;"><div class="component-text"><h3>The Mafia&#x27;s heart wasn&#x27;t in it. They went home...</h3></div></div></div></div></div><div class="message message-compact"><div class="message-avatar">4:22 PM</div><div class="message-content"><div class="message-header"><span class="message-author">Bugged Remastered</span><span class="bot-tag">BOT</span><span class="message-timestamp">06/08/2026 04:22 PM</span></div><div class="components"><div class="component-container" style="border-left-color: #a94300;"><div class="component-text"><h3>Oh ya this also happened...</h3></div><div class="component-text"><img class="custom-emoji" alt=":bullet:" src="https://cdn.discordapp.com/emojis/1160816931876651019.png"> The <strong>Vigilante</strong> shot a <strong>neutral</strong>! The <strong>neutral</strong> shot was <strong>tungsten.wd</strong>.</div><div class="component-separator"></div><div class="component-text"><img class="custom-emoji" alt=":couple:" src="https://cdn.discordapp.com/emojis/1175047375862120518.png"><img class="custom-emoji" alt=":heartbreak:" src="https://cdn.discordapp.com/emojis/1175047187323953173.png"> The lovers have had enough, and together, they&#x27;ve used their wrath on <strong>harmonyqq</strong></div></div></div></div></div><div class="message message-compact"><div class="message-avatar">4:22 PM</div><div class="message-content"><div class="message-header"><span class="message-author">Bugged Remastered</span><span class="bot-tag">BOT</span><span class="message-timestamp">06/08/2026 04:22 PM</span></div><div class="components"><div class="component-container" style="border-left-color: #972f25;"><div class="component-section"><div class="component-section-content"><div class="component-text"><h3>Day 3</h3></div><div class="component-text">-# The list below shows dead players. The alive player list will be shown later.</div><div class="component-text"><h2>Currently Dead</h2></div></div><div class="component-section-accessory"><img class="component-thumbnail" src="https://media.discordapp.net/attachments/923932323710398495/1046292063358029925/Screenshot_2022-11-27-13-10-29-43_680d03679600f7af0b4c700c6b270fe7.jpg?ex=6a27a06b&amp;is=6a264eeb&amp;hm=f980971925b0cd21ab385054d49cfb6d2c239db4659f9ec1dbb4cef9b2911d61&amp;" alt="None"></div></div><div class="component-text">💀 <span class="mention">@I love Yuno.fan and the KOG</span> - <strong><img class="custom-emoji" alt=":farmer:" src="https://cdn.discordapp.com/emojis/1281143816006533120.png"> Farmer</strong><br><br>💀 <span class="mention">@Your Uncle 🇵🇸</span> - <strong><img class="custom-emoji" alt=":jailor:" src="https://cdn.discordapp.com/emojis/1430453475040297100.png"> Jailor</strong><br><br>💀 <span class="mention">@Manas Ciel (Queen of Idiots)</span> - <strong><img class="custom-emoji" alt=":vendetta:" src="https://cdn.discordapp.com/emojis/1350864135973507206.png"> Vendetta</strong><br><br>💀 <span class="mention">@Harmony</span> - <strong><img class="custom-emoji" alt=":lawyer:" src="https://cdn.discordapp.com/emojis/1250427723105435658.png"> Lawyer</strong></div></div></div></div></div><div class="message message-compact"><div class="message-avatar">4:22 PM</div><div class="message-content"><div class="message-header"><span class="message-author">Bugged Remastered</span><span class="bot-tag">BOT</span><span class="message-timestamp">06/08/2026 04:22 PM</span></div><div class="components"><div class="component-container" style="border-left-color: #3498db;"><div class="component-text"><h3>Currently Alive</h3></div><div class="component-text">◽ <span class="mention">@Soap</span><br><br>◽ <span class="mention">@guora</span><br><br>◽ <span class="mention">@ꨄ𝐅𝐑𝐎𝐆𝐆𝐈𝐄ꨄ</span><br><br>◽ <span class="mention">@ibuprofen</span><br><br>◽ <span class="mention">@TRUEGAMER😎😎</span><br><br>◽ <span class="mention">@Stars🇵🇸</span><br><br>◽ <span class="mention">@Jeffery “yuno.fan” Epstein</span></div><div class="component-separator"></div><div class="component-text">-# Have fun!</div></div></div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/711472626832375829/1ee290e1e314eeb59e51686ec4821c79.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">ibuprofen</span><span class="message-timestamp">06/08/2026 04:22 PM</span></div><div class="message-text">oh ok</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/1199573769107288225/a_b5db3de2db78940b802683a7ebef6a3b.gif?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">ꨄ𝐅𝐑𝐎𝐆𝐆𝐈𝐄ꨄ</span><span class="message-timestamp">06/08/2026 04:22 PM</span></div><div class="message-text">Lmao</div></div></div><div class="message message-compact"><div class="message-avatar">4:22 PM</div><div class="message-content"><div class="message-header"><span class="message-author">ꨄ𝐅𝐑𝐎𝐆𝐆𝐈𝐄ꨄ</span><span class="message-timestamp">06/08/2026 04:22 PM</span></div><div class="message-text">W vogi</div></div></div><div class="message message-compact"><div class="message-avatar">4:22 PM</div><div class="message-content"><div class="message-header"><span class="message-author">ꨄ𝐅𝐑𝐎𝐆𝐆𝐈𝐄ꨄ</span><span class="message-timestamp">06/08/2026 04:22 PM</span></div><div class="message-text">Vigi</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/705365758955356160/53caf20b1dc8756370581a501f3a668a.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">TRUEGAMER😎😎</span><span class="message-timestamp">06/08/2026 04:22 PM</span></div><div class="message-text">RIP</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/926789636393680906/b92bb4d913379e43a6eae7beff7d5e12.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">guora</span><span class="message-timestamp">06/08/2026 04:22 PM</span></div><div class="message-text"><h1>on <span class="mention">@Soap</span> via 2 times dist</h1></div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/1151390888132624409/1f9e96301b6fa97c41a3ab08bec556a2.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Stars🇵🇸</span><span class="message-timestamp">06/08/2026 04:22 PM</span></div><div class="message-text">I got farmed</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/944916264353136660/c7e52e5ee8dbb183eeeb093258042448.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Soap</span><span class="message-timestamp">06/08/2026 04:22 PM</span></div><div class="message-text">ok ok</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/1151390888132624409/1f9e96301b6fa97c41a3ab08bec556a2.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Stars🇵🇸</span><span class="message-timestamp">06/08/2026 04:22 PM</span></div><div class="message-text">so i was bmed</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/944916264353136660/c7e52e5ee8dbb183eeeb093258042448.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Soap</span><span class="message-timestamp">06/08/2026 04:22 PM</span></div><div class="message-text">Yea I am godfather</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/1199573769107288225/a_b5db3de2db78940b802683a7ebef6a3b.gif?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">ꨄ𝐅𝐑𝐎𝐆𝐆𝐈𝐄ꨄ</span><span class="message-timestamp">06/08/2026 04:22 PM</span></div><div class="message-text">On soap</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/944916264353136660/c7e52e5ee8dbb183eeeb093258042448.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Soap</span><span class="message-timestamp">06/08/2026 04:22 PM</span></div><div class="message-text">guora should have revealed earlier</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/1151390888132624409/1f9e96301b6fa97c41a3ab08bec556a2.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Stars🇵🇸</span><span class="message-timestamp">06/08/2026 04:22 PM</span></div><div class="message-text">On soap</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/711472626832375829/1ee290e1e314eeb59e51686ec4821c79.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">ibuprofen</span><span class="message-timestamp">06/08/2026 04:22 PM</span></div><div class="message-text">ohhh Diego that rascal</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/926789636393680906/b92bb4d913379e43a6eae7beff7d5e12.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">guora</span><span class="message-timestamp">06/08/2026 04:22 PM</span></div><div class="message-text">1 time dist is not enough</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/1199573769107288225/a_b5db3de2db78940b802683a7ebef6a3b.gif?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">ꨄ𝐅𝐑𝐎𝐆𝐆𝐈𝐄ꨄ</span><span class="message-timestamp">06/08/2026 04:22 PM</span></div><div class="message-text">And we still have a cupid</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/758999095070687284/70e18007dbd33933f77d901a0db8eb19.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Bugged Remastered</span><span class="bot-tag">BOT</span><span class="message-timestamp">06/08/2026 04:22 PM</span></div><div class="components"><div class="component-container" style="border-left-color: #a94300;"><div class="component-text"><h3>Now it is time to nominate! Vote the player you want by pressing the button below on who should be put on trial!</h3></div><div class="component-text">Minimum votes required: 4</div><div class="component-separator"></div><div class="component-text"><em></em>- <span class="mention">@Soap</span><br>- <span class="mention">@guora</span><br>- <span class="mention">@ꨄ𝐅𝐑𝐎𝐆𝐆𝐈𝐄ꨄ</span><br>- <span class="mention">@ibuprofen</span><br>- <span class="mention">@TRUEGAMER😎😎</span><br>- <span class="mention">@Stars🇵🇸</span><br>- <span class="mention">@Jeffery “yuno.fan” Epstein</span><em></em></div><div class="component-separator"></div><div class="component-action-row"><span class="component-button component-button-success">Vote</span></div><div class="component-text">-# You have 45 seconds to nominate someone...</div></div></div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/705365758955356160/53caf20b1dc8756370581a501f3a668a.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">TRUEGAMER😎😎</span><span class="message-timestamp">06/08/2026 04:22 PM</span></div><div class="message-text">Yeah</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/1018393914518024193/49bc139efb26e72401c9b865f2863593.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Jeffery “yuno.fan” Epstein</span><span class="message-timestamp">06/08/2026 04:22 PM</span></div><div class="message-text"><h1>FROGGIE AND SOAP NOT SAME SIDE FROGGIE AND STARS SAME SIDE TUNG AND STARS NOT SAME SIDE</h1></div></div></div><div class="message message-compact"><div class="message-avatar">4:22 PM</div><div class="message-content"><div class="message-header"><span class="message-author">Jeffery “yuno.fan” Epstein</span><span class="message-timestamp">06/08/2026 04:22 PM</span></div><div class="message-text"><h1>FROGGIE AND SOAP NOT SAME SIDE FROGGIE AND STARS SAME SIDE TUNG AND STARS NOT SAME SIDE</h1></div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/1151390888132624409/1f9e96301b6fa97c41a3ab08bec556a2.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Stars🇵🇸</span><span class="message-timestamp">06/08/2026 04:23 PM</span></div><div class="message-text">ok we know</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/944916264353136660/c7e52e5ee8dbb183eeeb093258042448.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Soap</span><span class="message-timestamp">06/08/2026 04:23 PM</span></div><div class="message-text">I am Godfather</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/758999095070687284/70e18007dbd33933f77d901a0db8eb19.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Bugged Remastered</span><span class="bot-tag">BOT</span><span class="message-timestamp">06/08/2026 04:23 PM</span></div><div class="components"><div class="component-container" style="border-left-color: #9c59b6;"><div class="component-section"><div class="component-section-content"><div class="component-text"><h3>A PROSECUTION IS HAPPENING!</h3></div><div class="component-text">The Judge has decided to put <strong>soapmactavish4466</strong> on prosecution!</div></div><div class="component-section-accessory"><img class="component-thumbnail" src="https://res.cloudinary.com/dkpraixbv/image/upload/w_100/abilities/prosecute.png" alt="None"></div></div><div class="component-separator"></div><div class="component-text">-# You guys better hope that the Judge is right...</div></div></div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/1151390888132624409/1f9e96301b6fa97c41a3ab08bec556a2.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Stars🇵🇸</span><span class="message-timestamp">06/08/2026 04:23 PM</span></div><div class="message-text">froggie is clear</div></div></div><div class="message message-compact"><div class="message-avatar">4:23 PM</div><div class="message-content"><div class="message-header"><span class="message-author">Stars🇵🇸</span><span class="message-timestamp">06/08/2026 04:23 PM</span></div><div class="message-text">nice nice</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/1199573769107288225/a_b5db3de2db78940b802683a7ebef6a3b.gif?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">ꨄ𝐅𝐑𝐎𝐆𝐆𝐈𝐄ꨄ</span><span class="message-timestamp">06/08/2026 04:23 PM</span></div><div class="message-text">So def soap</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/944916264353136660/c7e52e5ee8dbb183eeeb093258042448.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Soap</span><span class="message-timestamp">06/08/2026 04:23 PM</span></div><div class="message-text">damn</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/758999095070687284/70e18007dbd33933f77d901a0db8eb19.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Bugged Remastered</span><span class="bot-tag">BOT</span><span class="message-timestamp">06/08/2026 04:23 PM</span></div><div class="components"><div class="component-container" style="border-left-color: #972f25;"><div class="component-text"><strong><img class="custom-emoji" alt=":animated_logo:" src="https://cdn.discordapp.com/emojis/1368198731878498385.gif"> Mafia Remastered</strong></div><div class="component-text">soapmactavish4466&#x27;s role was <strong><img class="custom-emoji" alt=":godfather:" src="https://cdn.discordapp.com/emojis/1157662256599941150.png"> Godfather</strong>.</div></div></div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/926789636393680906/b92bb4d913379e43a6eae7beff7d5e12.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">guora</span><span class="message-timestamp">06/08/2026 04:23 PM</span></div><div class="message-text">conrete evidence</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/1199573769107288225/a_b5db3de2db78940b802683a7ebef6a3b.gif?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">ꨄ𝐅𝐑𝐎𝐆𝐆𝐈𝐄ꨄ</span><span class="message-timestamp">06/08/2026 04:23 PM</span></div><div class="message-text">Nice</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/758999095070687284/70e18007dbd33933f77d901a0db8eb19.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Bugged Remastered</span><span class="bot-tag">BOT</span><span class="message-timestamp">06/08/2026 04:23 PM</span></div><div class="components"><div class="component-container" style="border-left-color: #4e5058;"><div class="component-text"><h3>Night 4</h3></div><div class="component-separator"></div><div class="component-text"><strong>Currently Alive:</strong></div><div class="component-text">🙂 <span class="mention">@guora</span><br><br>🙂 <span class="mention">@ꨄ𝐅𝐑𝐎𝐆𝐆𝐈𝐄ꨄ</span><br><br>🙂 <span class="mention">@ibuprofen</span><br><br>🙂 <span class="mention">@TRUEGAMER😎😎</span><br><br>🙂 <span class="mention">@Stars🇵🇸</span><br><br>🙂 <span class="mention">@Jeffery “yuno.fan” Epstein</span></div><div class="component-separator"></div><div class="component-text"><strong>Currently Dead:</strong></div><div class="component-text">💀 <span class="mention">@I love Yuno.fan and the KOG</span> - <strong><img class="custom-emoji" alt=":farmer:" src="https://cdn.discordapp.com/emojis/1281143816006533120.png"> Farmer</strong><br><br>💀 <span class="mention">@Soap</span> - <strong><img class="custom-emoji" alt=":godfather:" src="https://cdn.discordapp.com/emojis/1157662256599941150.png"> Godfather</strong><br><br>💀 <span class="mention">@Your Uncle 🇵🇸</span> - <strong><img class="custom-emoji" alt=":jailor:" src="https://cdn.discordapp.com/emojis/1430453475040297100.png"> Jailor</strong><br><br>💀 <span class="mention">@Manas Ciel (Queen of Idiots)</span> - <strong><img class="custom-emoji" alt=":vendetta:" src="https://cdn.discordapp.com/emojis/1350864135973507206.png"> Vendetta</strong><br><br>💀 <span class="mention">@Harmony</span> - <strong><img class="custom-emoji" alt=":lawyer:" src="https://cdn.discordapp.com/emojis/1250427723105435658.png"> Lawyer</strong></div></div></div></div></div><div class="message message-compact"><div class="message-avatar">4:23 PM</div><div class="message-content"><div class="message-header"><span class="message-author">Bugged Remastered</span><span class="bot-tag">BOT</span><span class="message-timestamp">06/08/2026 04:23 PM</span></div><div class="components"><div class="component-container" style="border-left-color: #3498db;"><div class="component-text"><h3>To do your action tonight, click the Action button below.</h3></div><div class="component-text">You can choose not to do anything tonight by clicking the red button.</div><div class="component-separator"></div><div class="component-action-row"><span class="component-button component-button-success">Action</span></div></div></div></div></div><div class="message message-compact"><div class="message-avatar">4:24 PM</div><div class="message-content"><div class="message-header"><span class="message-author">Bugged Remastered</span><span class="bot-tag">BOT</span><span class="message-timestamp">06/08/2026 04:24 PM</span></div><div class="components"><div class="component-container" style="border-left-color: #972f25;"><div class="component-text"><strong><img class="custom-emoji" alt=":animated_logo:" src="https://cdn.discordapp.com/emojis/1368198731878498385.gif"> Mafia Remastered</strong></div><div class="component-text">Alright everybody, get your butts back here. It&#x27;s storytime.</div></div></div></div></div><div class="message message-compact"><div class="message-avatar">4:24 PM</div><div class="message-content"><div class="message-header"><span class="message-author">Bugged Remastered</span><span class="bot-tag">BOT</span><span class="message-timestamp">06/08/2026 04:24 PM</span></div><div class="components"><div class="component-container" style="border-left-color: #972f25;"><div class="component-text"><h3>Oh ya this also happened...</h3></div><div class="component-text"><img class="custom-emoji" alt=":couple:" src="https://cdn.discordapp.com/emojis/1175047375862120518.png"><img class="custom-emoji" alt=":heartbreak:" src="https://cdn.discordapp.com/emojis/1175047187323953173.png"> The lovers have had enough, and together, they&#x27;ve used their wrath on <strong>\<em>king\</em>of\<em>the\</em>frogs\_</strong></div></div></div></div></div><div class="message message-compact"><div class="message-avatar">4:24 PM</div><div class="message-content"><div class="message-header"><span class="message-author">Bugged Remastered</span><span class="bot-tag">BOT</span><span class="message-timestamp">06/08/2026 04:24 PM</span></div><div class="components"><div class="component-container" style="border-left-color: #972f25;"><div class="component-section"><div class="component-section-content"><div class="component-text"><h3>Day 4</h3></div><div class="component-text">-# The list below shows dead players. The alive player list will be shown later.</div><div class="component-text"><h2>Currently Dead</h2></div></div><div class="component-section-accessory"><img class="component-thumbnail" src="https://media.discordapp.net/attachments/923932323710398495/1046292063358029925/Screenshot_2022-11-27-13-10-29-43_680d03679600f7af0b4c700c6b270fe7.jpg?ex=6a27a06b&amp;is=6a264eeb&amp;hm=f980971925b0cd21ab385054d49cfb6d2c239db4659f9ec1dbb4cef9b2911d61&amp;" alt="None"></div></div><div class="component-text">💀 <span class="mention">@I love Yuno.fan and the KOG</span> - <strong><img class="custom-emoji" alt=":farmer:" src="https://cdn.discordapp.com/emojis/1281143816006533120.png"> Farmer</strong><br><br>💀 <span class="mention">@Soap</span> - <strong><img class="custom-emoji" alt=":godfather:" src="https://cdn.discordapp.com/emojis/1157662256599941150.png"> Godfather</strong><br><br>💀 <span class="mention">@Your Uncle 🇵🇸</span> - <strong><img class="custom-emoji" alt=":jailor:" src="https://cdn.discordapp.com/emojis/1430453475040297100.png"> Jailor</strong><br><br>💀 <span class="mention">@ꨄ𝐅𝐑𝐎𝐆𝐆𝐈𝐄ꨄ</span> - <strong><img class="custom-emoji" alt=":vigilante:" src="https://cdn.discordapp.com/emojis/1157659600330444852.png"> Vigilante</strong><br><br>💀 <span class="mention">@Manas Ciel (Queen of Idiots)</span> - <strong><img class="custom-emoji" alt=":vendetta:" src="https://cdn.discordapp.com/emojis/1350864135973507206.png"> Vendetta</strong><br><br>💀 <span class="mention">@Harmony</span> - <strong><img class="custom-emoji" alt=":lawyer:" src="https://cdn.discordapp.com/emojis/1250427723105435658.png"> Lawyer</strong></div></div></div></div></div><div class="message message-compact"><div class="message-avatar">4:24 PM</div><div class="message-content"><div class="message-header"><span class="message-author">Bugged Remastered</span><span class="bot-tag">BOT</span><span class="message-timestamp">06/08/2026 04:24 PM</span></div><div class="components"><div class="component-container" style="border-left-color: #3498db;"><div class="component-text"><h3>Currently Alive</h3></div><div class="component-text">◽ <span class="mention">@guora</span><br><br>◽ <span class="mention">@ibuprofen</span><br><br>◽ <span class="mention">@TRUEGAMER😎😎</span><br><br>◽ <span class="mention">@Stars🇵🇸</span><br><br>◽ <span class="mention">@Jeffery “yuno.fan” Epstein</span></div><div class="component-separator"></div><div class="component-text">-# Have fun!</div></div></div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/926789636393680906/b92bb4d913379e43a6eae7beff7d5e12.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">guora</span><span class="message-timestamp">06/08/2026 04:24 PM</span></div><div class="message-text">woah</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/711472626832375829/1ee290e1e314eeb59e51686ec4821c79.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">ibuprofen</span><span class="message-timestamp">06/08/2026 04:24 PM</span></div><div class="message-text">well uh</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/926789636393680906/b92bb4d913379e43a6eae7beff7d5e12.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">guora</span><span class="message-timestamp">06/08/2026 04:24 PM</span></div><div class="message-text">population decreased huh</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/711472626832375829/1ee290e1e314eeb59e51686ec4821c79.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">ibuprofen</span><span class="message-timestamp">06/08/2026 04:24 PM</span></div><div class="message-text">It’s just Cupid now I think</div></div></div><div class="message message-compact"><div class="message-avatar">4:24 PM</div><div class="message-content"><div class="message-header"><span class="message-author">ibuprofen</span><span class="message-timestamp">06/08/2026 04:24 PM</span></div><div class="message-text">Everyone claim</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/926789636393680906/b92bb4d913379e43a6eae7beff7d5e12.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">guora</span><span class="message-timestamp">06/08/2026 04:24 PM</span></div><div class="message-text"><span class="mention">@TRUEGAMER😎😎</span> claim</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/705365758955356160/53caf20b1dc8756370581a501f3a668a.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">TRUEGAMER😎😎</span><span class="message-timestamp">06/08/2026 04:24 PM</span></div><div class="message-text">Sheriff</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/926789636393680906/b92bb4d913379e43a6eae7beff7d5e12.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">guora</span><span class="message-timestamp">06/08/2026 04:24 PM</span></div><div class="message-text">dist</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/1018393914518024193/49bc139efb26e72401c9b865f2863593.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Jeffery “yuno.fan” Epstein</span><span class="message-timestamp">06/08/2026 04:24 PM</span></div><div class="message-text"><h1>STARS AND TRUEGAMER NOT SAME SIDE</h1></div></div></div><div class="message message-compact"><div class="message-avatar">4:24 PM</div><div class="message-content"><div class="message-header"><span class="message-author">Jeffery “yuno.fan” Epstein</span><span class="message-timestamp">06/08/2026 04:24 PM</span></div><div class="message-text"><h1>STARS AND TRUEGAMER NOT SAME SIDE</h1></div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/711472626832375829/1ee290e1e314eeb59e51686ec4821c79.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">ibuprofen</span><span class="message-timestamp">06/08/2026 04:24 PM</span></div><div class="message-text">ok</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/1151390888132624409/1f9e96301b6fa97c41a3ab08bec556a2.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Stars🇵🇸</span><span class="message-timestamp">06/08/2026 04:24 PM</span></div><div class="message-text">on truegamer</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/926789636393680906/b92bb4d913379e43a6eae7beff7d5e12.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">guora</span><span class="message-timestamp">06/08/2026 04:24 PM</span></div><div class="message-text">on truegamer</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/711472626832375829/1ee290e1e314eeb59e51686ec4821c79.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">ibuprofen</span><span class="message-timestamp">06/08/2026 04:24 PM</span></div><div class="message-text">So it’s truegamer</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/758999095070687284/70e18007dbd33933f77d901a0db8eb19.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Bugged Remastered</span><span class="bot-tag">BOT</span><span class="message-timestamp">06/08/2026 04:24 PM</span></div><div class="components"><div class="component-container" style="border-left-color: #a94300;"><div class="component-text"><h3>Now it is time to nominate! Vote the player you want by pressing the button below on who should be put on trial!</h3></div><div class="component-text">Minimum votes required: 3</div><div class="component-separator"></div><div class="component-text"><em></em>- <span class="mention">@guora</span><br>- <span class="mention">@ibuprofen</span><br>- <span class="mention">@TRUEGAMER😎😎</span><br>- <span class="mention">@Stars🇵🇸</span><br>- <span class="mention">@Jeffery “yuno.fan” Epstein</span><em></em></div><div class="component-separator"></div><div class="component-action-row"><span class="component-button component-button-success">Vote</span></div><div class="component-text">-# You have 45 seconds to nominate someone...</div></div></div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/705365758955356160/53caf20b1dc8756370581a501f3a668a.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">TRUEGAMER😎😎</span><span class="message-timestamp">06/08/2026 04:25 PM</span></div><div class="message-text">On stars</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/1151390888132624409/1f9e96301b6fa97c41a3ab08bec556a2.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Stars🇵🇸</span><span class="message-timestamp">06/08/2026 04:25 PM</span></div><div class="message-text">and we win</div></div></div><div class="message message-compact"><div class="message-avatar">4:25 PM</div><div class="message-content"><div class="message-header"><span class="message-author">Stars🇵🇸</span><span class="message-timestamp">06/08/2026 04:25 PM</span></div><div class="message-text">gg</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/758999095070687284/70e18007dbd33933f77d901a0db8eb19.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Bugged Remastered</span><span class="bot-tag">BOT</span><span class="message-timestamp">06/08/2026 04:25 PM</span></div><div class="components"><div class="component-container" style="border-left-color: #9c59b6;"><div class="component-section"><div class="component-section-content"><div class="component-text"><h3>A PROSECUTION IS HAPPENING!</h3></div><div class="component-text">The Judge has decided to put <strong>truegamer0707</strong> on prosecution!</div></div><div class="component-section-accessory"><img class="component-thumbnail" src="https://res.cloudinary.com/dkpraixbv/image/upload/w_100/abilities/prosecute.png" alt="None"></div></div><div class="component-separator"></div><div class="component-text">-# You guys better hope that the Judge is right...</div></div></div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/1151390888132624409/1f9e96301b6fa97c41a3ab08bec556a2.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Stars🇵🇸</span><span class="message-timestamp">06/08/2026 04:25 PM</span></div><div class="message-text">w</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/926789636393680906/b92bb4d913379e43a6eae7beff7d5e12.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">guora</span><span class="message-timestamp">06/08/2026 04:25 PM</span></div><div class="message-text">pls pls pls pls</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/1151390888132624409/1f9e96301b6fa97c41a3ab08bec556a2.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Stars🇵🇸</span><span class="message-timestamp">06/08/2026 04:25 PM</span></div><div class="message-text">im so proud of this town 🥹</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/758999095070687284/70e18007dbd33933f77d901a0db8eb19.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Bugged Remastered</span><span class="bot-tag">BOT</span><span class="message-timestamp">06/08/2026 04:25 PM</span></div><div class="components"><div class="component-container" style="border-left-color: #972f25;"><div class="component-text"><strong><img class="custom-emoji" alt=":animated_logo:" src="https://cdn.discordapp.com/emojis/1368198731878498385.gif"> Mafia Remastered</strong></div><div class="component-text">truegamer0707&#x27;s role was <strong><img class="custom-emoji" alt=":cupid:" src="https://cdn.discordapp.com/emojis/1144267051293233223.png"> Cupid</strong>.</div></div></div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/926789636393680906/b92bb4d913379e43a6eae7beff7d5e12.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">guora</span><span class="message-timestamp">06/08/2026 04:25 PM</span></div><div class="message-text">wwwwwwwwwww</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/1018393914518024193/49bc139efb26e72401c9b865f2863593.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Jeffery “yuno.fan” Epstein</span><span class="message-timestamp">06/08/2026 04:25 PM</span></div><div class="message-text">Fuck</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/758999095070687284/70e18007dbd33933f77d901a0db8eb19.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Bugged Remastered</span><span class="bot-tag">BOT</span><span class="message-timestamp">06/08/2026 04:25 PM</span></div><div class="components"><div class="component-container" style="border-left-color: #2ebb6a;"><div class="component-text"><h3>Game Over - Village won the match!</h3></div><div class="component-separator"></div><div class="component-text"><strong>🎊 Winners</strong></div><div class="component-text"><strong><u>Main winners</u></strong><br>👼 <span class="mention">@guora</span> - Distractor <br>👼 <span class="mention">@ibuprofen</span> - Judge <br>👼 <span class="mention">@Stars🇵🇸</span> - Villager <br>👼 <span class="mention">@Jeffery “yuno.fan” Epstein</span> - Pi <br><br>☠️ <span class="mention">@ꨄ𝐅𝐑𝐎𝐆𝐆𝐈𝐄ꨄ</span> - Vigilante <br>☠️ <span class="mention">@Harmony</span> - Lawyer</div><div class="component-separator"></div><div class="component-text"><strong>🗡️ Losers</strong></div><div class="component-text">☠️ <span class="mention">@I love Yuno.fan and the KOG</span> - Farmer <br>☠️ <span class="mention">@Soap</span> - Godfather <br>☠️ <span class="mention">@Your Uncle 🇵🇸</span> - Jailor <br>☠️ <span class="mention">@Manas Ciel (Queen of Idiots)</span> - Vendetta <br>☠️ <span class="mention">@TRUEGAMER😎😎</span> - Cupid</div><div class="component-separator"></div><div class="component-text">-# W Village, L others</div></div></div></div></div></div></div></body></html>
