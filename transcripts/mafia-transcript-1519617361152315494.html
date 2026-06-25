@@ -1,0 +1,580 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Transcript - #mafia</title>
+        <style>
+            * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+            }
+            
+            body {
+                font-family: "gg sans", "Noto Sans", Whitney, "Helvetica Neue", Helvetica, Arial, sans-serif;
+                background-color: #313338;
+                color: #dbdee1;
+                padding: 0;
+                line-height: 1.5;
+            }
+            
+            .transcript-container {
+                max-width: 1180px;
+                margin: 0 auto;
+                background-color: #313338;
+                overflow: hidden;
+            }
+            
+            .header {
+                background-color: #2b2d31;
+                padding: 16px 20px;
+                border-bottom: 1px solid #1f2023;
+                display: flex;
+                align-items: center;
+                gap: 12px;
+                position: sticky;
+                top: 0;
+                z-index: 2;
+            }
+            
+            .header-icon {
+                width: 40px;
+                height: 40px;
+                border-radius: 50%;
+                background-color: #5865f2;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 20px;
+                font-weight: bold;
+            }
+            
+            .header-info h1 {
+                font-size: 20px;
+                font-weight: 600;
+                margin-bottom: 4px;
+            }
+            
+            .header-info p {
+                font-size: 14px;
+                color: #b9bbbe;
+            }
+            
+            .messages-container {
+                padding: 16px 0 32px;
+            }
+            
+            .message {
+                display: flex;
+                padding: 2px 48px 2px 16px;
+                margin: 0;
+                position: relative;
+            }
+            
+            .message:hover {
+                background-color: #2e3035;
+            }
+
+            .message-compact {
+                padding-top: 0;
+                padding-bottom: 0;
+            }
+            
+            .message-avatar {
+                width: 40px;
+                height: 40px;
+                border-radius: 50%;
+                margin-right: 16px;
+                margin-top: 2px;
+                flex-shrink: 0;
+                background-color: #5865f2;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-weight: 600;
+                color: white;
+            }
+
+            .message-compact .message-avatar {
+                background: transparent;
+                color: #949ba4;
+                font-size: 11px;
+                font-weight: 500;
+                opacity: 0;
+            }
+
+            .message-compact:hover .message-avatar {
+                opacity: 1;
+            }
+            
+            .message-avatar img {
+                width: 100%;
+                height: 100%;
+                border-radius: 50%;
+                object-fit: cover;
+            }
+            
+            .message-content {
+                flex: 1;
+                min-width: 0;
+            }
+            
+            .message-header {
+                display: flex;
+                align-items: baseline;
+                gap: 8px;
+                margin-bottom: 0;
+            }
+
+            .message-compact .message-header {
+                display: none;
+            }
+            
+            .message-author {
+                font-weight: 600;
+                font-size: 16px;
+                color: #ffffff;
+            }
+
+            .bot-tag {
+                background-color: #5865f2;
+                border-radius: 3px;
+                color: #ffffff;
+                font-size: 10px;
+                font-weight: 700;
+                line-height: 15px;
+                padding: 0 4px;
+                text-transform: uppercase;
+            }
+            
+            .message-timestamp {
+                font-size: 12px;
+                color: #949ba4;
+            }
+            
+            .message-text {
+                color: #dbdee1;
+                font-size: 16px;
+                line-height: 1.375;
+                word-wrap: break-word;
+                white-space: normal;
+            }
+            
+            .message-text a {
+                color: #00b0f4;
+                text-decoration: none;
+            }
+
+            .custom-emoji {
+                height: 1.375em;
+                object-fit: contain;
+                vertical-align: -0.25em;
+                width: 1.375em;
+            }
+            
+            .message-text a:hover {
+                text-decoration: underline;
+            }
+            
+            .message-attachments {
+                margin-top: 8px;
+            }
+            
+            .attachment {
+                display: inline-block;
+                margin: 4px 0;
+            }
+            
+            .attachment img {
+                max-width: 400px;
+                max-height: 300px;
+                border-radius: 4px;
+                cursor: pointer;
+            }
+            
+            .attachment-file {
+                background-color: #2b2d31;
+                border: 1px solid #1f2023;
+                border-radius: 4px;
+                padding: 10px 16px;
+                display: inline-flex;
+                align-items: center;
+                gap: 8px;
+                text-decoration: none;
+                color: #00b0f4;
+            }
+            
+            .attachment-file:hover {
+                background-color: #393c43;
+            }
+            
+            .embed {
+                margin-top: 8px;
+                max-width: 520px;
+                border-radius: 4px;
+                background-color: #2b2d31;
+                display: flex;
+                overflow: hidden;
+            }
+            
+            .embed-color-bar {
+                width: 4px;
+                flex-shrink: 0;
+                background-color: #5865f2;
+            }
+            
+            .embed-content {
+                padding: 16px;
+                flex: 1;
+            }
+            
+            .embed-author {
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                margin-bottom: 8px;
+                font-size: 14px;
+                font-weight: 600;
+            }
+            
+            .embed-author img {
+                width: 24px;
+                height: 24px;
+                border-radius: 50%;
+            }
+            
+            .embed-title {
+                font-size: 16px;
+                font-weight: 600;
+                margin-bottom: 8px;
+                color: #00b0f4;
+            }
+            
+            .embed-description {
+                font-size: 14px;
+                line-height: 1.5;
+                margin-bottom: 12px;
+                white-space: pre-wrap;
+            }
+
+            .components {
+                margin-top: 4px;
+                max-width: 720px;
+            }
+
+            .component-container {
+                background-color: #2b2d31;
+                border: 1px solid #1f2023;
+                border-left: 4px solid #4e5058;
+                border-radius: 4px;
+                margin-top: 8px;
+                max-width: 720px;
+                padding: 12px 16px;
+            }
+
+            .component-text {
+                color: #dbdee1;
+                font-size: 16px;
+                line-height: 1.375;
+                margin: 4px 0;
+                white-space: normal;
+                word-wrap: break-word;
+            }
+
+            .component-text h1,
+            .component-text h2,
+            .component-text h3 {
+                color: #f2f3f5;
+                font-weight: 700;
+                line-height: 1.25;
+                margin: 4px 0 8px;
+            }
+
+            .component-text h1 {
+                font-size: 24px;
+            }
+
+            .component-text h2 {
+                font-size: 20px;
+            }
+
+            .component-text h3 {
+                font-size: 16px;
+            }
+
+            .component-section {
+                display: flex;
+                gap: 16px;
+                margin: 4px 0;
+            }
+
+            .component-section-content {
+                flex: 1;
+                min-width: 0;
+            }
+
+            .component-section-accessory {
+                flex-shrink: 0;
+            }
+
+            .component-thumbnail {
+                display: block;
+                max-height: 80px;
+                max-width: 80px;
+                border-radius: 4px;
+                object-fit: cover;
+            }
+
+            .component-media-gallery {
+                display: grid;
+                gap: 4px;
+                grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+                margin-top: 8px;
+                max-width: 560px;
+            }
+
+            .component-media-gallery img,
+            .component-media-gallery video {
+                background-color: #1e1f22;
+                border-radius: 4px;
+                display: block;
+                max-height: 360px;
+                max-width: 100%;
+                object-fit: cover;
+                width: 100%;
+            }
+
+            .component-separator {
+                border-top: 1px solid #3f4147;
+                height: 1px;
+                margin: 10px 0;
+            }
+
+            .component-separator-spacer {
+                border-top: 0;
+                height: 8px;
+            }
+
+            .component-action-row {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 8px;
+                margin-top: 8px;
+            }
+
+            .component-button,
+            .component-select {
+                align-items: center;
+                border: 0;
+                border-radius: 3px;
+                color: #ffffff;
+                display: inline-flex;
+                font-size: 14px;
+                font-weight: 500;
+                gap: 6px;
+                min-height: 32px;
+                padding: 2px 16px;
+                text-decoration: none;
+            }
+
+            .component-button-primary { background-color: #5865f2; }
+            .component-button-secondary,
+            .component-select { background-color: #4e5058; }
+            .component-button-success { background-color: #248046; }
+            .component-button-danger { background-color: #da373c; }
+            .component-button-link { background-color: #4e5058; }
+            .component-button-disabled {
+                cursor: not-allowed;
+                opacity: 0.55;
+            }
+
+            .component-file {
+                align-items: center;
+                background-color: #2b2d31;
+                border: 1px solid #1f2023;
+                border-radius: 4px;
+                color: #00a8fc;
+                display: inline-flex;
+                gap: 8px;
+                margin-top: 8px;
+                padding: 10px 12px;
+                text-decoration: none;
+            }
+            
+            .embed-fields {
+                display: grid;
+                gap: 8px;
+            }
+            
+            .embed-field {
+                min-width: 0;
+            }
+            
+            .embed-field-inline {
+                display: inline-block;
+                width: calc(33.33% - 8px);
+                vertical-align: top;
+            }
+            
+            .embed-field-name {
+                font-size: 14px;
+                font-weight: 600;
+                margin-bottom: 2px;
+                color: #ffffff;
+            }
+            
+            .embed-field-value {
+                font-size: 14px;
+                line-height: 1.5;
+                white-space: pre-wrap;
+            }
+            
+            .embed-thumbnail {
+                margin-left: 16px;
+                flex-shrink: 0;
+            }
+            
+            .embed-thumbnail img {
+                max-width: 80px;
+                max-height: 80px;
+                border-radius: 4px;
+            }
+            
+            .embed-image {
+                margin-top: 12px;
+            }
+            
+            .embed-image img {
+                max-width: 100%;
+                border-radius: 4px;
+            }
+            
+            .embed-footer {
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                margin-top: 12px;
+                font-size: 12px;
+                color: #72767d;
+            }
+            
+            .embed-footer img {
+                width: 20px;
+                height: 20px;
+                border-radius: 50%;
+            }
+            
+            .reactions {
+                display: flex;
+                gap: 4px;
+                margin-top: 8px;
+                flex-wrap: wrap;
+            }
+            
+            .reaction {
+                background-color: #2f3136;
+                border: 1px solid #2f3136;
+                border-radius: 8px;
+                padding: 4px 8px;
+                display: flex;
+                align-items: center;
+                gap: 4px;
+                font-size: 14px;
+                cursor: pointer;
+            }
+            
+            .reaction:hover {
+                border-color: #4f545c;
+            }
+            
+            .reaction-emoji {
+                width: 16px;
+                height: 16px;
+            }
+            
+            .reaction-count {
+                color: #b9bbbe;
+                font-weight: 500;
+            }
+            
+            .system-message {
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                padding: 8px 16px;
+                margin: 16px 0;
+                color: #72767d;
+                font-size: 14px;
+            }
+            
+            .system-message-icon {
+                width: 16px;
+                height: 16px;
+                flex-shrink: 0;
+            }
+            
+            .mention {
+                background-color: rgba(88, 101, 242, 0.3);
+                color: #dee0fc;
+                padding: 0 2px;
+                border-radius: 3px;
+                font-weight: 500;
+            }
+            
+            .mention:hover {
+                background-color: #5865f2;
+                color: #ffffff;
+            }
+            
+            .code-inline {
+                background-color: #2f3136;
+                padding: 2px 4px;
+                border-radius: 3px;
+                font-family: Consolas, "Andale Mono WT", "Andale Mono", "Lucida Console", monospace;
+                font-size: 14px;
+            }
+            
+            .code-block {
+                background-color: #2f3136;
+                border: 1px solid #202225;
+                border-radius: 4px;
+                padding: 12px;
+                margin: 8px 0;
+                font-family: Consolas, "Andale Mono WT", "Andale Mono", "Lucida Console", monospace;
+                font-size: 14px;
+                overflow-x: auto;
+            }
+            
+            .spoiler {
+                background-color: #202225;
+                color: transparent;
+                padding: 0 2px;
+                border-radius: 3px;
+                cursor: pointer;
+                transition: all 0.1s;
+            }
+            
+            .spoiler:hover {
+                background-color: rgba(255, 255, 255, 0.1);
+                color: #dcddde;
+            }
+            
+            .divider {
+                display: flex;
+                align-items: center;
+                margin: 20px 0;
+                color: #72767d;
+                font-size: 12px;
+                font-weight: 600;
+                text-transform: uppercase;
+            }
+            
+            .divider::before,
+            .divider::after {
+                content: "";
+                flex: 1;
+                height: 1px;
+                background-color: #4f545c;
+            }
+            
+            .divider-text {
+                padding: 0 16px;
+            }
+        </style>
+        </head><body><div class="transcript-container"><div class="header"><div class="header-icon">#</div><div class="header-info"><h1>#mafia</h1><p>89 messages • Generated on June 25, 2026 at 08:24 AM</p></div></div><div class="messages-container"><div class="divider"><span class="divider-text">June 25, 2026</span></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/758999095070687284/70e18007dbd33933f77d901a0db8eb19.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">red thingy [ / ]</span><span class="bot-tag">BOT</span><span class="message-timestamp">06/25/2026 08:16 AM</span></div><div class="components"><div class="component-text"><span class="mention">@syl</span> <span class="mention">@aaa707yx</span> <span class="mention">@r</span> <span class="mention">@Noob Saibot &quot;The fraud&quot;</span> <span class="mention">@jester✨</span> <span class="mention">@Legends | Atharva</span> <span class="mention">@z</span> <span class="mention">@Zoro_</span> <span class="mention">@ambiguousenemy12</span> <span class="mention">@User</span></div></div></div></div><div class="message message-compact"><div class="message-avatar">8:16 AM</div><div class="message-content"><div class="message-header"><span class="message-author">red thingy [ / ]</span><span class="bot-tag">BOT</span><span class="message-timestamp">06/25/2026 08:16 AM</span></div><div class="components"><div class="component-container" style="border-left-color: #9c59b6;"><div class="component-text"><h3>🖐️ Welcome to Mafia!</h3></div><div class="component-text">📕 If you haven&#x27;t read the rules yet, please type &lt;/game:1042058961274282025&gt; to view them!</div><div class="component-separator"></div><div class="component-text"><strong>❗ HEY LISTEN UP</strong></div><div class="component-text">💢 Please do not type in this chat unless instructed to do so. Admins please don&#x27;t abuse your godly powers and talk when other people can&#x27;t. Thank you.</div><div class="component-separator"></div><div class="component-text"><strong>💀 To those who are dead:</strong></div><div class="component-text">Please do not talk. I know it&#x27;s hard to grasp but dead people can&#x27;t talk.</div><div class="component-separator"></div><div class="component-text"><strong>👀 Some important rules:</strong></div><div class="component-text">🚫 Screenshots are not permitted and would only ruin the game. However, you CAN claim roles to either coordinate among yourselves or trick other people. Just NO SCREENSHOTS (unless you are a mafia showing results to other mafias).</div><div class="component-separator"></div><div class="component-text"><strong>🗣️ Some useful commands:</strong></div><div class="component-text">&lt;/reset:1133666068360077378&gt;, &lt;/help:1042058961274282026&gt;, &lt;/game:1042058961274282025&gt;</div><div class="component-separator"></div><div class="component-text">-# Note: Parts of the game can be customized using the /config command! To view the current settings, use &lt;/settings:1164534455780782215&gt;.</div></div></div></div></div><div class="message message-compact"><div class="message-avatar">8:17 AM</div><div class="message-content"><div class="message-header"><span class="message-author">red thingy [ / ]</span><span class="bot-tag">BOT</span><span class="message-timestamp">06/25/2026 08:17 AM</span></div><div class="components"><div class="component-container" style="border-left-color: #15826c;"><div class="component-text"><h3>Anomalies are enabled!</h3></div><div class="component-text">Throughout the game, there is a 40% chance of anomalies happening. Let the crazy begin!</div><div class="component-separator"></div><div class="component-text">-# Hope you manage to survive this.</div></div></div></div></div><div class="message message-compact"><div class="message-avatar">8:17 AM</div><div class="message-content"><div class="message-header"><span class="message-author">red thingy [ / ]</span><span class="bot-tag">BOT</span><span class="message-timestamp">06/25/2026 08:17 AM</span></div><div class="components"><div class="component-container" style="border-left-color: #972f25;"><div class="component-text"><strong><img class="custom-emoji" alt=":animated_logo:" src="https://cdn.discordapp.com/emojis/1368198731878498385.gif"> Mafia Remastered</strong></div><div class="component-text">Alright! Let the game begin!</div></div></div></div></div><div class="message message-compact"><div class="message-avatar">8:17 AM</div><div class="message-content"><div class="message-header"><span class="message-author">red thingy [ / ]</span><span class="bot-tag">BOT</span><span class="message-timestamp">06/25/2026 08:17 AM</span></div><div class="components"><div class="component-container" style="border-left-color: #4e5058;"><div class="component-text"><h3>Night 1</h3></div><div class="component-separator"></div><div class="component-text"><strong>Currently Alive:</strong></div><div class="component-text">🙂 <span class="mention">@syl</span><br><br>🙂 <span class="mention">@aaa707yx</span><br><br>🙂 <span class="mention">@r</span><br><br>🙂 <span class="mention">@Noob Saibot &quot;The fraud&quot;</span><br><br>🙂 <span class="mention">@jester✨</span><br><br>🙂 <span class="mention">@Legends | Atharva</span><br><br>🙂 <span class="mention">@z</span><br><br>🙂 <span class="mention">@Zoro_</span><br><br>🙂 <span class="mention">@ambiguousenemy12</span><br><br>🙂 <span class="mention">@User</span></div><div class="component-separator"></div><div class="component-text"><strong>Currently Dead:</strong></div><div class="component-text">No one is dead yet...</div></div></div></div></div><div class="message message-compact"><div class="message-avatar">8:17 AM</div><div class="message-content"><div class="message-header"><span class="message-author">red thingy [ / ]</span><span class="bot-tag">BOT</span><span class="message-timestamp">06/25/2026 08:17 AM</span></div><div class="components"><div class="component-container" style="border-left-color: #3498db;"><div class="component-text"><h3>To do your action tonight, click the Action button below.</h3></div><div class="component-text">You can choose not to do anything tonight by clicking the red button.</div><div class="component-separator"></div><div class="component-action-row"><span class="component-button component-button-success">Action</span></div></div></div></div></div><div class="message message-compact"><div class="message-avatar">8:18 AM</div><div class="message-content"><div class="message-header"><span class="message-author">red thingy [ / ]</span><span class="bot-tag">BOT</span><span class="message-timestamp">06/25/2026 08:18 AM</span></div><div class="components"><div class="component-container" style="border-left-color: #972f25;"><div class="component-text"><strong><img class="custom-emoji" alt=":animated_logo:" src="https://cdn.discordapp.com/emojis/1368198731878498385.gif"> Mafia Remastered</strong></div><div class="component-text">Alright everybody, get your butts back here. It&#x27;s storytime.</div></div></div></div></div><div class="message message-compact"><div class="message-avatar">8:18 AM</div><div class="message-content"><div class="message-header"><span class="message-author">red thingy [ / ]</span><span class="bot-tag">BOT</span><span class="message-timestamp">06/25/2026 08:18 AM</span></div><div class="components"><div class="component-container" style="border-left-color: #972f25;"><div class="component-text"><h3>.user.\_. was attacked by the Mafia :(</h3></div><div class="component-text">.user.<em>. Challenged team Mafia to an pokemon battle, Mafia used the Pokemon Gun and shot .user.</em>.... Hey that wasn&#x27;t team rocket or the other evil teams.</div><div class="component-media-gallery"><img src="https://res.cloudinary.com/dkpraixbv/image/upload/misc/youdied-default.png" alt="You died background"></div></div></div></div></div><div class="message message-compact"><div class="message-avatar">8:18 AM</div><div class="message-content"><div class="message-header"><span class="message-author">red thingy [ / ]</span><span class="bot-tag">BOT</span><span class="message-timestamp">06/25/2026 08:18 AM</span></div><div class="components"><div class="component-container" style="border-left-color: #972f25;"><div class="component-section"><div class="component-section-content"><div class="component-text"><h3>Day 1</h3></div><div class="component-text">-# The list below shows dead players. The alive player list will be shown later.</div><div class="component-text"><h2>Currently Dead</h2></div></div><div class="component-section-accessory"><img class="component-thumbnail" src="https://media.discordapp.net/attachments/923932323710398495/1046292063358029925/Screenshot_2022-11-27-13-10-29-43_680d03679600f7af0b4c700c6b270fe7.jpg?ex=6a3e09eb&amp;is=6a3cb86b&amp;hm=2466fcb034b5384030116eb55024b338510c9f6beae97e01fad1ce920e7c243a&amp;" alt="None"></div></div><div class="component-text">💀 <span class="mention">@User</span> - <strong><img class="custom-emoji" alt=":manager:" src="https://cdn.discordapp.com/emojis/1250427786271920130.png"> Manager</strong></div></div></div></div></div><div class="message message-compact"><div class="message-avatar">8:18 AM</div><div class="message-content"><div class="message-header"><span class="message-author">red thingy [ / ]</span><span class="bot-tag">BOT</span><span class="message-timestamp">06/25/2026 08:18 AM</span></div><div class="components"><div class="component-container" style="border-left-color: #c67c1c;"><div class="component-text"><h3>ANOMALY: 🌧️ Acid Rain</h3></div><div class="component-text">The acid rain has wiped the disguise of someone&#x27;s role! <strong>namquan\_31469</strong> is the <strong><img class="custom-emoji" alt=":godfather:" src="https://cdn.discordapp.com/emojis/1157662256599941150.png"> Godfather</strong>!</div><div class="component-media-gallery"><img src="https://d3mvlb3hz2g78.cloudfront.net/wp-content/uploads/2023/04/thumb_720_450_dreamstime_xs_191493424.jpg" alt="Acid Rain image"></div></div></div><div class="reactions"><div class="reaction"><span class="reaction-emoji">☠️</span><span class="reaction-count">3</span></div></div></div></div><div class="message message-compact"><div class="message-avatar">8:18 AM</div><div class="message-content"><div class="message-header"><span class="message-author">red thingy [ / ]</span><span class="bot-tag">BOT</span><span class="message-timestamp">06/25/2026 08:18 AM</span></div><div class="components"><div class="component-container" style="border-left-color: #3498db;"><div class="component-text"><h3>Currently Alive</h3></div><div class="component-text">◽ <span class="mention">@syl</span><br><br>◽ <span class="mention">@aaa707yx</span><br><br>◽ <span class="mention">@r</span><br><br>◽ <span class="mention">@Noob Saibot &quot;The fraud&quot;</span><br><br>◽ <span class="mention">@jester✨</span><br><br>◽ <span class="mention">@Legends | Atharva</span><br><br>◽ <span class="mention">@z</span><br><br>◽ <span class="mention">@Zoro_</span><br><br>◽ <span class="mention">@ambiguousenemy12</span></div><div class="component-separator"></div><div class="component-text">-# Have fun!</div></div></div></div></div><div class="message message-compact"><div class="message-avatar">8:18 AM</div><div class="message-content"><div class="message-header"><span class="message-author">red thingy [ / ]</span><span class="bot-tag">BOT</span><span class="message-timestamp">06/25/2026 08:18 AM</span></div><div class="components"><div class="component-container" style="border-left-color: #4e5058;"><div class="component-text"><h3>Random player list:</h3></div><div class="component-text"><span class="mention">@jester✨</span> - <strong>Random Player 1</strong></div><div class="component-text"><span class="mention">@syl</span> - <strong>Random Player 2</strong></div><div class="component-text"><span class="mention">@aaa707yx</span> - <strong>Random Player 3</strong></div><div class="component-text"><span class="mention">@Zoro_</span> - <strong>Random Player 4</strong></div><div class="component-text"><span class="mention">@Noob Saibot &quot;The fraud&quot;</span> - <strong>Random Player 5</strong></div><div class="component-text"><span class="mention">@ambiguousenemy12</span> - <strong>Random Player 6</strong></div><div class="component-text"><span class="mention">@User</span> - <strong>Random Player 7</strong></div><div class="component-text"><span class="mention">@Legends | Atharva</span> - <strong>Random Player 8</strong></div><div class="component-text"><span class="mention">@r</span> - <strong>Random Player 9</strong></div><div class="component-text"><span class="mention">@z</span> - <strong>Random Player 10</strong></div></div></div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/1137010538568757389/d225f474e3caf224de714c04185cb77c.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">aaa707yx</span><span class="message-timestamp">06/25/2026 08:18 AM</span></div><div class="message-text">NAH BRO</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/897883731057070110/db1021f45a59126450777b2ff52ed56e.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Legends | Atharva</span><span class="message-timestamp">06/25/2026 08:18 AM</span></div><div class="message-text">Lol</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/1318136065827278848/1b99272492c2f16e9a354aee9807229c.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">jester✨</span><span class="message-timestamp">06/25/2026 08:18 AM</span></div><div class="message-text">W rain</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/896190315025813574/1d2a34fcfe11a8de12222e99b876a776.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">syl</span><span class="message-timestamp">06/25/2026 08:18 AM</span></div><div class="message-text">l</div></div></div><div class="message message-compact"><div class="message-avatar">8:18 AM</div><div class="message-content"><div class="message-header"><span class="message-author">syl</span><span class="message-timestamp">06/25/2026 08:18 AM</span></div><div class="message-text">w</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/800565154345517097/f434e2bab7f7c8b0d9ca39ddae698295.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">ambiguousenemy12</span><span class="message-timestamp">06/25/2026 08:18 AM</span></div><div class="message-text">yay</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/897883731057070110/db1021f45a59126450777b2ff52ed56e.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Legends | Atharva</span><span class="message-timestamp">06/25/2026 08:18 AM</span></div><div class="message-text">😭</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/895935784371228724/70be06190a482a748e51eee090ab3971.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">r</span><span class="message-timestamp">06/25/2026 08:18 AM</span></div><div class="message-text"><span class="mention">@z</span> village via link</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/1137010538568757389/d225f474e3caf224de714c04185cb77c.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">aaa707yx</span><span class="message-timestamp">06/25/2026 08:18 AM</span></div><div class="message-text">FIRST ROUND AND IM ALREADY COOKED</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/897883731057070110/db1021f45a59126450777b2ff52ed56e.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Legends | Atharva</span><span class="message-timestamp">06/25/2026 08:18 AM</span></div><div class="message-text">Ok</div></div></div><div class="message message-compact"><div class="message-avatar">8:18 AM</div><div class="message-content"><div class="message-header"><span class="message-author">Legends | Atharva</span><span class="message-timestamp">06/25/2026 08:18 AM</span></div><div class="message-text"><span class="mention">@z</span></div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/771309395816480798/5a7f95aa22242d67da5a693eb2fc6830.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Noob Saibot &quot;The fraud&quot;</span><span class="message-timestamp">06/25/2026 08:18 AM</span></div><div class="message-text">Lmao</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/897883731057070110/db1021f45a59126450777b2ff52ed56e.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Legends | Atharva</span><span class="message-timestamp">06/25/2026 08:18 AM</span></div><div class="message-text">Can u confirm</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/800565154345517097/f434e2bab7f7c8b0d9ca39ddae698295.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">ambiguousenemy12</span><span class="message-timestamp">06/25/2026 08:19 AM</span></div><div class="message-text">votere them</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/897883731057070110/db1021f45a59126450777b2ff52ed56e.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Legends | Atharva</span><span class="message-timestamp">06/25/2026 08:19 AM</span></div><div class="message-text">Where is z vro</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/808421736163967076/94e37e9cde4be6656b77c386e9569b28.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">z</span><span class="message-timestamp">06/25/2026 08:19 AM</span></div><div class="message-text">Yo</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/1318136065827278848/1b99272492c2f16e9a354aee9807229c.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">jester✨</span><span class="message-timestamp">06/25/2026 08:19 AM</span></div><div class="message-text"><span class="mention">@syl</span>  ducks are better</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/808421736163967076/94e37e9cde4be6656b77c386e9569b28.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">z</span><span class="message-timestamp">06/25/2026 08:19 AM</span></div><div class="message-text">R is lwk neut via link</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/758999095070687284/70e18007dbd33933f77d901a0db8eb19.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">red thingy [ / ]</span><span class="bot-tag">BOT</span><span class="message-timestamp">06/25/2026 08:19 AM</span></div><div class="components"><div class="component-container" style="border-left-color: #a94300;"><div class="component-text"><h3>Now it is time to nominate! Vote the player you want by pressing the button below on who should be put on trial!</h3></div><div class="component-text">Minimum votes required: 5</div><div class="component-separator"></div><div class="component-text"><em></em>- <span class="mention">@syl</span><br>- <span class="mention">@aaa707yx</span><br>- <span class="mention">@r</span><br>- <span class="mention">@Noob Saibot &quot;The fraud&quot;</span><br>- <span class="mention">@jester✨</span><br>- <span class="mention">@Legends | Atharva</span><br>- <span class="mention">@z</span><br>- <span class="mention">@Zoro_</span><br>- <span class="mention">@ambiguousenemy12</span><em></em></div><div class="component-separator"></div><div class="component-action-row"><span class="component-button component-button-success">Vote</span></div><div class="component-text">-# You have 45 seconds to nominate someone...</div></div></div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/896190315025813574/1d2a34fcfe11a8de12222e99b876a776.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">syl</span><span class="message-timestamp">06/25/2026 08:19 AM</span></div><div class="message-text">Chicken are better</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/897883731057070110/db1021f45a59126450777b2ff52ed56e.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Legends | Atharva</span><span class="message-timestamp">06/25/2026 08:19 AM</span></div><div class="message-text">☠️</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/895935784371228724/70be06190a482a748e51eee090ab3971.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">r</span><span class="message-timestamp">06/25/2026 08:19 AM</span></div><div class="message-text">see i confirmed him</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/897883731057070110/db1021f45a59126450777b2ff52ed56e.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Legends | Atharva</span><span class="message-timestamp">06/25/2026 08:19 AM</span></div><div class="message-text">On <span class="mention">@aaa707yx</span> now</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/895935784371228724/70be06190a482a748e51eee090ab3971.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">r</span><span class="message-timestamp">06/25/2026 08:19 AM</span></div><div class="message-text">now we vote out maf</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/800565154345517097/f434e2bab7f7c8b0d9ca39ddae698295.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">ambiguousenemy12</span><span class="message-timestamp">06/25/2026 08:19 AM</span></div><div class="message-text">yea</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/897883731057070110/db1021f45a59126450777b2ff52ed56e.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Legends | Atharva</span><span class="message-timestamp">06/25/2026 08:19 AM</span></div><div class="message-text">Fr?</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/895935784371228724/70be06190a482a748e51eee090ab3971.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">r</span><span class="message-timestamp">06/25/2026 08:19 AM</span></div><div class="message-text">yes</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/808421736163967076/94e37e9cde4be6656b77c386e9569b28.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">z</span><span class="message-timestamp">06/25/2026 08:19 AM</span></div><div class="message-text">Yeh</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/897883731057070110/db1021f45a59126450777b2ff52ed56e.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Legends | Atharva</span><span class="message-timestamp">06/25/2026 08:19 AM</span></div><div class="message-text">Which neut</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/1137010538568757389/d225f474e3caf224de714c04185cb77c.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">aaa707yx</span><span class="message-timestamp">06/25/2026 08:19 AM</span></div><div class="message-text">darn it</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/895935784371228724/70be06190a482a748e51eee090ab3971.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">r</span><span class="message-timestamp">06/25/2026 08:19 AM</span></div><div class="message-text">im uh subaru</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/808421736163967076/94e37e9cde4be6656b77c386e9569b28.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">z</span><span class="message-timestamp">06/25/2026 08:19 AM</span></div><div class="message-text">R u a good neut</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/1318136065827278848/1b99272492c2f16e9a354aee9807229c.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">jester✨</span><span class="message-timestamp">06/25/2026 08:20 AM</span></div><div class="message-text">anything to not swear</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/758999095070687284/70e18007dbd33933f77d901a0db8eb19.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">red thingy [ / ]</span><span class="bot-tag">BOT</span><span class="message-timestamp">06/25/2026 08:20 AM</span></div><div class="components"><div class="component-container" style="border-left-color: #c67c1c;"><div class="component-text"><h3>Nomination results</h3></div><div class="component-separator"></div><div class="component-text">All votes are hidden. If someone is on trial, it will be announced.</div><div class="component-separator"></div><div class="component-text">-# Minimum votes to put someone on stand: 5</div></div></div></div></div><div class="message message-compact"><div class="message-avatar">8:20 AM</div><div class="message-content"><div class="message-header"><span class="message-author">red thingy [ / ]</span><span class="bot-tag">BOT</span><span class="message-timestamp">06/25/2026 08:20 AM</span></div><div class="components"><div class="component-container" style="border-left-color: #4e5058;"><div class="component-section"><div class="component-section-content"><div class="component-text"><h3>namquan\_31469 has been called to the stand. How do you plead?</h3></div><div class="component-text">You have 45 seconds to defend yourself before the town casts their votes for judgement.</div></div><div class="component-section-accessory"><img class="component-thumbnail" src="https://cdn.discordapp.com/avatars/1137010538568757389/d225f474e3caf224de714c04185cb77c.webp" alt="None"></div></div></div></div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/895935784371228724/70be06190a482a748e51eee090ab3971.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">r</span><span class="message-timestamp">06/25/2026 08:20 AM</span></div><div class="message-text"><a href="https://tenor.com/view/subaru-rezero-re-zero-re-zero-kara-hajimeru-isekai-seikatsu-re-zero--starting-life-in-another-world-gif-2740361170727624582" target="_blank">https://tenor.com/view/subaru-rezero-re-zero-re-zero-kara-hajimeru-isekai-seikatsu-re-zero--starting-life-in-another-world-gif-2740361170727624582</a></div><div class="embed"><div class="embed-color-bar" style="background-color: #5865f2;"></div><div class="embed-content"></div><div class="embed-thumbnail"><img src="https://media.tenor.com/Jge39zl-X4YAAAAe/subaru-rezero.png" alt=""></div></div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/897883731057070110/db1021f45a59126450777b2ff52ed56e.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Legends | Atharva</span><span class="message-timestamp">06/25/2026 08:20 AM</span></div><div class="message-text">Shoot r (:</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/895935784371228724/70be06190a482a748e51eee090ab3971.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">r</span><span class="message-timestamp">06/25/2026 08:20 AM</span></div><div class="message-text">yes im subaru</div></div></div><div class="message message-compact"><div class="message-avatar">8:20 AM</div><div class="message-content"><div class="message-header"><span class="message-author">r</span><span class="message-timestamp">06/25/2026 08:20 AM</span></div><div class="message-text">bro no</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/897883731057070110/db1021f45a59126450777b2ff52ed56e.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Legends | Atharva</span><span class="message-timestamp">06/25/2026 08:20 AM</span></div><div class="message-text">Which neut then</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/895935784371228724/70be06190a482a748e51eee090ab3971.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">r</span><span class="message-timestamp">06/25/2026 08:20 AM</span></div><div class="message-text">THAT THE FUCKING BEST HINT I CAN GIVE</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/1318136065827278848/1b99272492c2f16e9a354aee9807229c.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">jester✨</span><span class="message-timestamp">06/25/2026 08:20 AM</span></div><div class="message-text">get the donator</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/895935784371228724/70be06190a482a748e51eee090ab3971.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">r</span><span class="message-timestamp">06/25/2026 08:20 AM</span></div><div class="message-text">SUBARU</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/897883731057070110/db1021f45a59126450777b2ff52ed56e.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Legends | Atharva</span><span class="message-timestamp">06/25/2026 08:20 AM</span></div><div class="message-text">Wtf is subaru</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/758999095070687284/70e18007dbd33933f77d901a0db8eb19.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">red thingy [ / ]</span><span class="bot-tag">BOT</span><span class="message-timestamp">06/25/2026 08:20 AM</span></div><div class="components"><div class="component-container" style="border-left-color: #c67c1c;"><div class="component-text"><h3>It is judgement time 👨‍⚖️👩‍⚖️. The village is in session!</h3></div><div class="component-text">The village must now decide the fate of <strong>namquan\_31469</strong>. You guys have 45 seconds to vote, or forever hold your peace.</div><div class="component-separator"></div><div class="component-text">👿 Guilty</div><div class="component-text">Votes are hidden.</div><div class="component-separator"></div><div class="component-text">👼 Innocent</div><div class="component-text">Votes are hidden.</div><div class="component-separator"></div><div class="component-text">-# I really hope the town is coordinated (no not really)</div><div class="component-action-row"><span class="component-button component-button-danger component-button-disabled">👿<span>Guilty</span></span><span class="component-button component-button-success component-button-disabled">👼<span>Innocent</span></span><span class="component-button component-button-secondary component-button-disabled">🙅‍♂️<span>ME NO VOTE</span></span></div></div></div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/895935784371228724/70be06190a482a748e51eee090ab3971.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">r</span><span class="message-timestamp">06/25/2026 08:20 AM</span></div><div class="message-text">ISEKAI IDIOT</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/771309395816480798/5a7f95aa22242d67da5a693eb2fc6830.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Noob Saibot &quot;The fraud&quot;</span><span class="message-timestamp">06/25/2026 08:20 AM</span></div><div class="message-text">😂😂😂</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/808421736163967076/94e37e9cde4be6656b77c386e9569b28.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">z</span><span class="message-timestamp">06/25/2026 08:21 AM</span></div><div class="message-text">Ok</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/1318136065827278848/1b99272492c2f16e9a354aee9807229c.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">jester✨</span><span class="message-timestamp">06/25/2026 08:21 AM</span></div><div class="message-text">sahara desert</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/897883731057070110/db1021f45a59126450777b2ff52ed56e.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Legends | Atharva</span><span class="message-timestamp">06/25/2026 08:21 AM</span></div><div class="message-text">☠️</div></div></div><div class="message message-compact"><div class="message-avatar">8:21 AM</div><div class="message-content"><div class="message-header"><span class="message-author">Legends | Atharva</span><span class="message-timestamp">06/25/2026 08:21 AM</span></div><div class="message-text">Turn into a vill</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/895935784371228724/70be06190a482a748e51eee090ab3971.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">r</span><span class="message-timestamp">06/25/2026 08:21 AM</span></div><div class="message-text">sure ig</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/808421736163967076/94e37e9cde4be6656b77c386e9569b28.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">z</span><span class="message-timestamp">06/25/2026 08:21 AM</span></div><div class="message-text">Reincarnate as manager free win</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/895935784371228724/70be06190a482a748e51eee090ab3971.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">r</span><span class="message-timestamp">06/25/2026 08:21 AM</span></div><div class="message-text">can judge suicide</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/771309395816480798/5a7f95aa22242d67da5a693eb2fc6830.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Noob Saibot &quot;The fraud&quot;</span><span class="message-timestamp">06/25/2026 08:21 AM</span></div><div class="message-text"><a href="https://tenor.com/view/a-person-who-thinks-all-the-time-albert-einstein-a-person-who-thinks-has-nothing-to-think-about-except-thoughts-gif-571443897782833709" target="_blank">https://tenor.com/view/a-person-who-thinks-all-the-time-albert-einstein-a-person-who-thinks-has-nothing-to-think-about-except-thoughts-gif-571443897782833709</a></div><div class="embed"><div class="embed-color-bar" style="background-color: #5865f2;"></div><div class="embed-content"></div><div class="embed-thumbnail"><img src="https://media.tenor.com/B-4tMohpEi0AAAAe/a-person-who-thinks-all-the-time-albert-einstein.png" alt=""></div></div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/895935784371228724/70be06190a482a748e51eee090ab3971.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">r</span><span class="message-timestamp">06/25/2026 08:21 AM</span></div><div class="message-text">so i can prosecute people</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/758999095070687284/70e18007dbd33933f77d901a0db8eb19.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">red thingy [ / ]</span><span class="bot-tag">BOT</span><span class="message-timestamp">06/25/2026 08:21 AM</span></div><div class="components"><div class="component-container" style="border-left-color: #3498db;"><div class="component-text"><h3>Here are the final results</h3></div><div class="component-separator"></div><div class="component-text">Votes are hidden.</div></div></div></div></div><div class="message message-compact"><div class="message-avatar">8:21 AM</div><div class="message-content"><div class="message-header"><span class="message-author">red thingy [ / ]</span><span class="bot-tag">BOT</span><span class="message-timestamp">06/25/2026 08:21 AM</span></div><div class="components"><div class="component-container" style="border-left-color: #972f25;"><div class="component-text"><h3>namquan\_31469 has been found guilty so the village has hanged them. Press F to pay respect.</h3></div><div class="component-media-gallery"><img src="https://res.cloudinary.com/dkpraixbv/image/upload/misc/lynch-default.jpg" alt="hang background"></div></div></div></div></div><div class="message message-compact"><div class="message-avatar">8:21 AM</div><div class="message-content"><div class="message-header"><span class="message-author">red thingy [ / ]</span><span class="bot-tag">BOT</span><span class="message-timestamp">06/25/2026 08:21 AM</span></div><div class="components"><div class="component-container" style="border-left-color: #972f25;"><div class="component-text"><strong><img class="custom-emoji" alt=":animated_logo:" src="https://cdn.discordapp.com/emojis/1368198731878498385.gif"> Mafia Remastered</strong></div><div class="component-text">namquan\_31469&#x27;s role was <strong><img class="custom-emoji" alt=":godfather:" src="https://cdn.discordapp.com/emojis/1157662256599941150.png"> Godfather</strong>.</div></div></div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/897883731057070110/db1021f45a59126450777b2ff52ed56e.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Legends | Atharva</span><span class="message-timestamp">06/25/2026 08:21 AM</span></div><div class="message-text">Hm</div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/758999095070687284/70e18007dbd33933f77d901a0db8eb19.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">red thingy [ / ]</span><span class="bot-tag">BOT</span><span class="message-timestamp">06/25/2026 08:21 AM</span></div><div class="components"><div class="component-container" style="border-left-color: #4e5058;"><div class="component-text"><h3>Night 2</h3></div><div class="component-separator"></div><div class="component-text"><strong>Currently Alive:</strong></div><div class="component-text">🙂 <span class="mention">@syl</span><br><br>🙂 <span class="mention">@r</span><br><br>🙂 <span class="mention">@Noob Saibot &quot;The fraud&quot;</span><br><br>🙂 <span class="mention">@jester✨</span><br><br>🙂 <span class="mention">@Legends | Atharva</span><br><br>🙂 <span class="mention">@z</span><br><br>🙂 <span class="mention">@Zoro_</span><br><br>🙂 <span class="mention">@ambiguousenemy12</span></div><div class="component-separator"></div><div class="component-text"><strong>Currently Dead:</strong></div><div class="component-text">💀 <span class="mention">@aaa707yx</span> - <strong><img class="custom-emoji" alt=":godfather:" src="https://cdn.discordapp.com/emojis/1157662256599941150.png"> Godfather</strong><br><br>💀 <span class="mention">@User</span> - <strong><img class="custom-emoji" alt=":manager:" src="https://cdn.discordapp.com/emojis/1250427786271920130.png"> Manager</strong></div></div></div></div></div><div class="message message-compact"><div class="message-avatar">8:21 AM</div><div class="message-content"><div class="message-header"><span class="message-author">red thingy [ / ]</span><span class="bot-tag">BOT</span><span class="message-timestamp">06/25/2026 08:21 AM</span></div><div class="components"><div class="component-container" style="border-left-color: #3498db;"><div class="component-text"><h3>To do your action tonight, click the Action button below.</h3></div><div class="component-text">You can choose not to do anything tonight by clicking the red button.</div><div class="component-separator"></div><div class="component-action-row"><span class="component-button component-button-success">Action</span></div></div></div></div></div><div class="message message-compact"><div class="message-avatar">8:22 AM</div><div class="message-content"><div class="message-header"><span class="message-author">red thingy [ / ]</span><span class="bot-tag">BOT</span><span class="message-timestamp">06/25/2026 08:22 AM</span></div><div class="components"><div class="component-container" style="border-left-color: #972f25;"><div class="component-text"><strong><img class="custom-emoji" alt=":animated_logo:" src="https://cdn.discordapp.com/emojis/1368198731878498385.gif"> Mafia Remastered</strong></div><div class="component-text">Alright everybody, get your butts back here. It&#x27;s storytime.</div></div></div></div></div><div class="message message-compact"><div class="message-avatar">8:22 AM</div><div class="message-content"><div class="message-header"><span class="message-author">red thingy [ / ]</span><span class="bot-tag">BOT</span><span class="message-timestamp">06/25/2026 08:22 AM</span></div><div class="components"><div class="component-container" style="border-left-color: #972f25;"><div class="component-text"><h3>jellooy was attacked by the Mafia :(</h3></div><div class="component-text">One night, jellooy realized that they were in a dream somehow, so they robbed their boss in the office with a ski-mask using their finger as a gun. But turns out that their boss was apart of the mafia and decided to do the same this night. The only difference? jellooy was found on the bed with a knife through his throat.</div><div class="component-media-gallery"><img src="https://res.cloudinary.com/dkpraixbv/image/upload/misc/youdied-default.png" alt="You died background"></div></div></div></div></div><div class="message message-compact"><div class="message-avatar">8:22 AM</div><div class="message-content"><div class="message-header"><span class="message-author">red thingy [ / ]</span><span class="bot-tag">BOT</span><span class="message-timestamp">06/25/2026 08:22 AM</span></div><div class="components"><div class="component-container" style="border-left-color: #979c9f;"><div class="component-section"><div class="component-section-content"><div class="component-text"><h3>The Isekai has transformed!</h3></div><div class="component-text">The <strong><img class="custom-emoji" alt=":isekai:" src="https://cdn.discordapp.com/emojis/1157661050129350818.png"> Isekai</strong> took some time to re-think, and decided to take on their life of a <strong><img class="custom-emoji" alt=":manager:" src="https://cdn.discordapp.com/emojis/1250427786271920130.png"> Manager</strong>! Who&#x27;s the Isekai? No one knows...👀</div></div><div class="component-section-accessory"><img class="component-thumbnail" src="https://res.cloudinary.com/dkpraixbv/image/upload/w_100/abilities/reincarnate.png" alt="None"></div></div></div></div></div></div><div class="message message-compact"><div class="message-avatar">8:22 AM</div><div class="message-content"><div class="message-header"><span class="message-author">red thingy [ / ]</span><span class="bot-tag">BOT</span><span class="message-timestamp">06/25/2026 08:22 AM</span></div><div class="components"><div class="component-container" style="border-left-color: #972f25;"><div class="component-section"><div class="component-section-content"><div class="component-text"><h3>Day 2</h3></div><div class="component-text">-# The list below shows dead players. The alive player list will be shown later.</div><div class="component-text"><h2>Currently Dead</h2></div></div><div class="component-section-accessory"><img class="component-thumbnail" src="https://media.discordapp.net/attachments/923932323710398495/1046292063358029925/Screenshot_2022-11-27-13-10-29-43_680d03679600f7af0b4c700c6b270fe7.jpg?ex=6a3e09eb&amp;is=6a3cb86b&amp;hm=2466fcb034b5384030116eb55024b338510c9f6beae97e01fad1ce920e7c243a&amp;" alt="None"></div></div><div class="component-text">💀 <span class="mention">@aaa707yx</span> - <strong><img class="custom-emoji" alt=":godfather:" src="https://cdn.discordapp.com/emojis/1157662256599941150.png"> Godfather</strong><br><br>💀 <span class="mention">@jester✨</span> - <strong><img class="custom-emoji" alt=":trapper:" src="https://cdn.discordapp.com/emojis/1488550489716035715.png"> Trapper</strong><br><br>💀 <span class="mention">@User</span> - <strong><img class="custom-emoji" alt=":manager:" src="https://cdn.discordapp.com/emojis/1250427786271920130.png"> Manager</strong></div></div></div></div></div><div class="message message-compact"><div class="message-avatar">8:22 AM</div><div class="message-content"><div class="message-header"><span class="message-author">red thingy [ / ]</span><span class="bot-tag">BOT</span><span class="message-timestamp">06/25/2026 08:22 AM</span></div><div class="components"><div class="component-container" style="border-left-color: #c67c1c;"><div class="component-text"><h3>ANOMALY: 🌧️ Acid Rain</h3></div><div class="component-text">The acid rain has wiped the disguise of someone&#x27;s role! <strong>delusional\_r</strong> is the <strong><img class="custom-emoji" alt=":manager:" src="https://cdn.discordapp.com/emojis/1250427786271920130.png"> Manager</strong>!</div><div class="component-media-gallery"><img src="https://d3mvlb3hz2g78.cloudfront.net/wp-content/uploads/2023/04/thumb_720_450_dreamstime_xs_191493424.jpg" alt="Acid Rain image"></div></div></div></div></div><div class="message message-compact"><div class="message-avatar">8:23 AM</div><div class="message-content"><div class="message-header"><span class="message-author">red thingy [ / ]</span><span class="bot-tag">BOT</span><span class="message-timestamp">06/25/2026 08:23 AM</span></div><div class="components"><div class="component-container" style="border-left-color: #3498db;"><div class="component-text"><h3>Currently Alive</h3></div><div class="component-text">◽ <span class="mention">@syl</span><br><br>◽ <span class="mention">@r</span><br><br>◽ <span class="mention">@Noob Saibot &quot;The fraud&quot;</span><br><br>◽ <span class="mention">@Legends | Atharva</span><br><br>◽ <span class="mention">@z</span><br><br>◽ <span class="mention">@Zoro_</span><br><br>◽ <span class="mention">@ambiguousenemy12</span></div><div class="component-separator"></div><div class="component-text">-# Have fun!</div></div></div></div></div><div class="message message-compact"><div class="message-avatar">8:23 AM</div><div class="message-content"><div class="message-header"><span class="message-author">red thingy [ / ]</span><span class="bot-tag">BOT</span><span class="message-timestamp">06/25/2026 08:23 AM</span></div><div class="components"><div class="component-container" style="border-left-color: #9c59b6;"><div class="component-text"><h3>The sun is under the Duskweaver&#x27;s control!</h3></div><div class="component-text">The Duskweaver has decided to use their ability and forced the sun to go down! It is night time, but only the players belonging to the Duskweaver&#x27;s team can use their ability!</div></div></div></div></div><div class="message message-compact"><div class="message-avatar">8:23 AM</div><div class="message-content"><div class="message-header"><span class="message-author">red thingy [ / ]</span><span class="bot-tag">BOT</span><span class="message-timestamp">06/25/2026 08:23 AM</span></div><div class="components"><div class="component-container" style="border-left-color: #4e5058;"><div class="component-text"><h3>Night 3</h3></div><div class="component-separator"></div><div class="component-text"><strong>Currently Alive:</strong></div><div class="component-text">🙂 <span class="mention">@syl</span><br><br>🙂 <span class="mention">@r</span><br><br>🙂 <span class="mention">@Noob Saibot &quot;The fraud&quot;</span><br><br>🙂 <span class="mention">@Legends | Atharva</span><br><br>🙂 <span class="mention">@z</span><br><br>🙂 <span class="mention">@Zoro_</span><br><br>🙂 <span class="mention">@ambiguousenemy12</span></div><div class="component-separator"></div><div class="component-text"><strong>Currently Dead:</strong></div><div class="component-text">💀 <span class="mention">@aaa707yx</span> - <strong><img class="custom-emoji" alt=":godfather:" src="https://cdn.discordapp.com/emojis/1157662256599941150.png"> Godfather</strong><br><br>💀 <span class="mention">@jester✨</span> - <strong><img class="custom-emoji" alt=":trapper:" src="https://cdn.discordapp.com/emojis/1488550489716035715.png"> Trapper</strong><br><br>💀 <span class="mention">@User</span> - <strong><img class="custom-emoji" alt=":manager:" src="https://cdn.discordapp.com/emojis/1250427786271920130.png"> Manager</strong></div></div></div></div></div><div class="message message-compact"><div class="message-avatar">8:23 AM</div><div class="message-content"><div class="message-header"><span class="message-author">red thingy [ / ]</span><span class="bot-tag">BOT</span><span class="message-timestamp">06/25/2026 08:23 AM</span></div><div class="components"><div class="component-container" style="border-left-color: #3498db;"><div class="component-text"><h3>To do your action tonight, click the Action button below.</h3></div><div class="component-text">You can choose not to do anything tonight by clicking the red button.</div><div class="component-separator"></div><div class="component-action-row"><span class="component-button component-button-success">Action</span></div></div></div></div></div><div class="message message-compact"><div class="message-avatar">8:24 AM</div><div class="message-content"><div class="message-header"><span class="message-author">red thingy [ / ]</span><span class="bot-tag">BOT</span><span class="message-timestamp">06/25/2026 08:24 AM</span></div><div class="components"><div class="component-container" style="border-left-color: #972f25;"><div class="component-text"><strong><img class="custom-emoji" alt=":animated_logo:" src="https://cdn.discordapp.com/emojis/1368198731878498385.gif"> Mafia Remastered</strong></div><div class="component-text">Alright everybody, get your butts back here. It&#x27;s storytime.</div></div></div></div></div><div class="message message-compact"><div class="message-avatar">8:24 AM</div><div class="message-content"><div class="message-header"><span class="message-author">red thingy [ / ]</span><span class="bot-tag">BOT</span><span class="message-timestamp">06/25/2026 08:24 AM</span></div><div class="components"><div class="component-container" style="border-left-color: #972f25;"><div class="component-text"><h3>The Mafia got a confusing fax...</h3></div></div></div></div></div><div class="message message-compact"><div class="message-avatar">8:24 AM</div><div class="message-content"><div class="message-header"><span class="message-author">red thingy [ / ]</span><span class="bot-tag">BOT</span><span class="message-timestamp">06/25/2026 08:24 AM</span></div><div class="components"><div class="component-container" style="border-left-color: #2ebb6a;"><div class="component-text"><h3>Oh ya this also happened...</h3></div><div class="component-text"><img class="custom-emoji" alt=":bullet:" src="https://cdn.discordapp.com/emojis/1160816931876651019.png"> <strong>subtojeff\_thevlogger</strong> failed to convince the <strong>Jailor</strong> to spare them, so they have been executed!</div></div></div></div></div><div class="message message-compact"><div class="message-avatar">8:24 AM</div><div class="message-content"><div class="message-header"><span class="message-author">red thingy [ / ]</span><span class="bot-tag">BOT</span><span class="message-timestamp">06/25/2026 08:24 AM</span></div><div class="components"><div class="component-container" style="border-left-color: #972f25;"><div class="component-section"><div class="component-section-content"><div class="component-text"><h3>Day 3</h3></div><div class="component-text">-# The list below shows dead players. The alive player list will be shown later.</div><div class="component-text"><h2>Currently Dead</h2></div></div><div class="component-section-accessory"><img class="component-thumbnail" src="https://media.discordapp.net/attachments/923932323710398495/1046292063358029925/Screenshot_2022-11-27-13-10-29-43_680d03679600f7af0b4c700c6b270fe7.jpg?ex=6a3e09eb&amp;is=6a3cb86b&amp;hm=2466fcb034b5384030116eb55024b338510c9f6beae97e01fad1ce920e7c243a&amp;" alt="None"></div></div><div class="component-text">💀 <span class="mention">@syl</span> - <strong><img class="custom-emoji" alt=":godfather:" src="https://cdn.discordapp.com/emojis/1157662256599941150.png"> Godfather</strong><br><br>💀 <span class="mention">@aaa707yx</span> - <strong><img class="custom-emoji" alt=":godfather:" src="https://cdn.discordapp.com/emojis/1157662256599941150.png"> Godfather</strong><br><br>💀 <span class="mention">@jester✨</span> - <strong><img class="custom-emoji" alt=":trapper:" src="https://cdn.discordapp.com/emojis/1488550489716035715.png"> Trapper</strong><br><br>💀 <span class="mention">@User</span> - <strong><img class="custom-emoji" alt=":manager:" src="https://cdn.discordapp.com/emojis/1250427786271920130.png"> Manager</strong></div></div></div></div></div><div class="message message-compact"><div class="message-avatar">8:24 AM</div><div class="message-content"><div class="message-header"><span class="message-author">red thingy [ / ]</span><span class="bot-tag">BOT</span><span class="message-timestamp">06/25/2026 08:24 AM</span></div><div class="components"><div class="component-container" style="border-left-color: #2ebb6a;"><div class="component-text"><h3>Game Over - Village won the match!</h3></div><div class="component-separator"></div><div class="component-text"><strong>🎊 Winners</strong></div><div class="component-text"><strong><u>Main winners</u></strong><br>👼 <span class="mention">@r</span> - Manager <br>👼 <span class="mention">@Noob Saibot &quot;The fraud&quot;</span> - Watcher <br>👼 <span class="mention">@Legends | Atharva</span> - Link <br>👼 <span class="mention">@z</span> - Jailor <br>👼 <span class="mention">@Zoro_</span> - Pi <br>👼 <span class="mention">@ambiguousenemy12</span> - Duskweaver <br><br>☠️ <span class="mention">@jester✨</span> - Trapper <br>☠️ <span class="mention">@User</span> - Manager</div><div class="component-separator"></div><div class="component-text"><strong>🗡️ Losers</strong></div><div class="component-text">☠️ <span class="mention">@syl</span> - Godfather <br>☠️ <span class="mention">@aaa707yx</span> - Godfather</div><div class="component-separator"></div><div class="component-text">-# W Village, L others</div></div></div></div></div><div class="message"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/897883731057070110/db1021f45a59126450777b2ff52ed56e.png?size=1024" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author">Legends | Atharva</span><span class="message-timestamp">06/25/2026 08:24 AM</span></div><div class="message-text">Lol</div></div></div></div></div></body></html>
