@@ -1,0 +1,588 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>#mafia</title><link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;500;600;700&family=Noto+Sans+Mono:wght@400;500&display=swap" rel="stylesheet">
+        <style>
+            :root {
+                --bg-primary: #313338;
+                --bg-secondary: #2b2d31;
+                --bg-tertiary: #1e1f22;
+                --bg-floating: #111214;
+                --bg-mod: #232428;
+                --text: #dbdee1;
+                --text-muted: #949ba4;
+                --header: #f2f3f5;
+                --brand: #5865f2;
+                --green: #23a559;
+                --danger: #da373c;
+                --link: #00a8fc;
+                --mention: rgba(88, 101, 242, 0.3);
+            }
+            * { margin: 0; padding: 0; box-sizing: border-box; }
+            html, body {
+                height: 100%;
+                background: var(--bg-tertiary);
+                color: var(--text);
+                font-family: "gg sans", "Noto Sans", Whitney, "Helvetica Neue", Helvetica, Arial, sans-serif;
+                -webkit-font-smoothing: antialiased;
+                line-height: 1.375;
+            }
+            body { display: flex; min-height: 100%; }
+            .app {
+                display: flex;
+                flex: 1;
+                min-width: 0;
+                min-height: 100%;
+            }
+            .channel-col { display: flex; flex-direction: column; flex: 1; min-width: 0; background: var(--bg-primary); }
+            .channel-header {
+                height: 48px;
+                flex-shrink: 0;
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                padding: 0 16px;
+                box-shadow: 0 1px 0 rgba(0,0,0,0.3), 0 1px 2px rgba(0,0,0,0.12);
+                z-index: 4;
+                background: var(--bg-primary);
+            }
+            .channel-hash { color: var(--text-muted); font-size: 22px; font-weight: 700; line-height: 1; }
+            .channel-header h1 {
+                font-size: 16px;
+                font-weight: 600;
+                color: var(--header);
+                text-wrap: balance;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
+            .header-meta { color: var(--text-muted); font-size: 12px; margin-left: 4px; white-space: nowrap; }
+            .header-search {
+                margin-left: auto;
+                background: var(--bg-tertiary);
+                border: 0;
+                border-radius: 4px;
+                color: var(--text);
+                font: inherit;
+                font-size: 14px;
+                height: 30px;
+                min-width: 140px;
+                width: 220px;
+                padding: 0 10px;
+                outline: none;
+            }
+            .header-search::placeholder { color: var(--text-muted); }
+            .header-search:focus { box-shadow: 0 0 0 2px rgba(88,101,242,0.45); }
+            .channel-body { display: flex; flex: 1; min-height: 0; }
+            .messages-scroller { flex: 1; min-width: 0; overflow-y: auto; }
+            .messages-container { padding: 16px 0 32px; }
+            .start-of-channel { padding: 16px 16px 8px 16px; }
+            .start-of-channel h2 { color: var(--header); font-size: 32px; font-weight: 700; letter-spacing: -0.5px; text-wrap: balance; }
+            .start-of-channel p { color: var(--text-muted); margin-top: 8px; font-size: 16px; }
+            .message {
+                display: flex;
+                padding: 2px 48px 2px 16px;
+                margin: 0;
+                position: relative;
+            }
+            .message:hover, .message:target { background-color: #2e3035; }
+            .message.flash { background: rgba(88,101,242,0.16); }
+            .message-compact { padding-top: 0; padding-bottom: 0; min-height: 22px; }
+            .message-avatar {
+                width: 40px;
+                height: 40px;
+                border-radius: 50%;
+                margin-right: 16px;
+                margin-top: 2px;
+                flex-shrink: 0;
+                background-color: var(--brand);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-weight: 600;
+                color: white;
+                cursor: pointer;
+                outline: 1px solid rgba(255,255,255,0.08);
+            }
+            .message-compact .message-avatar {
+                background: transparent;
+                outline: 0;
+                color: var(--text-muted);
+                font-size: 11px;
+                font-weight: 500;
+                font-variant-numeric: tabular-nums;
+                opacity: 0;
+                cursor: default;
+                border-radius: 0;
+            }
+            .message-compact:hover .message-avatar { opacity: 1; }
+            .message-avatar img { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; }
+            .parser-avatar { display: none; }
+            .message-content { flex: 1; min-width: 0; }
+            .message-header { display: flex; align-items: baseline; gap: 8px; margin-bottom: 0; }
+            .message-compact .message-header { display: none; }
+            .message-author {
+                font-weight: 500;
+                font-size: 16px;
+                color: var(--header);
+                cursor: pointer;
+            }
+            .message-author:hover { text-decoration: underline; }
+            .bot-tag, .app-tag {
+                background-color: var(--brand);
+                border-radius: 4px;
+                color: #fff;
+                font-size: 10px;
+                font-weight: 700;
+                line-height: 15px;
+                padding: 0 4px;
+                text-transform: uppercase;
+                position: relative;
+                top: -1px;
+            }
+            .message-timestamp, .edited {
+                font-size: 12px;
+                color: var(--text-muted);
+                font-weight: 500;
+                font-variant-numeric: tabular-nums;
+            }
+            .message-text {
+                color: var(--text);
+                font-size: 16px;
+                line-height: 1.375;
+                word-wrap: break-word;
+                white-space: normal;
+            }
+            .message-text a, .embed-title a { color: var(--link); text-decoration: none; }
+            .message-text a:hover, .embed-title a:hover { text-decoration: underline; }
+            .custom-emoji { height: 1.375em; width: 1.375em; object-fit: contain; vertical-align: -0.25em; }
+            .custom-emoji.jumbo { height: 3rem; width: 3rem; }
+            .reply-preview {
+                display: flex;
+                align-items: center;
+                gap: 4px;
+                max-width: 100%;
+                margin-bottom: 4px;
+                font-size: 13px;
+                color: var(--text-muted);
+                cursor: pointer;
+                position: relative;
+            }
+            .reply-preview::before {
+                content: "";
+                width: 33px;
+                height: 10px;
+                border-left: 2px solid #4e5058;
+                border-top: 2px solid #4e5058;
+                border-radius: 6px 0 0 0;
+                margin: 0 4px 0 20px;
+                flex-shrink: 0;
+                position: relative;
+                top: 6px;
+            }
+            .reply-preview img { width: 16px; height: 16px; border-radius: 50%; }
+            .reply-author { font-weight: 500; color: var(--header); }
+            .reply-body { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+            .message-attachments { margin-top: 8px; display: flex; flex-direction: column; gap: 4px; }
+            .attachment img, .sticker, .embed-image img, .component-media-gallery img {
+                max-width: min(400px, 100%);
+                max-height: 300px;
+                border-radius: 8px;
+                cursor: pointer;
+                outline: 1px solid rgba(255,255,255,0.1);
+            }
+            .sticker { max-width: 160px; max-height: 160px; }
+            .attachment-file, .component-file {
+                background: var(--bg-secondary);
+                border: 1px solid #1f2023;
+                border-radius: 8px;
+                padding: 10px 16px;
+                display: inline-flex;
+                align-items: center;
+                gap: 8px;
+                text-decoration: none;
+                color: var(--link);
+                max-width: 420px;
+            }
+            .embed {
+                margin-top: 8px;
+                max-width: 520px;
+                border-radius: 8px;
+                background: var(--bg-secondary);
+                display: flex;
+                overflow: hidden;
+                outline: 1px solid rgba(0,0,0,0.24);
+            }
+            .embed-color-bar { width: 4px; flex-shrink: 0; background: var(--brand); }
+            .embed-content { padding: 8px 16px 16px 12px; flex: 1; min-width: 0; }
+            .embed-author { display: flex; align-items: center; gap: 8px; margin: 8px 0; font-size: 14px; font-weight: 600; }
+            .embed-author img { width: 24px; height: 24px; border-radius: 50%; }
+            .embed-title { font-size: 16px; font-weight: 600; margin-bottom: 4px; color: var(--link); }
+            .embed-description { font-size: 14px; line-height: 1.375; white-space: pre-wrap; }
+            .embed-fields { display: grid; gap: 8px; margin-top: 8px; }
+            .embed-field-inline { display: inline-block; width: calc(33.33% - 8px); vertical-align: top; }
+            .embed-field-name { font-size: 14px; font-weight: 600; color: var(--header); margin-bottom: 2px; }
+            .embed-field-value { font-size: 14px; white-space: pre-wrap; }
+            .embed-thumbnail { margin: 8px 16px 8px 0; }
+            .embed-thumbnail img { max-width: 80px; max-height: 80px; border-radius: 4px; }
+            .embed-footer { display: flex; align-items: center; gap: 8px; margin-top: 8px; font-size: 12px; color: var(--text-muted); }
+            .embed-footer img { width: 16px; height: 16px; border-radius: 50%; }
+            .components { margin-top: 4px; max-width: 540px; }
+            .component-container {
+                background: var(--bg-secondary);
+                border: 1px solid rgba(0,0,0,0.3);
+                border-left: 4px solid #4e5058;
+                border-radius: 8px;
+                margin-top: 8px;
+                padding: 12px 16px 16px;
+            }
+            .component-text { color: var(--text); font-size: 16px; line-height: 1.375; margin: 4px 0; word-wrap: break-word; }
+            .component-text h1, .component-text h2, .component-text h3 { color: var(--header); font-weight: 700; line-height: 1.25; margin: 4px 0 8px; }
+            .component-text h1 { font-size: 24px; }
+            .component-text h2 { font-size: 20px; }
+            .component-text h3 { font-size: 16px; }
+            .component-section { display: flex; gap: 16px; margin: 4px 0; }
+            .component-section-content { flex: 1; min-width: 0; }
+            .component-section-accessory { flex-shrink: 0; }
+            .component-thumbnail { display: block; max-height: 80px; max-width: 80px; border-radius: 8px; object-fit: cover; outline: 1px solid rgba(255,255,255,0.1); }
+            .component-media-gallery { display: grid; gap: 4px; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); margin-top: 8px; max-width: 560px; }
+            .component-media-gallery img, .component-media-gallery video {
+                background: var(--bg-tertiary);
+                border-radius: 8px;
+                display: block;
+                max-height: 360px;
+                max-width: 100%;
+                object-fit: cover;
+                width: 100%;
+            }
+            .component-separator { border-top: 1px solid #3f4147; height: 1px; margin: 10px 0; }
+            .component-separator-spacer { border-top: 0; height: 8px; }
+            .component-action-row { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
+            .component-button, .component-select, .component-text-input, .component-file-upload {
+                align-items: center;
+                border: 0;
+                border-radius: 8px;
+                color: #fff;
+                display: inline-flex;
+                font-size: 14px;
+                font-weight: 500;
+                gap: 6px;
+                min-height: 32px;
+                padding: 2px 16px;
+                text-decoration: none;
+            }
+            .component-button:active { transform: scale(0.96); }
+            .component-button-primary { background: var(--brand); }
+            .component-button-secondary, .component-select, .component-text-input, .component-file-upload { background: #4e5058; }
+            .component-button-success { background: #248046; }
+            .component-button-danger { background: var(--danger); }
+            .component-button-link { background: #4e5058; }
+            .component-button-disabled, .component-select { cursor: default; opacity: 0.92; }
+            .component-select { min-width: 220px; justify-content: space-between; }
+            .component-select-menu {
+                background: var(--bg-floating);
+                border-radius: 8px;
+                margin-top: 4px;
+                padding: 6px;
+                display: none;
+                flex-direction: column;
+                gap: 2px;
+            }
+            .component-select.open + .component-select-menu, .component-select-wrap.open .component-select-menu { display: flex; }
+            .component-select-option { padding: 8px 10px; border-radius: 4px; color: var(--text); font-size: 14px; }
+            .component-select-option:hover { background: #393c41; }
+            .component-label { margin-top: 8px; }
+            .component-label-text { font-size: 14px; font-weight: 700; color: var(--header); margin-bottom: 6px; }
+            .poll {
+                margin-top: 8px;
+                max-width: 420px;
+                background: var(--bg-secondary);
+                border-radius: 8px;
+                padding: 16px;
+                outline: 1px solid rgba(255,255,255,0.06);
+            }
+            .poll-q { font-weight: 600; color: var(--header); margin-bottom: 10px; }
+            .poll-ans { background: var(--bg-mod); border-radius: 8px; padding: 8px 12px; margin-top: 6px; display: flex; justify-content: space-between; font-size: 14px; }
+            .reactions { display: flex; gap: 4px; margin-top: 4px; flex-wrap: wrap; }
+            .reaction {
+                background: var(--bg-mod);
+                border: 1px solid transparent;
+                border-radius: 8px;
+                padding: 3px 8px;
+                display: flex;
+                align-items: center;
+                gap: 6px;
+                font-size: 14px;
+                min-height: 24px;
+            }
+            .reaction:hover { border-color: #4f545c; background: #36373d; }
+            .reaction-emoji { width: 16px; height: 16px; font-size: 16px; line-height: 16px; }
+            .reaction-count { color: var(--text-muted); font-weight: 500; font-variant-numeric: tabular-nums; }
+            .system-message {
+                display: flex;
+                align-items: center;
+                gap: 16px;
+                padding: 4px 16px 4px 16px;
+                color: var(--text-muted);
+                font-size: 14px;
+            }
+            .system-message-icon { width: 40px; text-align: center; flex-shrink: 0; font-size: 16px; }
+            .mention {
+                background: var(--mention);
+                color: #c9cdfb;
+                padding: 0 2px;
+                border-radius: 3px;
+                font-weight: 500;
+                cursor: pointer;
+            }
+            .mention:hover { background: var(--brand); color: #fff; }
+            .code-inline {
+                background: var(--bg-tertiary);
+                padding: 2px 4px;
+                border-radius: 4px;
+                font-family: "Noto Sans Mono", Consolas, monospace;
+                font-size: 85%;
+            }
+            .code-block {
+                background: var(--bg-tertiary);
+                border-radius: 8px;
+                padding: 12px;
+                margin: 6px 0;
+                font-family: "Noto Sans Mono", Consolas, monospace;
+                font-size: 14px;
+                overflow-x: auto;
+            }
+            .spoiler {
+                background: #1e1f22;
+                color: transparent;
+                padding: 0 2px;
+                border-radius: 4px;
+                cursor: pointer;
+                transition-property: color, background-color;
+                transition-duration: 120ms;
+            }
+            .spoiler.revealed { background: rgba(0,0,0,0.22); color: inherit; }
+            .divider {
+                display: flex;
+                align-items: center;
+                margin: 24px 16px 8px;
+                color: var(--text-muted);
+                font-size: 12px;
+                font-weight: 600;
+            }
+            .divider::before, .divider::after { content: ""; flex: 1; height: 1px; background: #3f4147; }
+            .divider-text { padding: 0 8px; font-variant-numeric: tabular-nums; }
+            .members {
+                width: 240px;
+                flex-shrink: 0;
+                background: var(--bg-secondary);
+                overflow-y: auto;
+                padding: 16px 8px 24px;
+            }
+            .members h3 {
+                color: var(--text-muted);
+                font-size: 12px;
+                font-weight: 700;
+                letter-spacing: 0.02em;
+                text-transform: uppercase;
+                padding: 0 8px 8px;
+            }
+            .member-row {
+                display: flex;
+                align-items: center;
+                gap: 12px;
+                padding: 6px 8px;
+                border-radius: 4px;
+                cursor: pointer;
+                min-height: 42px;
+            }
+            .member-row:hover { background: #35373c; }
+            .member-row img { width: 32px; height: 32px; border-radius: 50%; outline: 1px solid rgba(255,255,255,0.08); }
+            .member-name { font-size: 14px; font-weight: 500; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+            .profile-pop {
+                position: fixed;
+                z-index: 50;
+                width: 300px;
+                background: var(--bg-floating);
+                border-radius: 8px;
+                overflow: hidden;
+                box-shadow: 0 8px 24px rgba(0,0,0,0.45);
+                display: none;
+            }
+            .profile-pop.show { display: block; }
+            .profile-banner { height: 60px; background: #5865f2; }
+            .profile-avatar {
+                width: 80px;
+                height: 80px;
+                border-radius: 50%;
+                border: 6px solid var(--bg-floating);
+                margin: -40px 16px 0;
+                background: var(--brand);
+                object-fit: cover;
+            }
+            .profile-body { padding: 8px 16px 16px; }
+            .profile-name { font-size: 20px; font-weight: 700; color: var(--header); }
+            .profile-user { color: var(--text); font-size: 14px; margin-bottom: 12px; }
+            .profile-section { font-size: 12px; font-weight: 700; color: var(--header); text-transform: uppercase; margin: 10px 0 6px; }
+            .role-pills { display: flex; flex-wrap: wrap; gap: 4px; }
+            .role-pill {
+                display: inline-flex;
+                align-items: center;
+                gap: 6px;
+                background: var(--bg-mod);
+                border-radius: 4px;
+                padding: 4px 8px;
+                font-size: 12px;
+            }
+            .role-dot { width: 12px; height: 12px; border-radius: 50%; }
+            .profile-actions { display: flex; gap: 8px; margin-top: 12px; }
+            .profile-actions button, .profile-actions a {
+                flex: 1;
+                background: var(--bg-mod);
+                color: var(--text);
+                border: 0;
+                border-radius: 4px;
+                padding: 8px;
+                font: inherit;
+                font-size: 13px;
+                font-weight: 500;
+                text-align: center;
+                text-decoration: none;
+                cursor: pointer;
+            }
+            .profile-actions button:active, .profile-actions a:active { transform: scale(0.96); }
+            .lightbox {
+                position: fixed;
+                inset: 0;
+                background: rgba(0,0,0,0.86);
+                display: none;
+                align-items: center;
+                justify-content: center;
+                z-index: 80;
+                cursor: zoom-out;
+            }
+            .lightbox.show { display: flex; }
+            .lightbox img { max-width: 90vw; max-height: 90vh; border-radius: 8px; outline: 1px solid rgba(255,255,255,0.1); }
+            .hidden-hit { display: none; }
+            @media (max-width: 820px) {
+                .members { display: none; }
+                .header-search { width: 120px; min-width: 0; }
+                .message { padding-right: 16px; }
+            }
+        </style>
+        </head><body><div class="app"><div class="channel-col"><div class="channel-header"><span class="channel-hash">#</span><h1>mafia</h1><span class="header-meta">11 messages · Robbing Central</span><input id="tx-search" class="header-search" type="search" placeholder="Search" autocomplete="off"></div><div class="channel-body"><div class="messages-scroller"><div class="messages-container"><div class="start-of-channel"><h2>Welcome to #mafia</h2><p>This is the start of the #mafia channel.</p></div><div class="divider"><span class="divider-text">September 03, 2026</span></div><div class="message" id="m-1545047296104988775"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/758999095070687284/70e18007dbd33933f77d901a0db8eb19.png?size=1024" alt="" data-user-id="758999095070687284"><img class="parser-avatar" src="https://cdn.discordapp.com/avatars/758999095070687284/70e18007dbd33933f77d901a0db8eb19.png" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author" data-user-id="758999095070687284" style="color: #54aaec">Mafia Remastered</span><span class="bot-tag">BOT</span><span class="message-timestamp" title="Thursday, September 03, 2026 12:26 PM">Today at 12:26 PM</span></div><div class="components"><div class="component-text"><span class="mention mention-user" data-user-id="712067230619140196">@Razel the turkish delight</span> <span class="mention mention-user" data-user-id="1352990182256939028">@fish</span> <span class="mention mention-user" data-user-id="1318216575915917434">@hawk</span> <span class="mention mention-user" data-user-id="1137010538568757389">@aaa707yx</span> <span class="mention mention-user" data-user-id="925033181990756392">@kie</span> <span class="mention mention-user" data-user-id="871344950380482620">@soumya</span> <span class="mention mention-user" data-user-id="1028147983885287465">@blackhole_unoriginal</span> <span class="mention mention-user" data-user-id="908967007725183036">@funkiller</span> <span class="mention mention-user" data-user-id="762572282698661898">@マサアキ</span> <span class="mention mention-user" data-user-id="800565154345517097">@ambiguousenemy12</span> <span class="mention mention-user" data-user-id="1080993015214133309">@61 #miaisthebestintheworld</span></div></div></div></div><div class="message message-compact" id="m-1545047319404085311"><div class="message-avatar">12:26 PM</div><div class="message-content"><div class="message-header"><span class="message-author" data-user-id="758999095070687284" style="color: #54aaec">Mafia Remastered</span><span class="bot-tag">BOT</span><span class="message-timestamp" title="Thursday, September 03, 2026 12:26 PM">Today at 12:26 PM</span></div><div class="components"><div class="component-container" style="border-left-color: #9c59b6;"><div class="component-text"><h3>🖐️ Welcome to Mafia!</h3></div><div class="component-text">📕 If you haven&#x27;t read the rules yet, please type &lt;/game:1042058961274282025&gt; to view them!</div><div class="component-separator"></div><div class="component-text"><strong>❗ HEY LISTEN UP</strong></div><div class="component-text">💢 Please do not type in this chat unless instructed to do so. Admins please don&#x27;t abuse your godly powers and talk when other people can&#x27;t. Thank you.</div><div class="component-separator"></div><div class="component-text"><strong>💀 To those who are dead:</strong></div><div class="component-text">Please do not talk. I know it&#x27;s hard to grasp but dead people can&#x27;t talk.</div><div class="component-separator"></div><div class="component-text"><strong>👀 Some important rules:</strong></div><div class="component-text">🚫 Screenshots are not permitted and would only ruin the game. However, you CAN claim roles to either coordinate among yourselves or trick other people. Just NO SCREENSHOTS (unless you are a mafia showing results to other mafias).</div><div class="component-separator"></div><div class="component-text"><strong>🗣️ Some useful commands:</strong></div><div class="component-text">&lt;/reset:1133666068360077378&gt;, &lt;/help:1042058961274282026&gt;, &lt;/game:1042058961274282025&gt;</div><div class="component-separator"></div><div class="component-text">-# Note: Parts of the game can be customized using the /config command! To view the current settings, use &lt;/settings:1164534455780782215&gt;.</div></div></div></div></div><div class="message message-compact" id="m-1545047342099468350"><div class="message-avatar">12:26 PM</div><div class="message-content"><div class="message-header"><span class="message-author" data-user-id="758999095070687284" style="color: #54aaec">Mafia Remastered</span><span class="bot-tag">BOT</span><span class="message-timestamp" title="Thursday, September 03, 2026 12:26 PM">Today at 12:26 PM</span></div><div class="components"><div class="component-container" style="border-left-color: #15826c;"><div class="component-text"><h3>Anomalies are enabled!</h3></div><div class="component-text">Throughout the game, there is a 40% chance of anomalies happening. Let the crazy begin!</div><div class="component-separator"></div><div class="component-text">-# Hope you manage to survive this.</div></div></div></div></div><div class="message message-compact" id="m-1545047364190998609"><div class="message-avatar">12:26 PM</div><div class="message-content"><div class="message-header"><span class="message-author" data-user-id="758999095070687284" style="color: #54aaec">Mafia Remastered</span><span class="bot-tag">BOT</span><span class="message-timestamp" title="Thursday, September 03, 2026 12:26 PM">Today at 12:26 PM</span></div><div class="components"><div class="component-container" style="border-left-color: #972f25;"><div class="component-text"><strong><img class="custom-emoji" alt=":animated_logo:" src="https://cdn.discordapp.com/emojis/1368198731878498385.gif"> Mafia Remastered</strong></div><div class="component-text">Alright! Let the game begin!</div></div></div></div></div><div class="message message-compact" id="m-1545047386429063239"><div class="message-avatar">12:26 PM</div><div class="message-content"><div class="message-header"><span class="message-author" data-user-id="758999095070687284" style="color: #54aaec">Mafia Remastered</span><span class="bot-tag">BOT</span><span class="message-timestamp" title="Thursday, September 03, 2026 12:26 PM">Today at 12:26 PM</span></div><div class="components"><div class="component-container" style="border-left-color: #4e5058;"><div class="component-text"><h3>Night 1</h3></div><div class="component-separator"></div><div class="component-text"><strong>Currently Alive:</strong></div><div class="component-text">🙂 <span class="mention mention-user" data-user-id="712067230619140196">@User</span><br><br>🙂 <span class="mention mention-user" data-user-id="1352990182256939028">@User</span><br><br>🙂 <span class="mention mention-user" data-user-id="1318216575915917434">@User</span><br><br>🙂 <span class="mention mention-user" data-user-id="1137010538568757389">@User</span><br><br>🙂 <span class="mention mention-user" data-user-id="925033181990756392">@User</span><br><br>🙂 <span class="mention mention-user" data-user-id="871344950380482620">@User</span><br><br>🙂 <span class="mention mention-user" data-user-id="1028147983885287465">@User</span><br><br>🙂 <span class="mention mention-user" data-user-id="908967007725183036">@User</span><br><br>🙂 <span class="mention mention-user" data-user-id="762572282698661898">@User</span><br><br>🙂 <span class="mention mention-user" data-user-id="800565154345517097">@User</span><br><br>🙂 <span class="mention mention-user" data-user-id="1080993015214133309">@User</span></div><div class="component-separator"></div><div class="component-text"><strong>Currently Dead:</strong></div><div class="component-text">No one is dead yet...</div></div></div></div></div><div class="message message-compact" id="m-1545047400350224485"><div class="message-avatar">12:26 PM</div><div class="message-content"><div class="message-header"><span class="message-author" data-user-id="758999095070687284" style="color: #54aaec">Mafia Remastered</span><span class="bot-tag">BOT</span><span class="message-timestamp" title="Thursday, September 03, 2026 12:26 PM">Today at 12:26 PM</span></div><div class="components"><div class="component-container" style="border-left-color: #3498db;"><div class="component-text"><h3>To do your action tonight, click the Action button below.</h3></div><div class="component-text">You can choose not to do anything tonight by clicking the red button.</div><div class="component-separator"></div><div class="component-action-row"><span class="component-button component-button-success">Action</span></div></div></div></div></div><div class="message message-compact" id="m-1545047653279211525"><div class="message-avatar">12:27 PM</div><div class="message-content"><div class="message-header"><span class="message-author" data-user-id="758999095070687284" style="color: #54aaec">Mafia Remastered</span><span class="bot-tag">BOT</span><span class="message-timestamp" title="Thursday, September 03, 2026 12:27 PM">Today at 12:27 PM</span></div><div class="components"><div class="component-container" style="border-left-color: #972f25;"><div class="component-text"><strong><img class="custom-emoji" alt=":animated_logo:" src="https://cdn.discordapp.com/emojis/1368198731878498385.gif"> Mafia Remastered</strong></div><div class="component-text">Alright everybody, get your butts back here. It&#x27;s storytime.</div></div></div></div></div><div class="message message-compact" id="m-1545047677799112706"><div class="message-avatar">12:27 PM</div><div class="message-content"><div class="message-header"><span class="message-author" data-user-id="758999095070687284" style="color: #54aaec">Mafia Remastered</span><span class="bot-tag">BOT</span><span class="message-timestamp" title="Thursday, September 03, 2026 12:27 PM">Today at 12:27 PM</span></div><div class="components"><div class="component-container" style="border-left-color: #c67c1c;"><div class="component-section"><div class="component-section-content"><div class="component-text"><h3>The town is grieving heavily!</h3></div><div class="component-text">The <strong><img class="custom-emoji" alt=":vendetta:" src="https://cdn.discordapp.com/emojis/1350864135973507206.png"> Vendetta</strong> has sacrificed themselves in order to kill <strong>r4zel\_</strong>! This has grieved the town so much that they can&#x27;t continue to discuss, and are not in the state to vote as they wish to honor the lives of the lost ones. There will be no discussion or voting phase today!</div></div><div class="component-section-accessory"><img class="component-thumbnail" src="https://res.cloudinary.com/dkpraixbv/image/upload/w_100/abilities/ritual.png" alt=""></div></div></div></div></div></div><div class="message message-compact" id="m-1545047714448937083"><div class="message-avatar">12:28 PM</div><div class="message-content"><div class="message-header"><span class="message-author" data-user-id="758999095070687284" style="color: #54aaec">Mafia Remastered</span><span class="bot-tag">BOT</span><span class="message-timestamp" title="Thursday, September 03, 2026 12:28 PM">Today at 12:28 PM</span></div><div class="components"><div class="component-container" style="border-left-color: #972f25;"><div class="component-section"><div class="component-section-content"><div class="component-text"><h3>Day 1</h3></div><div class="component-text">-# The list below shows dead players. The alive player list will be shown later.</div><div class="component-text"><h2>Currently Dead</h2></div></div><div class="component-section-accessory"><img class="component-thumbnail" src="https://media.discordapp.net/attachments/923932323710398495/1046292063358029925/Screenshot_2022-11-27-13-10-29-43_680d03679600f7af0b4c700c6b270fe7.jpg?ex=6a9a52eb&amp;is=6a99016b&amp;hm=b4ce149d92e99a6dddb1db1379ec3a9049a50b8624d40b2f8c8eeb2cc4c0aea2&amp;" alt=""></div></div><div class="component-text">💀 <span class="mention mention-user" data-user-id="712067230619140196">@User</span> - <strong><img class="custom-emoji" alt=":guardian:" src="https://cdn.discordapp.com/emojis/1187117070341648404.png"> Guardian</strong><br><br>💀 <span class="mention mention-user" data-user-id="1137010538568757389">@User</span> - <strong><img class="custom-emoji" alt=":godfather:" src="https://cdn.discordapp.com/emojis/1157662256599941150.png"> Godfather</strong><br><br>💀 <span class="mention mention-user" data-user-id="762572282698661898">@User</span> - <strong><img class="custom-emoji" alt=":vendetta:" src="https://cdn.discordapp.com/emojis/1350864135973507206.png"> Vendetta</strong></div></div></div></div></div><div class="message message-compact" id="m-1545047715325415567"><div class="message-avatar">12:28 PM</div><div class="message-content"><div class="message-header"><span class="message-author" data-user-id="758999095070687284" style="color: #54aaec">Mafia Remastered</span><span class="bot-tag">BOT</span><span class="message-timestamp" title="Thursday, September 03, 2026 12:28 PM">Today at 12:28 PM</span></div><div class="components"><div class="component-container" style="border-left-color: #f1c40f;"><div class="component-text"><h3>ANOMALY: 🌫️ Foggy Mist</h3></div><div class="component-text">Messages from last night have disappeared! Who killed who? Who saved who? Who knows? Only thing you know is who&#x27;s dead...</div><div class="component-media-gallery"><img src="https://static01.nyt.com/images/2020/02/06/climate/06CLI-LIGHTNING/06CLI-LIGHTNING-facebookJumbo.png" alt="Foggy mist image"></div></div></div></div></div><div class="message message-compact" id="m-1545047740143243426"><div class="message-avatar">12:28 PM</div><div class="message-content"><div class="message-header"><span class="message-author" data-user-id="758999095070687284" style="color: #54aaec">Mafia Remastered</span><span class="bot-tag">BOT</span><span class="message-timestamp" title="Thursday, September 03, 2026 12:28 PM">Today at 12:28 PM</span></div><div class="components"><div class="component-container" style="border-left-color: #2ebb6a;"><div class="component-text"><h3>Game Over - Village won the match!</h3></div><div class="component-separator"></div><div class="component-text"><strong>🎊 Winners</strong></div><div class="component-text"><strong><u>Main winners</u></strong><br>👼 <span class="mention mention-user" data-user-id="1352990182256939028">@fish</span> - Cleric <br>👼 <span class="mention mention-user" data-user-id="1318216575915917434">@hawk</span> - Mayor <br>👼 <span class="mention mention-user" data-user-id="925033181990756392">@kie</span> - Oracle <br>👼 <span class="mention mention-user" data-user-id="1028147983885287465">@blackhole_unoriginal</span> - Vigilante <br>👼 <span class="mention mention-user" data-user-id="908967007725183036">@funkiller</span> - Doctor <br>👼 <span class="mention mention-user" data-user-id="800565154345517097">@ambiguousenemy12</span> - Lawyer <br><br>☠️ <span class="mention mention-user" data-user-id="712067230619140196">@Razel the turkish delight</span> - Guardian <br><br><strong><u>Other winners</u></strong><br>👼 <span class="mention mention-user" data-user-id="1080993015214133309">@61 #miaisthebestintheworld</span> - Shaman <br><br><br><em> </em></div><div class="component-separator"></div><div class="component-text"><strong>🗡️ Losers</strong></div><div class="component-text">👼 <span class="mention mention-user" data-user-id="871344950380482620">@soumya</span> - Agent <br>☠️ <span class="mention mention-user" data-user-id="1137010538568757389">@aaa707yx</span> - Godfather <br>☠️ <span class="mention mention-user" data-user-id="762572282698661898">@マサアキ</span> - Vendetta</div><div class="component-separator"></div><div class="component-text">-# W Village, L others</div></div></div></div></div></div></div><aside class="members"><h3>Members — 12</h3><div class="member-row" data-user-id="758999095070687284"><img src="https://cdn.discordapp.com/avatars/758999095070687284/70e18007dbd33933f77d901a0db8eb19.png?size=1024" alt=""><span class="member-name" style="color:#54aaec">Mafia Remastered <span class="bot-tag">BOT</span></span></div><div class="member-row" data-user-id="1080993015214133309"><img src="https://cdn.discordapp.com/avatars/1080993015214133309/692d098a01d6f4bd15fc467d74801c4f.png?size=1024" alt=""><span class="member-name" style="color:#fc9502">61 #miaisthebestintheworld</span></div><div class="member-row" data-user-id="1137010538568757389"><img src="https://cdn.discordapp.com/avatars/1137010538568757389/d225f474e3caf224de714c04185cb77c.png?size=1024" alt=""><span class="member-name" style="color:#f1a969">aaa707yx</span></div><div class="member-row" data-user-id="800565154345517097"><img src="https://cdn.discordapp.com/avatars/800565154345517097/f434e2bab7f7c8b0d9ca39ddae698295.png?size=1024" alt=""><span class="member-name" style="color:#62b0fa">ambiguousenemy12</span></div><div class="member-row" data-user-id="1028147983885287465"><img src="https://cdn.discordapp.com/avatars/1028147983885287465/d9f82f9fa837ed73bf8734f8bbfadd3b.png?size=1024" alt=""><span class="member-name" style="color:#ffb700">blackhole_unoriginal</span></div><div class="member-row" data-user-id="1352990182256939028"><img src="https://cdn.discordapp.com/avatars/1352990182256939028/d9be47487e29713c71a7d43816608aeb.png?size=1024" alt=""><span class="member-name" style="color:#88c057">fish</span></div><div class="member-row" data-user-id="908967007725183036"><img src="https://cdn.discordapp.com/avatars/908967007725183036/9e6b2b6865a2b27798d3a5bdf239ffb2.png?size=1024" alt=""><span class="member-name" style="color:#a2a7ad">funkiller</span></div><div class="member-row" data-user-id="1318216575915917434"><img src="https://cdn.discordapp.com/avatars/1318216575915917434/804e606a13316c43dbd1879016baaa55.png?size=1024" alt=""><span class="member-name" style="color:#fadfdc">hawk</span></div><div class="member-row" data-user-id="925033181990756392"><img src="https://cdn.discordapp.com/avatars/925033181990756392/0bf34ae40c5580f02361258f8fcc7417.png?size=1024" alt=""><span class="member-name" style="color:#96cee5">kie</span></div><div class="member-row" data-user-id="712067230619140196"><img src="https://cdn.discordapp.com/avatars/712067230619140196/b64612ba5ef94240c1946bcc98965e2f.png?size=1024" alt=""><span class="member-name" style="color:#edc72f">Razel the turkish delight</span></div><div class="member-row" data-user-id="871344950380482620"><img src="https://cdn.discordapp.com/avatars/871344950380482620/5d4443bbbcdd20ee5b8cf3c8b6e2082f.png?size=1024" alt=""><span class="member-name" style="color:#88c057">soumya</span></div><div class="member-row" data-user-id="762572282698661898"><img src="https://cdn.discordapp.com/avatars/762572282698661898/92e21e33f92cedbd51743e4ec1d293fc.png?size=1024" alt=""><span class="member-name" style="color:#ff0000">マサアキ</span></div></aside></div></div></div><script type="application/json" id="transcript-users">[{"id": "758999095070687284", "name": "Mafia Remastered", "username": "Mafia Remastered", "avatar": "https://cdn.discordapp.com/avatars/758999095070687284/70e18007dbd33933f77d901a0db8eb19.png?size=1024", "bot": true, "color": "#54aaec", "roles": [{"name": "♢ Category E", "color": "#e81800"}, {"name": "♢ Bot", "color": "#54aaec"}, {"name": "♢ Role Management", "color": "#99aab5"}], "created_at": "2020-09-25T10:31:25.786000+00:00", "joined_at": "2026-07-19T05:40:44.861000+00:00"}, {"id": "712067230619140196", "name": "Razel the turkish delight", "username": "r4zel_", "avatar": "https://cdn.discordapp.com/avatars/712067230619140196/b64612ba5ef94240c1946bcc98965e2f.png?size=1024", "bot": false, "color": "#edc72f", "roles": [{"name": "Turkish Delight", "color": "#ff0f0f"}, {"name": "Staff of the Week", "color": "#edc72f"}, {"name": "GarticMod", "color": "#99aab5"}, {"name": "✧ Karuta Manager", "color": "#99aab5"}, {"name": "✧ Rumble Manager", "color": "#99aab5"}, {"name": "✧ Event Manager", "color": "#99aab5"}, {"name": "✦ Head Moderator", "color": "#99aab5"}, {"name": "★ Payout Staff", "color": "#99aab5"}], "created_at": "2020-05-18T22:20:57.349000+00:00", "joined_at": "2025-07-16T20:17:23.667000+00:00"}, {"id": "925033181990756392", "name": "kie", "username": "https.www.eepie.com", "avatar": "https://cdn.discordapp.com/avatars/925033181990756392/0bf34ae40c5580f02361258f8fcc7417.png?size=1024", "bot": false, "color": "#96cee5", "roles": [{"name": "Donor [10M]", "color": "#fc9502"}, {"name": "Donor [69M]", "color": "#fadfdc"}, {"name": "Donor [250M]", "color": "#62b0fa"}, {"name": "Donor [500M]", "color": "#ffd782"}, {"name": "Donor [690M]", "color": "#f1a969"}, {"name": "Donor [1B]", "color": "#d7dadd"}, {"name": "Donor [2B]", "color": "#d95cff"}, {"name": "Donor [5B]", "color": "#96cee5"}], "created_at": "2021-12-27T14:31:36.872000+00:00", "joined_at": "2026-08-23T11:07:50.969000+00:00"}, {"id": "800565154345517097", "name": "ambiguousenemy12", "username": "ambiguousenemy12", "avatar": "https://cdn.discordapp.com/avatars/800565154345517097/f434e2bab7f7c8b0d9ca39ddae698295.png?size=1024", "bot": false, "color": "#62b0fa", "roles": [{"name": "Giveaway Ping", "color": "#99aab5"}, {"name": "Auction Ping", "color": "#99aab5"}, {"name": "Mafia Ping", "color": "#99aab5"}, {"name": "Event Ping", "color": "#99aab5"}, {"name": "Member", "color": "#88c057"}, {"name": "Donor [10M]", "color": "#fc9502"}, {"name": "Donor [69M]", "color": "#fadfdc"}, {"name": "Donor [250M]", "color": "#62b0fa"}], "created_at": "2021-01-18T03:20:06.577000+00:00", "joined_at": "2026-01-25T21:21:12.650000+00:00"}, {"id": "762572282698661898", "name": "マサアキ", "username": "masaaci724", "avatar": "https://cdn.discordapp.com/avatars/762572282698661898/92e21e33f92cedbd51743e4ec1d293fc.png?size=1024", "bot": false, "color": "#ff0000", "roles": [{"name": "Heist Ping", "color": "#99aab5"}, {"name": "Member", "color": "#88c057"}, {"name": "10 ✯ | Lurker", "color": "#99aab5"}, {"name": "20 ✯ | Active", "color": "#99aab5"}, {"name": "Donor [10M]", "color": "#fc9502"}, {"name": "Donor [69M]", "color": "#fadfdc"}, {"name": "Donor [250M]", "color": "#62b0fa"}, {"name": "YouTube Squad", "color": "#ff0000"}], "created_at": "2020-10-05T07:10:00.103000+00:00", "joined_at": "2026-08-19T06:35:59.225000+00:00"}, {"id": "1028147983885287465", "name": "blackhole_unoriginal", "username": "changed_blackhole", "avatar": "https://cdn.discordapp.com/avatars/1028147983885287465/d9f82f9fa837ed73bf8734f8bbfadd3b.png?size=1024", "bot": false, "color": "#ffb700", "roles": [{"name": "Donor [250M]", "color": "#62b0fa"}, {"name": "Donor [500M]", "color": "#ffd782"}, {"name": "Donor [690M]", "color": "#f1a969"}, {"name": "Donor [1B]", "color": "#d7dadd"}, {"name": "Donor [2B]", "color": "#d95cff"}, {"name": "Donor [5B]", "color": "#96cee5"}, {"name": "YouTube Squad", "color": "#ff0000"}, {"name": "blackhole", "color": "#ffb700"}], "created_at": "2022-10-08T03:33:01.424000+00:00", "joined_at": "2025-03-08T10:39:16.237000+00:00"}, {"id": "1137010538568757389", "name": "aaa707yx", "username": "namquan_31469", "avatar": "https://cdn.discordapp.com/avatars/1137010538568757389/d225f474e3caf224de714c04185cb77c.png?size=1024", "bot": false, "color": "#f1a969", "roles": [{"name": "Heist Ping", "color": "#99aab5"}, {"name": "Member", "color": "#88c057"}, {"name": "10 ✯ | Lurker", "color": "#99aab5"}, {"name": "Donor [10M]", "color": "#fc9502"}, {"name": "Donor [69M]", "color": "#fadfdc"}, {"name": "Donor [250M]", "color": "#62b0fa"}, {"name": "Donor [500M]", "color": "#ffd782"}, {"name": "Donor [690M]", "color": "#f1a969"}], "created_at": "2023-08-04T13:13:57.029000+00:00", "joined_at": "2026-06-22T12:50:39.150000+00:00"}, {"id": "908967007725183036", "name": "funkiller", "username": "_.theo_ry_", "avatar": "https://cdn.discordapp.com/avatars/908967007725183036/9e6b2b6865a2b27798d3a5bdf239ffb2.png?size=1024", "bot": false, "color": "#a2a7ad", "roles": [{"name": "Known", "color": "#ebebeb"}, {"name": "Respected", "color": "#ffd915"}, {"name": "♢ Staff", "color": "#e74741"}, {"name": "「 ✦ 𝐃𝐚𝐫𝐤 ✦ 」", "color": "#a2a7ad"}, {"name": "GarticMod", "color": "#99aab5"}, {"name": "✧ Rumble Manager", "color": "#99aab5"}, {"name": "✧ Event Manager", "color": "#99aab5"}, {"name": "✦ Head Event Manager", "color": "#99aab5"}], "created_at": "2021-11-13T06:30:22.432000+00:00", "joined_at": "2025-10-30T23:24:30.076000+00:00"}, {"id": "1352990182256939028", "name": "fish", "username": "fishinguy_9881", "avatar": "https://cdn.discordapp.com/avatars/1352990182256939028/d9be47487e29713c71a7d43816608aeb.png?size=1024", "bot": false, "color": "#88c057", "roles": [{"name": "Dank Random Event Ping", "color": "#99aab5"}, {"name": "Other Server Heists Ping", "color": "#99aab5"}, {"name": "Server Update Ping", "color": "#99aab5"}, {"name": "Rumble Ping", "color": "#99aab5"}, {"name": "Mafia Ping", "color": "#99aab5"}, {"name": "Big Event Ping", "color": "#99aab5"}, {"name": "Heist Ping", "color": "#99aab5"}, {"name": "Member", "color": "#88c057"}], "created_at": "2025-03-22T12:59:56.792000+00:00", "joined_at": "2026-09-03T05:11:58.214000+00:00"}, {"id": "1318216575915917434", "name": "hawk", "username": "9cache", "avatar": "https://cdn.discordapp.com/avatars/1318216575915917434/804e606a13316c43dbd1879016baaa55.png?size=1024", "bot": false, "color": "#fadfdc", "roles": [{"name": "Announcement Ping", "color": "#99aab5"}, {"name": "Nitro Giveaway Ping", "color": "#99aab5"}, {"name": "Mafia Ping", "color": "#99aab5"}, {"name": "Big Event Ping", "color": "#99aab5"}, {"name": "Member", "color": "#88c057"}, {"name": "10 ✯ | Lurker", "color": "#99aab5"}, {"name": "Donor [10M]", "color": "#fc9502"}, {"name": "Donor [69M]", "color": "#fadfdc"}], "created_at": "2024-12-16T14:02:02.978000+00:00", "joined_at": "2026-05-28T18:06:42.073000+00:00"}, {"id": "871344950380482620", "name": "soumya", "username": "soumya_1609", "avatar": "https://cdn.discordapp.com/avatars/871344950380482620/5d4443bbbcdd20ee5b8cf3c8b6e2082f.png?size=1024", "bot": false, "color": "#88c057", "roles": [{"name": "Other Server Heists Ping", "color": "#99aab5"}, {"name": "Giveaway Ping", "color": "#99aab5"}, {"name": "Auction Ping", "color": "#99aab5"}, {"name": "Mafia Ping", "color": "#99aab5"}, {"name": "Big Event Ping", "color": "#99aab5"}, {"name": "Event Ping", "color": "#99aab5"}, {"name": "Heist Ping", "color": "#99aab5"}, {"name": "Member", "color": "#88c057"}], "created_at": "2021-08-01T10:53:44.977000+00:00", "joined_at": "2026-09-03T02:46:10.460000+00:00"}, {"id": "1080993015214133309", "name": "61 #miaisthebestintheworld", "username": "61__.", "avatar": "https://cdn.discordapp.com/avatars/1080993015214133309/692d098a01d6f4bd15fc467d74801c4f.png?size=1024", "bot": false, "color": "#fc9502", "roles": [{"name": "Nitro Giveaway Ping", "color": "#99aab5"}, {"name": "Mafia Ping", "color": "#99aab5"}, {"name": "Member", "color": "#88c057"}, {"name": "10 ✯ | Lurker", "color": "#99aab5"}, {"name": "20 ✯ | Active", "color": "#99aab5"}, {"name": "30 ✯ | Notable", "color": "#99aab5"}, {"name": "Donor [$10]", "color": "#f7dba7"}, {"name": "Donor [10M]", "color": "#fc9502"}], "created_at": "2023-03-02T23:20:18.706000+00:00", "joined_at": "2026-08-04T18:53:42.255000+00:00"}]</script><div id="profile-pop" class="profile-pop"></div><div id="lightbox" class="lightbox"><img alt=""></div>
+        <script>
+        (function () {
+          const users = JSON.parse(document.getElementById("transcript-users").textContent || "[]");
+          const byId = Object.fromEntries(users.map((u) => [String(u.id), u]));
+          const pop = document.getElementById("profile-pop");
+          const box = document.getElementById("lightbox");
+          const search = document.getElementById("tx-search");
+
+          function hidePop() { pop.classList.remove("show"); }
+          function colorOr(c, fb) { return c && c !== "#000000" ? c : fb; }
+
+          function showProfile(id, anchor) {
+            const u = byId[String(id)];
+            if (!u) return;
+            const roles = (u.roles || []).map((r) =>
+              `<span class="role-pill"><span class="role-dot" style="background:${colorOr(r.color, "#99aab5")}"></span>${escapeHtml(r.name)}</span>`
+            ).join("");
+            pop.innerHTML =
+              `<div class="profile-banner" style="background:${colorOr(u.color, "#5865f2")}"></div>` +
+              `<img class="profile-avatar" src="${escapeAttr(u.avatar || "")}" alt="">` +
+              `<div class="profile-body">` +
+              `<div class="profile-name">${escapeHtml(u.name || u.username || "User")}${u.bot ? ' <span class="bot-tag">BOT</span>' : ""}</div>` +
+              `<div class="profile-user">${escapeHtml(u.username || "")}</div>` +
+              (u.joined_at ? `<div class="profile-section">Server member since</div><div>${fmtDate(u.joined_at)}</div>` : "") +
+              (u.created_at ? `<div class="profile-section">Member since</div><div>${fmtDate(u.created_at)}</div>` : "") +
+              (roles ? `<div class="profile-section">Roles</div><div class="role-pills">${roles}</div>` : "") +
+              `<div class="profile-actions">` +
+              `<button type="button" data-copy="${escapeAttr(u.id)}">Copy ID</button>` +
+              `<a href="https://discord.com/users/${encodeURIComponent(u.id)}" target="_blank" rel="noreferrer">Open profile</a>` +
+              `</div></div>`;
+            pop.classList.add("show");
+            const r = (anchor || document.body).getBoundingClientRect();
+            let x = r.right + 8;
+            let y = r.top - 20;
+            const w = 300, h = Math.min(pop.offsetHeight || 360, window.innerHeight - 16);
+            if (x + w > window.innerWidth - 8) x = r.left - w - 8;
+            if (x < 8) x = 8;
+            if (y + h > window.innerHeight - 8) y = window.innerHeight - h - 8;
+            if (y < 8) y = 8;
+            pop.style.left = x + "px";
+            pop.style.top = y + "px";
+          }
+
+          function escapeHtml(s) {
+            return String(s || "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+          }
+          function escapeAttr(s) { return escapeHtml(s).replace(/`/g, ""); }
+          function fmtDate(iso) {
+            try { return new Date(iso).toLocaleString(undefined, { dateStyle: "medium", timeStyle: "short" }); }
+            catch (e) { return iso; }
+          }
+
+          document.addEventListener("click", (e) => {
+            const copy = e.target.closest("[data-copy]");
+            if (copy) {
+              navigator.clipboard.writeText(copy.getAttribute("data-copy") || "");
+              copy.textContent = "Copied";
+              setTimeout(() => { copy.textContent = "Copy ID"; }, 1200);
+              return;
+            }
+            const spoiler = e.target.closest(".spoiler:not(.revealed)");
+            if (spoiler) { spoiler.classList.add("revealed"); return; }
+            const img = e.target.closest(".attachment img, .embed-image img, .component-media-gallery img, .sticker, .embed-thumbnail img");
+            if (img && img.src) {
+              box.querySelector("img").src = img.src;
+              box.classList.add("show");
+              return;
+            }
+            const jump = e.target.closest("[data-jump]");
+            if (jump) {
+              const el = document.getElementById(jump.getAttribute("data-jump"));
+              if (el) {
+                el.scrollIntoView({ behavior: "smooth", block: "center" });
+                el.classList.add("flash");
+                setTimeout(() => el.classList.remove("flash"), 1600);
+              }
+              return;
+            }
+            const sel = e.target.closest(".component-select");
+            if (sel) {
+              sel.parentElement.classList.toggle("open");
+              return;
+            }
+            const hit = e.target.closest(".message-author, .member-row, .mention-user, .reply-author, img[data-user-id]");
+            if (hit) {
+              const uid = hit.getAttribute("data-user-id");
+              if (uid) {
+                showProfile(uid, hit);
+                e.stopPropagation();
+                return;
+              }
+            }
+            if (!pop.contains(e.target)) hidePop();
+          });
+          box.addEventListener("click", () => box.classList.remove("show"));
+          document.addEventListener("keydown", (e) => {
+            if (e.key === "Escape") { hidePop(); box.classList.remove("show"); }
+          });
+
+          if (search) {
+            search.addEventListener("input", () => {
+              const q = search.value.trim().toLowerCase();
+              document.querySelectorAll(".message, .system-message").forEach((el) => {
+                el.style.display = !q || el.textContent.toLowerCase().includes(q) ? "" : "none";
+              });
+            });
+          }
+
+          if (location.hash) {
+            const el = document.getElementById(location.hash.slice(1));
+            if (el) {
+              el.classList.add("flash");
+              setTimeout(() => el.classList.remove("flash"), 1800);
+            }
+          }
+        })();
+        </script>
+        </body></html>
