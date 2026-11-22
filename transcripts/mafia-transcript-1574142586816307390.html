@@ -1,0 +1,588 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>#mafia</title><link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;500;600;700&family=Noto+Sans+Mono:wght@400;500&display=swap" rel="stylesheet">
+        <style>
+            :root {
+                --bg-primary: #313338;
+                --bg-secondary: #2b2d31;
+                --bg-tertiary: #1e1f22;
+                --bg-floating: #111214;
+                --bg-mod: #232428;
+                --text: #dbdee1;
+                --text-muted: #949ba4;
+                --header: #f2f3f5;
+                --brand: #5865f2;
+                --green: #23a559;
+                --danger: #da373c;
+                --link: #00a8fc;
+                --mention: rgba(88, 101, 242, 0.3);
+            }
+            * { margin: 0; padding: 0; box-sizing: border-box; }
+            html, body {
+                height: 100%;
+                background: var(--bg-tertiary);
+                color: var(--text);
+                font-family: "gg sans", "Noto Sans", Whitney, "Helvetica Neue", Helvetica, Arial, sans-serif;
+                -webkit-font-smoothing: antialiased;
+                line-height: 1.375;
+            }
+            body { display: flex; min-height: 100%; }
+            .app {
+                display: flex;
+                flex: 1;
+                min-width: 0;
+                min-height: 100%;
+            }
+            .channel-col { display: flex; flex-direction: column; flex: 1; min-width: 0; background: var(--bg-primary); }
+            .channel-header {
+                height: 48px;
+                flex-shrink: 0;
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                padding: 0 16px;
+                box-shadow: 0 1px 0 rgba(0,0,0,0.3), 0 1px 2px rgba(0,0,0,0.12);
+                z-index: 4;
+                background: var(--bg-primary);
+            }
+            .channel-hash { color: var(--text-muted); font-size: 22px; font-weight: 700; line-height: 1; }
+            .channel-header h1 {
+                font-size: 16px;
+                font-weight: 600;
+                color: var(--header);
+                text-wrap: balance;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
+            .header-meta { color: var(--text-muted); font-size: 12px; margin-left: 4px; white-space: nowrap; }
+            .header-search {
+                margin-left: auto;
+                background: var(--bg-tertiary);
+                border: 0;
+                border-radius: 4px;
+                color: var(--text);
+                font: inherit;
+                font-size: 14px;
+                height: 30px;
+                min-width: 140px;
+                width: 220px;
+                padding: 0 10px;
+                outline: none;
+            }
+            .header-search::placeholder { color: var(--text-muted); }
+            .header-search:focus { box-shadow: 0 0 0 2px rgba(88,101,242,0.45); }
+            .channel-body { display: flex; flex: 1; min-height: 0; }
+            .messages-scroller { flex: 1; min-width: 0; overflow-y: auto; }
+            .messages-container { padding: 16px 0 32px; }
+            .start-of-channel { padding: 16px 16px 8px 16px; }
+            .start-of-channel h2 { color: var(--header); font-size: 32px; font-weight: 700; letter-spacing: -0.5px; text-wrap: balance; }
+            .start-of-channel p { color: var(--text-muted); margin-top: 8px; font-size: 16px; }
+            .message {
+                display: flex;
+                padding: 2px 48px 2px 16px;
+                margin: 0;
+                position: relative;
+            }
+            .message:hover, .message:target { background-color: #2e3035; }
+            .message.flash { background: rgba(88,101,242,0.16); }
+            .message-compact { padding-top: 0; padding-bottom: 0; min-height: 22px; }
+            .message-avatar {
+                width: 40px;
+                height: 40px;
+                border-radius: 50%;
+                margin-right: 16px;
+                margin-top: 2px;
+                flex-shrink: 0;
+                background-color: var(--brand);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-weight: 600;
+                color: white;
+                cursor: pointer;
+                outline: 1px solid rgba(255,255,255,0.08);
+            }
+            .message-compact .message-avatar {
+                background: transparent;
+                outline: 0;
+                color: var(--text-muted);
+                font-size: 11px;
+                font-weight: 500;
+                font-variant-numeric: tabular-nums;
+                opacity: 0;
+                cursor: default;
+                border-radius: 0;
+            }
+            .message-compact:hover .message-avatar { opacity: 1; }
+            .message-avatar img { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; }
+            .parser-avatar { display: none; }
+            .message-content { flex: 1; min-width: 0; }
+            .message-header { display: flex; align-items: baseline; gap: 8px; margin-bottom: 0; }
+            .message-compact .message-header { display: none; }
+            .message-author {
+                font-weight: 500;
+                font-size: 16px;
+                color: var(--header);
+                cursor: pointer;
+            }
+            .message-author:hover { text-decoration: underline; }
+            .bot-tag, .app-tag {
+                background-color: var(--brand);
+                border-radius: 4px;
+                color: #fff;
+                font-size: 10px;
+                font-weight: 700;
+                line-height: 15px;
+                padding: 0 4px;
+                text-transform: uppercase;
+                position: relative;
+                top: -1px;
+            }
+            .message-timestamp, .edited {
+                font-size: 12px;
+                color: var(--text-muted);
+                font-weight: 500;
+                font-variant-numeric: tabular-nums;
+            }
+            .message-text {
+                color: var(--text);
+                font-size: 16px;
+                line-height: 1.375;
+                word-wrap: break-word;
+                white-space: normal;
+            }
+            .message-text a, .embed-title a { color: var(--link); text-decoration: none; }
+            .message-text a:hover, .embed-title a:hover { text-decoration: underline; }
+            .custom-emoji { height: 1.375em; width: 1.375em; object-fit: contain; vertical-align: -0.25em; }
+            .custom-emoji.jumbo { height: 3rem; width: 3rem; }
+            .reply-preview {
+                display: flex;
+                align-items: center;
+                gap: 4px;
+                max-width: 100%;
+                margin-bottom: 4px;
+                font-size: 13px;
+                color: var(--text-muted);
+                cursor: pointer;
+                position: relative;
+            }
+            .reply-preview::before {
+                content: "";
+                width: 33px;
+                height: 10px;
+                border-left: 2px solid #4e5058;
+                border-top: 2px solid #4e5058;
+                border-radius: 6px 0 0 0;
+                margin: 0 4px 0 20px;
+                flex-shrink: 0;
+                position: relative;
+                top: 6px;
+            }
+            .reply-preview img { width: 16px; height: 16px; border-radius: 50%; }
+            .reply-author { font-weight: 500; color: var(--header); }
+            .reply-body { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+            .message-attachments { margin-top: 8px; display: flex; flex-direction: column; gap: 4px; }
+            .attachment img, .sticker, .embed-image img, .component-media-gallery img {
+                max-width: min(400px, 100%);
+                max-height: 300px;
+                border-radius: 8px;
+                cursor: pointer;
+                outline: 1px solid rgba(255,255,255,0.1);
+            }
+            .sticker { max-width: 160px; max-height: 160px; }
+            .attachment-file, .component-file {
+                background: var(--bg-secondary);
+                border: 1px solid #1f2023;
+                border-radius: 8px;
+                padding: 10px 16px;
+                display: inline-flex;
+                align-items: center;
+                gap: 8px;
+                text-decoration: none;
+                color: var(--link);
+                max-width: 420px;
+            }
+            .embed {
+                margin-top: 8px;
+                max-width: 520px;
+                border-radius: 8px;
+                background: var(--bg-secondary);
+                display: flex;
+                overflow: hidden;
+                outline: 1px solid rgba(0,0,0,0.24);
+            }
+            .embed-color-bar { width: 4px; flex-shrink: 0; background: var(--brand); }
+            .embed-content { padding: 8px 16px 16px 12px; flex: 1; min-width: 0; }
+            .embed-author { display: flex; align-items: center; gap: 8px; margin: 8px 0; font-size: 14px; font-weight: 600; }
+            .embed-author img { width: 24px; height: 24px; border-radius: 50%; }
+            .embed-title { font-size: 16px; font-weight: 600; margin-bottom: 4px; color: var(--link); }
+            .embed-description { font-size: 14px; line-height: 1.375; white-space: pre-wrap; }
+            .embed-fields { display: grid; gap: 8px; margin-top: 8px; }
+            .embed-field-inline { display: inline-block; width: calc(33.33% - 8px); vertical-align: top; }
+            .embed-field-name { font-size: 14px; font-weight: 600; color: var(--header); margin-bottom: 2px; }
+            .embed-field-value { font-size: 14px; white-space: pre-wrap; }
+            .embed-thumbnail { margin: 8px 16px 8px 0; }
+            .embed-thumbnail img { max-width: 80px; max-height: 80px; border-radius: 4px; }
+            .embed-footer { display: flex; align-items: center; gap: 8px; margin-top: 8px; font-size: 12px; color: var(--text-muted); }
+            .embed-footer img { width: 16px; height: 16px; border-radius: 50%; }
+            .components { margin-top: 4px; max-width: 540px; }
+            .component-container {
+                background: var(--bg-secondary);
+                border: 1px solid rgba(0,0,0,0.3);
+                border-left: 4px solid #4e5058;
+                border-radius: 8px;
+                margin-top: 8px;
+                padding: 12px 16px 16px;
+            }
+            .component-text { color: var(--text); font-size: 16px; line-height: 1.375; margin: 4px 0; word-wrap: break-word; }
+            .component-text h1, .component-text h2, .component-text h3 { color: var(--header); font-weight: 700; line-height: 1.25; margin: 4px 0 8px; }
+            .component-text h1 { font-size: 24px; }
+            .component-text h2 { font-size: 20px; }
+            .component-text h3 { font-size: 16px; }
+            .component-section { display: flex; gap: 16px; margin: 4px 0; }
+            .component-section-content { flex: 1; min-width: 0; }
+            .component-section-accessory { flex-shrink: 0; }
+            .component-thumbnail { display: block; max-height: 80px; max-width: 80px; border-radius: 8px; object-fit: cover; outline: 1px solid rgba(255,255,255,0.1); }
+            .component-media-gallery { display: grid; gap: 4px; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); margin-top: 8px; max-width: 560px; }
+            .component-media-gallery img, .component-media-gallery video {
+                background: var(--bg-tertiary);
+                border-radius: 8px;
+                display: block;
+                max-height: 360px;
+                max-width: 100%;
+                object-fit: cover;
+                width: 100%;
+            }
+            .component-separator { border-top: 1px solid #3f4147; height: 1px; margin: 10px 0; }
+            .component-separator-spacer { border-top: 0; height: 8px; }
+            .component-action-row { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
+            .component-button, .component-select, .component-text-input, .component-file-upload {
+                align-items: center;
+                border: 0;
+                border-radius: 8px;
+                color: #fff;
+                display: inline-flex;
+                font-size: 14px;
+                font-weight: 500;
+                gap: 6px;
+                min-height: 32px;
+                padding: 2px 16px;
+                text-decoration: none;
+            }
+            .component-button:active { transform: scale(0.96); }
+            .component-button-primary { background: var(--brand); }
+            .component-button-secondary, .component-select, .component-text-input, .component-file-upload { background: #4e5058; }
+            .component-button-success { background: #248046; }
+            .component-button-danger { background: var(--danger); }
+            .component-button-link { background: #4e5058; }
+            .component-button-disabled, .component-select { cursor: default; opacity: 0.92; }
+            .component-select { min-width: 220px; justify-content: space-between; }
+            .component-select-menu {
+                background: var(--bg-floating);
+                border-radius: 8px;
+                margin-top: 4px;
+                padding: 6px;
+                display: none;
+                flex-direction: column;
+                gap: 2px;
+            }
+            .component-select.open + .component-select-menu, .component-select-wrap.open .component-select-menu { display: flex; }
+            .component-select-option { padding: 8px 10px; border-radius: 4px; color: var(--text); font-size: 14px; }
+            .component-select-option:hover { background: #393c41; }
+            .component-label { margin-top: 8px; }
+            .component-label-text { font-size: 14px; font-weight: 700; color: var(--header); margin-bottom: 6px; }
+            .poll {
+                margin-top: 8px;
+                max-width: 420px;
+                background: var(--bg-secondary);
+                border-radius: 8px;
+                padding: 16px;
+                outline: 1px solid rgba(255,255,255,0.06);
+            }
+            .poll-q { font-weight: 600; color: var(--header); margin-bottom: 10px; }
+            .poll-ans { background: var(--bg-mod); border-radius: 8px; padding: 8px 12px; margin-top: 6px; display: flex; justify-content: space-between; font-size: 14px; }
+            .reactions { display: flex; gap: 4px; margin-top: 4px; flex-wrap: wrap; }
+            .reaction {
+                background: var(--bg-mod);
+                border: 1px solid transparent;
+                border-radius: 8px;
+                padding: 3px 8px;
+                display: flex;
+                align-items: center;
+                gap: 6px;
+                font-size: 14px;
+                min-height: 24px;
+            }
+            .reaction:hover { border-color: #4f545c; background: #36373d; }
+            .reaction-emoji { width: 16px; height: 16px; font-size: 16px; line-height: 16px; }
+            .reaction-count { color: var(--text-muted); font-weight: 500; font-variant-numeric: tabular-nums; }
+            .system-message {
+                display: flex;
+                align-items: center;
+                gap: 16px;
+                padding: 4px 16px 4px 16px;
+                color: var(--text-muted);
+                font-size: 14px;
+            }
+            .system-message-icon { width: 40px; text-align: center; flex-shrink: 0; font-size: 16px; }
+            .mention {
+                background: var(--mention);
+                color: #c9cdfb;
+                padding: 0 2px;
+                border-radius: 3px;
+                font-weight: 500;
+                cursor: pointer;
+            }
+            .mention:hover { background: var(--brand); color: #fff; }
+            .code-inline {
+                background: var(--bg-tertiary);
+                padding: 2px 4px;
+                border-radius: 4px;
+                font-family: "Noto Sans Mono", Consolas, monospace;
+                font-size: 85%;
+            }
+            .code-block {
+                background: var(--bg-tertiary);
+                border-radius: 8px;
+                padding: 12px;
+                margin: 6px 0;
+                font-family: "Noto Sans Mono", Consolas, monospace;
+                font-size: 14px;
+                overflow-x: auto;
+            }
+            .spoiler {
+                background: #1e1f22;
+                color: transparent;
+                padding: 0 2px;
+                border-radius: 4px;
+                cursor: pointer;
+                transition-property: color, background-color;
+                transition-duration: 120ms;
+            }
+            .spoiler.revealed { background: rgba(0,0,0,0.22); color: inherit; }
+            .divider {
+                display: flex;
+                align-items: center;
+                margin: 24px 16px 8px;
+                color: var(--text-muted);
+                font-size: 12px;
+                font-weight: 600;
+            }
+            .divider::before, .divider::after { content: ""; flex: 1; height: 1px; background: #3f4147; }
+            .divider-text { padding: 0 8px; font-variant-numeric: tabular-nums; }
+            .members {
+                width: 240px;
+                flex-shrink: 0;
+                background: var(--bg-secondary);
+                overflow-y: auto;
+                padding: 16px 8px 24px;
+            }
+            .members h3 {
+                color: var(--text-muted);
+                font-size: 12px;
+                font-weight: 700;
+                letter-spacing: 0.02em;
+                text-transform: uppercase;
+                padding: 0 8px 8px;
+            }
+            .member-row {
+                display: flex;
+                align-items: center;
+                gap: 12px;
+                padding: 6px 8px;
+                border-radius: 4px;
+                cursor: pointer;
+                min-height: 42px;
+            }
+            .member-row:hover { background: #35373c; }
+            .member-row img { width: 32px; height: 32px; border-radius: 50%; outline: 1px solid rgba(255,255,255,0.08); }
+            .member-name { font-size: 14px; font-weight: 500; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+            .profile-pop {
+                position: fixed;
+                z-index: 50;
+                width: 300px;
+                background: var(--bg-floating);
+                border-radius: 8px;
+                overflow: hidden;
+                box-shadow: 0 8px 24px rgba(0,0,0,0.45);
+                display: none;
+            }
+            .profile-pop.show { display: block; }
+            .profile-banner { height: 60px; background: #5865f2; }
+            .profile-avatar {
+                width: 80px;
+                height: 80px;
+                border-radius: 50%;
+                border: 6px solid var(--bg-floating);
+                margin: -40px 16px 0;
+                background: var(--brand);
+                object-fit: cover;
+            }
+            .profile-body { padding: 8px 16px 16px; }
+            .profile-name { font-size: 20px; font-weight: 700; color: var(--header); }
+            .profile-user { color: var(--text); font-size: 14px; margin-bottom: 12px; }
+            .profile-section { font-size: 12px; font-weight: 700; color: var(--header); text-transform: uppercase; margin: 10px 0 6px; }
+            .role-pills { display: flex; flex-wrap: wrap; gap: 4px; }
+            .role-pill {
+                display: inline-flex;
+                align-items: center;
+                gap: 6px;
+                background: var(--bg-mod);
+                border-radius: 4px;
+                padding: 4px 8px;
+                font-size: 12px;
+            }
+            .role-dot { width: 12px; height: 12px; border-radius: 50%; }
+            .profile-actions { display: flex; gap: 8px; margin-top: 12px; }
+            .profile-actions button, .profile-actions a {
+                flex: 1;
+                background: var(--bg-mod);
+                color: var(--text);
+                border: 0;
+                border-radius: 4px;
+                padding: 8px;
+                font: inherit;
+                font-size: 13px;
+                font-weight: 500;
+                text-align: center;
+                text-decoration: none;
+                cursor: pointer;
+            }
+            .profile-actions button:active, .profile-actions a:active { transform: scale(0.96); }
+            .lightbox {
+                position: fixed;
+                inset: 0;
+                background: rgba(0,0,0,0.86);
+                display: none;
+                align-items: center;
+                justify-content: center;
+                z-index: 80;
+                cursor: zoom-out;
+            }
+            .lightbox.show { display: flex; }
+            .lightbox img { max-width: 90vw; max-height: 90vh; border-radius: 8px; outline: 1px solid rgba(255,255,255,0.1); }
+            .hidden-hit { display: none; }
+            @media (max-width: 820px) {
+                .members { display: none; }
+                .header-search { width: 120px; min-width: 0; }
+                .message { padding-right: 16px; }
+            }
+        </style>
+        </head><body><div class="app"><div class="channel-col"><div class="channel-header"><span class="channel-hash">#</span><h1>mafia</h1><span class="header-meta">94 messages · Robbing Central</span><input id="tx-search" class="header-search" type="search" placeholder="Search" autocomplete="off"></div><div class="channel-body"><div class="messages-scroller"><div class="messages-container"><div class="start-of-channel"><h2>Welcome to #mafia</h2><p>This is the start of the #mafia channel.</p></div><div class="divider"><span class="divider-text">November 22, 2026</span></div><div class="message" id="m-1574142597037957244"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/758999095070687284/70e18007dbd33933f77d901a0db8eb19.png?size=1024" alt="" data-user-id="758999095070687284"><img class="parser-avatar" src="https://cdn.discordapp.com/avatars/758999095070687284/70e18007dbd33933f77d901a0db8eb19.png" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author" data-user-id="758999095070687284" style="color: #54aaec">Mafia Remastered</span><span class="bot-tag">BOT</span><span class="message-timestamp" title="Sunday, November 22, 2026 07:20 PM">Today at 7:20 PM</span></div><div class="components"><div class="component-text"><span class="mention mention-user" data-user-id="993191642280493177">@pz</span> <span class="mention mention-user" data-user-id="807160521353854986">@Rose</span> <span class="mention mention-user" data-user-id="890215961544757268">@transnationally feared</span> <span class="mention mention-user" data-user-id="1337560879813758996">@Wintermelonboss</span> <span class="mention mention-user" data-user-id="995158317875875871">@gttl</span> <span class="mention mention-user" data-user-id="955802095276138576">@Jerry</span> <span class="mention mention-user" data-user-id="483217929177923585">@xLx 🇵🇸</span></div></div></div></div><div class="message message-compact" id="m-1574142622006513734"><div class="message-avatar">7:20 PM</div><div class="message-content"><div class="message-header"><span class="message-author" data-user-id="758999095070687284" style="color: #54aaec">Mafia Remastered</span><span class="bot-tag">BOT</span><span class="message-timestamp" title="Sunday, November 22, 2026 07:20 PM">Today at 7:20 PM</span></div><div class="components"><div class="component-container" style="border-left-color: #9c59b6;"><div class="component-text"><h3>🖐️ Welcome to Mafia!</h3></div><div class="component-text">📕 If you haven&#x27;t read the rules yet, please type &lt;/game:1042058961274282025&gt; to view them!</div><div class="component-separator"></div><div class="component-text"><strong>❗ HEY LISTEN UP</strong></div><div class="component-text">💢 Please do not type in this chat unless instructed to do so. Admins please don&#x27;t abuse your godly powers and talk when other people can&#x27;t. Thank you.</div><div class="component-separator"></div><div class="component-text"><strong>💀 To those who are dead:</strong></div><div class="component-text">Please do not talk. I know it&#x27;s hard to grasp but dead people can&#x27;t talk.</div><div class="component-separator"></div><div class="component-text"><strong>👀 Some important rules:</strong></div><div class="component-text">🚫 Screenshots are not permitted and would only ruin the game. However, you CAN claim roles to either coordinate among yourselves or trick other people. Just NO SCREENSHOTS (unless you are a mafia showing results to other mafias).</div><div class="component-separator"></div><div class="component-text"><strong>🗣️ Some useful commands:</strong></div><div class="component-text">&lt;/reset:1164534455604609051&gt;, &lt;/help:1042058961274282026&gt;, &lt;/game:1042058961274282025&gt;</div><div class="component-separator"></div><div class="component-text">-# Note: Parts of the game can be customized using the /config command! To view the current settings, use &lt;/settings:1164534455780782215&gt;.</div></div></div></div></div><div class="message message-compact" id="m-1574142644185989141"><div class="message-avatar">7:20 PM</div><div class="message-content"><div class="message-header"><span class="message-author" data-user-id="758999095070687284" style="color: #54aaec">Mafia Remastered</span><span class="bot-tag">BOT</span><span class="message-timestamp" title="Sunday, November 22, 2026 07:20 PM">Today at 7:20 PM</span></div><div class="components"><div class="component-container" style="border-left-color: #15826c;"><div class="component-text"><h3>Anomalies are enabled!</h3></div><div class="component-text">Throughout the game, there is a 40% chance of anomalies happening. Let the crazy begin!</div><div class="component-separator"></div><div class="component-text">-# Hope you manage to survive this.</div></div></div></div></div><div class="message message-compact" id="m-1574142666248167454"><div class="message-avatar">7:20 PM</div><div class="message-content"><div class="message-header"><span class="message-author" data-user-id="758999095070687284" style="color: #54aaec">Mafia Remastered</span><span class="bot-tag">BOT</span><span class="message-timestamp" title="Sunday, November 22, 2026 07:20 PM">Today at 7:20 PM</span></div><div class="components"><div class="component-container" style="border-left-color: #972f25;"><div class="component-text"><strong><img class="custom-emoji" alt=":animated_logo:" src="https://cdn.discordapp.com/emojis/1368198731878498385.gif"> Mafia Remastered</strong></div><div class="component-text">Alright! Let the game begin!</div></div></div></div></div><div class="message message-compact" id="m-1574142688398278727"><div class="message-avatar">7:21 PM</div><div class="message-content"><div class="message-header"><span class="message-author" data-user-id="758999095070687284" style="color: #54aaec">Mafia Remastered</span><span class="bot-tag">BOT</span><span class="message-timestamp" title="Sunday, November 22, 2026 07:21 PM">Today at 7:21 PM</span></div><div class="components"><div class="component-container" style="border-left-color: #4e5058;"><div class="component-text"><h3>Night 1</h3></div><div class="component-separator"></div><div class="component-text"><strong>Currently Alive:</strong></div><div class="component-text">🙂 <span class="mention mention-user" data-user-id="993191642280493177">@User</span><br><br>🙂 <span class="mention mention-user" data-user-id="807160521353854986">@User</span><br><br>🙂 <span class="mention mention-user" data-user-id="890215961544757268">@User</span><br><br>🙂 <span class="mention mention-user" data-user-id="1337560879813758996">@User</span><br><br>🙂 <span class="mention mention-user" data-user-id="995158317875875871">@User</span><br><br>🙂 <span class="mention mention-user" data-user-id="955802095276138576">@User</span><br><br>🙂 <span class="mention mention-user" data-user-id="483217929177923585">@User</span></div><div class="component-separator"></div><div class="component-text"><strong>Currently Dead:</strong></div><div class="component-text">No one is dead yet...</div></div></div></div></div><div class="message message-compact" id="m-1574142702239617097"><div class="message-avatar">7:21 PM</div><div class="message-content"><div class="message-header"><span class="message-author" data-user-id="758999095070687284" style="color: #54aaec">Mafia Remastered</span><span class="bot-tag">BOT</span><span class="message-timestamp" title="Sunday, November 22, 2026 07:21 PM">Today at 7:21 PM</span></div><div class="components"><div class="component-container" style="border-left-color: #3498db;"><div class="component-text"><h3>To do your action tonight, click the Action button below.</h3></div><div class="component-text">You can choose not to do anything tonight by clicking the red button.</div><div class="component-separator"></div><div class="component-action-row"><span class="component-button component-button-success">Action</span></div></div></div></div></div><div class="message message-compact" id="m-1574142955520786483"><div class="message-avatar">7:22 PM</div><div class="message-content"><div class="message-header"><span class="message-author" data-user-id="758999095070687284" style="color: #54aaec">Mafia Remastered</span><span class="bot-tag">BOT</span><span class="message-timestamp" title="Sunday, November 22, 2026 07:22 PM">Today at 7:22 PM</span></div><div class="components"><div class="component-container" style="border-left-color: #972f25;"><div class="component-text"><strong><img class="custom-emoji" alt=":animated_logo:" src="https://cdn.discordapp.com/emojis/1368198731878498385.gif"> Mafia Remastered</strong></div><div class="component-text">Alright everybody, get your butts back here. It&#x27;s storytime.</div></div></div></div></div><div class="message message-compact" id="m-1574142962169020591"><div class="message-avatar">7:22 PM</div><div class="message-content"><div class="message-header"><span class="message-author" data-user-id="758999095070687284" style="color: #54aaec">Mafia Remastered</span><span class="bot-tag">BOT</span><span class="message-timestamp" title="Sunday, November 22, 2026 07:22 PM">Today at 7:22 PM</span></div><div class="components"><div class="component-container" style="border-left-color: #972f25;"><div class="component-text"><h3>judev2 was attacked by the Mafia :(</h3></div><div class="component-text">You know who you are. You have gotten me now, but remember that the phoenix always respawns….</div><div class="component-media-gallery"><img src="https://res.cloudinary.com/dkpraixbv/image/upload/misc/youdied-default.png" alt="You died background"></div></div></div></div></div><div class="message message-compact" id="m-1574142994662293747"><div class="message-avatar">7:22 PM</div><div class="message-content"><div class="message-header"><span class="message-author" data-user-id="758999095070687284" style="color: #54aaec">Mafia Remastered</span><span class="bot-tag">BOT</span><span class="message-timestamp" title="Sunday, November 22, 2026 07:22 PM">Today at 7:22 PM</span></div><div class="components"><div class="component-container" style="border-left-color: #972f25;"><div class="component-section"><div class="component-section-content"><div class="component-text"><h3>Day 1</h3></div><div class="component-text">-# The list below shows dead players. The alive player list will be shown later.</div><div class="component-text"><h2>Currently Dead</h2></div></div><div class="component-section-accessory"><img class="component-thumbnail" src="https://media.discordapp.net/attachments/923932323710398495/1046292063358029925/Screenshot_2022-11-27-13-10-29-43_680d03679600f7af0b4c700c6b270fe7.jpg?ex=6b0473ab&amp;is=6b03222b&amp;hm=f0e920006fb43fa55f936bf9c5862e9fb264e959d384b29beef1f19c737d506f&amp;" alt=""></div></div><div class="component-text">💀 <span class="mention mention-user" data-user-id="890215961544757268">@User</span> - <strong><img class="custom-emoji" alt=":grave_robber:" src="https://cdn.discordapp.com/emojis/1172521800631078968.png"> Grave Robber</strong></div></div></div><div class="reactions"><div class="reaction"><span class="reaction-emoji">💀</span><span class="reaction-count">1</span></div></div></div></div><div class="message" id="m-1574143023267319942"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/993191642280493177/04325df5031650bf56f63d51ab9caa58.png?size=1024" alt="" data-user-id="993191642280493177"><img class="parser-avatar" src="https://cdn.discordapp.com/avatars/993191642280493177/04325df5031650bf56f63d51ab9caa58.png" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author" data-user-id="993191642280493177" style="color: #ba2708">pz</span><span class="message-timestamp" title="Sunday, November 22, 2026 07:22 PM">Today at 7:22 PM</span></div><div class="message-text">LMAO</div></div></div><div class="message" id="m-1574143025104293901"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/807160521353854986/78b2760fa15bee22f65ea038ff22f25d.png?size=1024" alt="" data-user-id="807160521353854986"><img class="parser-avatar" src="https://cdn.discordapp.com/avatars/807160521353854986/78b2760fa15bee22f65ea038ff22f25d.png" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author" data-user-id="807160521353854986" style="color: #ff0000">Rose</span><span class="message-timestamp" title="Sunday, November 22, 2026 07:22 PM">Today at 7:22 PM</span></div><div class="message-text">Fire</div></div></div><div class="message" id="m-1574143026354331802"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/758999095070687284/70e18007dbd33933f77d901a0db8eb19.png?size=1024" alt="" data-user-id="758999095070687284"><img class="parser-avatar" src="https://cdn.discordapp.com/avatars/758999095070687284/70e18007dbd33933f77d901a0db8eb19.png" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author" data-user-id="758999095070687284" style="color: #54aaec">Mafia Remastered</span><span class="bot-tag">BOT</span><span class="message-timestamp" title="Sunday, November 22, 2026 07:22 PM">Today at 7:22 PM</span></div><div class="components"><div class="component-container" style="border-left-color: #3498db;"><div class="component-text"><h3>Currently Alive</h3></div><div class="component-text">◽ <span class="mention mention-user" data-user-id="993191642280493177">@pz</span><br><br>◽ <span class="mention mention-user" data-user-id="807160521353854986">@Rose</span><br><br>◽ <span class="mention mention-user" data-user-id="1337560879813758996">@Wintermelonboss</span><br><br>◽ <span class="mention mention-user" data-user-id="995158317875875871">@gttl</span><br><br>◽ <span class="mention mention-user" data-user-id="955802095276138576">@Jerry</span><br><br>◽ <span class="mention mention-user" data-user-id="483217929177923585">@xLx 🇵🇸</span></div><div class="component-separator"></div><div class="component-text">-# Have fun!</div></div></div></div></div><div class="message message-compact" id="m-1574143028380180541"><div class="message-avatar">7:22 PM</div><div class="message-content"><div class="message-header"><span class="message-author" data-user-id="758999095070687284" style="color: #54aaec">Mafia Remastered</span><span class="bot-tag">BOT</span><span class="message-timestamp" title="Sunday, November 22, 2026 07:22 PM">Today at 7:22 PM</span></div><div class="components"><div class="component-container" style="border-left-color: #4e5058;"><div class="component-text"><h3>Random player list:</h3></div><div class="component-text"><span class="mention mention-user" data-user-id="995158317875875871">@gttl</span> - <strong>Random Player 1</strong></div><div class="component-text"><span class="mention mention-user" data-user-id="993191642280493177">@pz</span> - <strong>Random Player 2</strong></div><div class="component-text"><span class="mention mention-user" data-user-id="890215961544757268">@transnationally feared</span> - <strong>Random Player 3</strong></div><div class="component-text"><span class="mention mention-user" data-user-id="1337560879813758996">@Wintermelonboss</span> - <strong>Random Player 4</strong></div><div class="component-text"><span class="mention mention-user" data-user-id="807160521353854986">@Rose</span> - <strong>Random Player 5</strong></div><div class="component-text"><span class="mention mention-user" data-user-id="955802095276138576">@Jerry</span> - <strong>Random Player 6</strong></div><div class="component-text"><span class="mention mention-user" data-user-id="483217929177923585">@xLx 🇵🇸</span> - <strong>Random Player 7</strong></div></div></div></div></div><div class="message" id="m-1574143032377213110"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/483217929177923585/a3ecbba69c03caca22dffb4ea1d42668.png?size=1024" alt="" data-user-id="483217929177923585"><img class="parser-avatar" src="https://cdn.discordapp.com/avatars/483217929177923585/a3ecbba69c03caca22dffb4ea1d42668.png" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author" data-user-id="483217929177923585" style="color: #e2e5e7">xLx 🇵🇸</span><span class="message-timestamp" title="Sunday, November 22, 2026 07:22 PM">Today at 7:22 PM</span></div><div class="message-text">w maf</div></div></div><div class="message" id="m-1574143038974988330"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/807160521353854986/78b2760fa15bee22f65ea038ff22f25d.png?size=1024" alt="" data-user-id="807160521353854986"><img class="parser-avatar" src="https://cdn.discordapp.com/avatars/807160521353854986/78b2760fa15bee22f65ea038ff22f25d.png" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author" data-user-id="807160521353854986" style="color: #ff0000">Rose</span><span class="message-timestamp" title="Sunday, November 22, 2026 07:22 PM">Today at 7:22 PM</span></div><div class="message-text">Only gf left</div></div></div><div class="message" id="m-1574143053189488753"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/955802095276138576/3cecaa7e2206df6f7c7a56b9fc155d60.png?size=1024" alt="" data-user-id="955802095276138576"><img class="parser-avatar" src="https://cdn.discordapp.com/avatars/955802095276138576/3cecaa7e2206df6f7c7a56b9fc155d60.png" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author" data-user-id="955802095276138576" style="color: #e2e5e7">Jerry</span><span class="message-timestamp" title="Sunday, November 22, 2026 07:22 PM">Today at 7:22 PM</span></div><div class="message-text">bro digged his own grave</div></div></div><div class="message" id="m-1574143053302726848"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/1337560879813758996/5605e501e3c5ae3ebc21255a7e88e1c6.png?size=1024" alt="" data-user-id="1337560879813758996"><img class="parser-avatar" src="https://cdn.discordapp.com/avatars/1337560879813758996/5605e501e3c5ae3ebc21255a7e88e1c6.png" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author" data-user-id="1337560879813758996" style="color: #88c057">Wintermelonboss</span><span class="message-timestamp" title="Sunday, November 22, 2026 07:22 PM">Today at 7:22 PM</span></div><div class="message-text">hm</div></div></div><div class="message" id="m-1574143072864837706"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/955802095276138576/3cecaa7e2206df6f7c7a56b9fc155d60.png?size=1024" alt="" data-user-id="955802095276138576"><img class="parser-avatar" src="https://cdn.discordapp.com/avatars/955802095276138576/3cecaa7e2206df6f7c7a56b9fc155d60.png" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author" data-user-id="955802095276138576" style="color: #e2e5e7">Jerry</span><span class="message-timestamp" title="Sunday, November 22, 2026 07:22 PM">Today at 7:22 PM</span></div><div class="message-text"><img class="custom-emoji" alt=":wtf_ghost:" src="https://cdn.discordapp.com/emojis/1562768832307666944.png"></div></div></div><div class="message" id="m-1574143077247885376"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/993191642280493177/04325df5031650bf56f63d51ab9caa58.png?size=1024" alt="" data-user-id="993191642280493177"><img class="parser-avatar" src="https://cdn.discordapp.com/avatars/993191642280493177/04325df5031650bf56f63d51ab9caa58.png" alt=""></div><div class="message-content"><div class="reply-preview" data-jump="m-1574143053189488753"><span class="reply-body">Original message was deleted</span></div><div class="message-header"><span class="message-author" data-user-id="993191642280493177" style="color: #ba2708">pz</span><span class="message-timestamp" title="Sunday, November 22, 2026 07:22 PM">Today at 7:22 PM</span></div><div class="message-text">Dug</div></div></div><div class="message" id="m-1574143079697481829"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/483217929177923585/a3ecbba69c03caca22dffb4ea1d42668.png?size=1024" alt="" data-user-id="483217929177923585"><img class="parser-avatar" src="https://cdn.discordapp.com/avatars/483217929177923585/a3ecbba69c03caca22dffb4ea1d42668.png" alt=""></div><div class="message-content"><div class="reply-preview" data-jump="m-1574143053189488753"><span class="reply-body">Original message was deleted</span></div><div class="message-header"><span class="message-author" data-user-id="483217929177923585" style="color: #e2e5e7">xLx 🇵🇸</span><span class="message-timestamp" title="Sunday, November 22, 2026 07:22 PM">Today at 7:22 PM</span></div><div class="message-text"><img class="custom-emoji" alt=":rails_rofl:" src="https://cdn.discordapp.com/emojis/1566861947767627907.png"></div></div></div><div class="message" id="m-1574143087834304633"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/1337560879813758996/5605e501e3c5ae3ebc21255a7e88e1c6.png?size=1024" alt="" data-user-id="1337560879813758996"><img class="parser-avatar" src="https://cdn.discordapp.com/avatars/1337560879813758996/5605e501e3c5ae3ebc21255a7e88e1c6.png" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author" data-user-id="1337560879813758996" style="color: #88c057">Wintermelonboss</span><span class="message-timestamp" title="Sunday, November 22, 2026 07:22 PM">Today at 7:22 PM</span></div><div class="message-text">wait what does grave robber do</div></div></div><div class="message" id="m-1574143093534494723"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/807160521353854986/78b2760fa15bee22f65ea038ff22f25d.png?size=1024" alt="" data-user-id="807160521353854986"><img class="parser-avatar" src="https://cdn.discordapp.com/avatars/807160521353854986/78b2760fa15bee22f65ea038ff22f25d.png" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author" data-user-id="807160521353854986" style="color: #ff0000">Rose</span><span class="message-timestamp" title="Sunday, November 22, 2026 07:22 PM">Today at 7:22 PM</span></div><div class="message-text">Alr so I&#x27;ll be pubbing historian</div></div></div><div class="message" id="m-1574143109007278172"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/993191642280493177/04325df5031650bf56f63d51ab9caa58.png?size=1024" alt="" data-user-id="993191642280493177"><img class="parser-avatar" src="https://cdn.discordapp.com/avatars/993191642280493177/04325df5031650bf56f63d51ab9caa58.png" alt=""></div><div class="message-content"><div class="reply-preview" data-jump="m-1574143087834304633"><span class="reply-body">Original message was deleted</span></div><div class="message-header"><span class="message-author" data-user-id="993191642280493177" style="color: #ba2708">pz</span><span class="message-timestamp" title="Sunday, November 22, 2026 07:22 PM">Today at 7:22 PM</span></div><div class="message-text">Solo win neut</div></div></div><div class="message" id="m-1574143116045451295"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/955802095276138576/3cecaa7e2206df6f7c7a56b9fc155d60.png?size=1024" alt="" data-user-id="955802095276138576"><img class="parser-avatar" src="https://cdn.discordapp.com/avatars/955802095276138576/3cecaa7e2206df6f7c7a56b9fc155d60.png" alt=""></div><div class="message-content"><div class="reply-preview" data-jump="m-1574143077247885376"><span class="reply-body">Original message was deleted</span></div><div class="message-header"><span class="message-author" data-user-id="955802095276138576" style="color: #e2e5e7">Jerry</span><span class="message-timestamp" title="Sunday, November 22, 2026 07:22 PM">Today at 7:22 PM</span></div><div class="message-text">digger</div><div class="reactions"><div class="reaction"><span class="reaction-emoji">💀</span><span class="reaction-count">3</span></div></div></div></div><div class="message" id="m-1574143117890691343"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/807160521353854986/78b2760fa15bee22f65ea038ff22f25d.png?size=1024" alt="" data-user-id="807160521353854986"><img class="parser-avatar" src="https://cdn.discordapp.com/avatars/807160521353854986/78b2760fa15bee22f65ea038ff22f25d.png" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author" data-user-id="807160521353854986" style="color: #ff0000">Rose</span><span class="message-timestamp" title="Sunday, November 22, 2026 07:22 PM">Today at 7:22 PM</span></div><div class="message-text"><img class="custom-emoji" alt=":RV_catdance:" src="https://cdn.discordapp.com/emojis/1563290060483461140.gif"></div></div></div><div class="message" id="m-1574143135901028415"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/1337560879813758996/5605e501e3c5ae3ebc21255a7e88e1c6.png?size=1024" alt="" data-user-id="1337560879813758996"><img class="parser-avatar" src="https://cdn.discordapp.com/avatars/1337560879813758996/5605e501e3c5ae3ebc21255a7e88e1c6.png" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author" data-user-id="1337560879813758996" style="color: #88c057">Wintermelonboss</span><span class="message-timestamp" title="Sunday, November 22, 2026 07:22 PM">Today at 7:22 PM</span></div><div class="message-text">oh</div></div></div><div class="message" id="m-1574143167748378625"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/993191642280493177/04325df5031650bf56f63d51ab9caa58.png?size=1024" alt="" data-user-id="993191642280493177"><img class="parser-avatar" src="https://cdn.discordapp.com/avatars/993191642280493177/04325df5031650bf56f63d51ab9caa58.png" alt=""></div><div class="message-content"><div class="reply-preview" data-jump="m-1574143116045451295"><span class="reply-body">Original message was deleted</span></div><div class="message-header"><span class="message-author" data-user-id="993191642280493177" style="color: #ba2708">pz</span><span class="message-timestamp" title="Sunday, November 22, 2026 07:22 PM">Today at 7:22 PM</span></div><div class="message-text">Be very careful with your next words</div></div></div><div class="message" id="m-1574143173767462944"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/807160521353854986/78b2760fa15bee22f65ea038ff22f25d.png?size=1024" alt="" data-user-id="807160521353854986"><img class="parser-avatar" src="https://cdn.discordapp.com/avatars/807160521353854986/78b2760fa15bee22f65ea038ff22f25d.png" alt=""></div><div class="message-content"><div class="reply-preview" data-jump="m-1574143116045451295"><span class="reply-body">Original message was deleted</span></div><div class="message-header"><span class="message-author" data-user-id="807160521353854986" style="color: #ff0000">Rose</span><span class="message-timestamp" title="Sunday, November 22, 2026 07:22 PM">Today at 7:22 PM</span></div><div class="message-text">Chup</div></div></div><div class="message" id="m-1574143203014086677"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/955802095276138576/3cecaa7e2206df6f7c7a56b9fc155d60.png?size=1024" alt="" data-user-id="955802095276138576"><img class="parser-avatar" src="https://cdn.discordapp.com/avatars/955802095276138576/3cecaa7e2206df6f7c7a56b9fc155d60.png" alt=""></div><div class="message-content"><div class="reply-preview" data-jump="m-1574143167748378625"><span class="reply-body">Original message was deleted</span></div><div class="message-header"><span class="message-author" data-user-id="955802095276138576" style="color: #e2e5e7">Jerry</span><span class="message-timestamp" title="Sunday, November 22, 2026 07:23 PM">Today at 7:23 PM</span></div><div class="message-text">?</div></div></div><div class="message message-compact" id="m-1574143226066243756"><div class="message-avatar">7:23 PM</div><div class="message-content"><div class="message-header"><span class="message-author" data-user-id="955802095276138576" style="color: #e2e5e7">Jerry</span><span class="message-timestamp" title="Sunday, November 22, 2026 07:23 PM">Today at 7:23 PM</span></div><div class="message-text">dont correct my grammer</div></div></div><div class="message message-compact" id="m-1574143246328795362"><div class="message-avatar">7:23 PM</div><div class="message-content"><div class="message-header"><span class="message-author" data-user-id="955802095276138576" style="color: #e2e5e7">Jerry</span><span class="message-timestamp" title="Sunday, November 22, 2026 07:23 PM">Today at 7:23 PM</span></div><div class="message-text">dig dug dugged</div></div></div><div class="message" id="m-1574143251915608065"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/993191642280493177/04325df5031650bf56f63d51ab9caa58.png?size=1024" alt="" data-user-id="993191642280493177"><img class="parser-avatar" src="https://cdn.discordapp.com/avatars/993191642280493177/04325df5031650bf56f63d51ab9caa58.png" alt=""></div><div class="message-content"><div class="reply-preview" data-jump="m-1574143226066243756"><span class="reply-body">Original message was deleted</span></div><div class="message-header"><span class="message-author" data-user-id="993191642280493177" style="color: #ba2708">pz</span><span class="message-timestamp" title="Sunday, November 22, 2026 07:23 PM">Today at 7:23 PM</span></div><div class="message-text">I do what i want</div></div></div><div class="message" id="m-1574143276825710666"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/995158317875875871/878fb1d60d23e1d1ae8815daca95caa4.png?size=1024" alt="" data-user-id="995158317875875871"><img class="parser-avatar" src="https://cdn.discordapp.com/avatars/995158317875875871/878fb1d60d23e1d1ae8815daca95caa4.png" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author" data-user-id="995158317875875871" style="color: #e2e5e7">gttl</span><span class="message-timestamp" title="Sunday, November 22, 2026 07:23 PM">Today at 7:23 PM</span></div><div class="message-text">-# i will not go afk this round.</div></div></div><div class="message" id="m-1574143279560134657"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/993191642280493177/04325df5031650bf56f63d51ab9caa58.png?size=1024" alt="" data-user-id="993191642280493177"><img class="parser-avatar" src="https://cdn.discordapp.com/avatars/993191642280493177/04325df5031650bf56f63d51ab9caa58.png" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author" data-user-id="993191642280493177" style="color: #ba2708">pz</span><span class="message-timestamp" title="Sunday, November 22, 2026 07:23 PM">Today at 7:23 PM</span></div><div class="message-text">So any info or</div></div></div><div class="message" id="m-1574143282148147401"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/758999095070687284/70e18007dbd33933f77d901a0db8eb19.png?size=1024" alt="" data-user-id="758999095070687284"><img class="parser-avatar" src="https://cdn.discordapp.com/avatars/758999095070687284/70e18007dbd33933f77d901a0db8eb19.png" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author" data-user-id="758999095070687284" style="color: #54aaec">Mafia Remastered</span><span class="bot-tag">BOT</span><span class="message-timestamp" title="Sunday, November 22, 2026 07:23 PM">Today at 7:23 PM</span></div><div class="components"><div class="component-container" style="border-left-color: #a94300;"><div class="component-text"><h3>Now it is time to nominate! Vote the player you want by pressing the button below on who should be put on trial!</h3></div><div class="component-text">Minimum votes required: 3</div><div class="component-separator"></div><div class="component-text"><em></em>- <span class="mention mention-user" data-user-id="993191642280493177">@User</span><br>- <span class="mention mention-user" data-user-id="807160521353854986">@User</span><br>- <span class="mention mention-user" data-user-id="1337560879813758996">@User</span><br>- <span class="mention mention-user" data-user-id="995158317875875871">@User</span><br>- <span class="mention mention-user" data-user-id="955802095276138576">@User</span><br>- <span class="mention mention-user" data-user-id="483217929177923585">@User</span><em></em></div><div class="component-separator"></div><div class="component-action-row"><span class="component-button component-button-success">Vote</span></div><div class="component-text">-# You have 50 seconds to nominate someone...</div></div></div></div></div><div class="message" id="m-1574143288842260501"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/955802095276138576/3cecaa7e2206df6f7c7a56b9fc155d60.png?size=1024" alt="" data-user-id="955802095276138576"><img class="parser-avatar" src="https://cdn.discordapp.com/avatars/955802095276138576/3cecaa7e2206df6f7c7a56b9fc155d60.png" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author" data-user-id="955802095276138576" style="color: #e2e5e7">Jerry</span><span class="message-timestamp" title="Sunday, November 22, 2026 07:23 PM">Today at 7:23 PM</span></div><div class="message-text">ill use whatever tense i went</div></div></div><div class="message" id="m-1574143320396013704"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/807160521353854986/78b2760fa15bee22f65ea038ff22f25d.png?size=1024" alt="" data-user-id="807160521353854986"><img class="parser-avatar" src="https://cdn.discordapp.com/avatars/807160521353854986/78b2760fa15bee22f65ea038ff22f25d.png" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author" data-user-id="807160521353854986" style="color: #ff0000">Rose</span><span class="message-timestamp" title="Sunday, November 22, 2026 07:23 PM">Today at 7:23 PM</span></div><div class="message-text">Ok I&#x27;m historian wtv</div></div></div><div class="message" id="m-1574143344857325739"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/1337560879813758996/5605e501e3c5ae3ebc21255a7e88e1c6.png?size=1024" alt="" data-user-id="1337560879813758996"><img class="parser-avatar" src="https://cdn.discordapp.com/avatars/1337560879813758996/5605e501e3c5ae3ebc21255a7e88e1c6.png" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author" data-user-id="1337560879813758996" style="color: #88c057">Wintermelonboss</span><span class="message-timestamp" title="Sunday, November 22, 2026 07:23 PM">Today at 7:23 PM</span></div><div class="message-text">any info</div></div></div><div class="message" id="m-1574143365748891831"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/807160521353854986/78b2760fa15bee22f65ea038ff22f25d.png?size=1024" alt="" data-user-id="807160521353854986"><img class="parser-avatar" src="https://cdn.discordapp.com/avatars/807160521353854986/78b2760fa15bee22f65ea038ff22f25d.png" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author" data-user-id="807160521353854986" style="color: #ff0000">Rose</span><span class="message-timestamp" title="Sunday, November 22, 2026 07:23 PM">Today at 7:23 PM</span></div><div class="message-text">On gttl2</div></div></div><div class="message message-compact" id="m-1574143393204797574"><div class="message-avatar">7:23 PM</div><div class="message-content"><div class="message-header"><span class="message-author" data-user-id="807160521353854986" style="color: #ff0000">Rose</span><span class="message-timestamp" title="Sunday, November 22, 2026 07:23 PM">Today at 7:23 PM</span></div><div class="message-text">Till claim</div></div></div><div class="message" id="m-1574143410275745925"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/995158317875875871/878fb1d60d23e1d1ae8815daca95caa4.png?size=1024" alt="" data-user-id="995158317875875871"><img class="parser-avatar" src="https://cdn.discordapp.com/avatars/995158317875875871/878fb1d60d23e1d1ae8815daca95caa4.png" alt=""></div><div class="message-content"><div class="reply-preview" data-jump="m-1574143393204797574"><span class="reply-body">Original message was deleted</span></div><div class="message-header"><span class="message-author" data-user-id="995158317875875871" style="color: #e2e5e7">gttl</span><span class="message-timestamp" title="Sunday, November 22, 2026 07:23 PM">Today at 7:23 PM</span></div><div class="message-text">mayor</div></div></div><div class="message" id="m-1574143444463517747"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/955802095276138576/3cecaa7e2206df6f7c7a56b9fc155d60.png?size=1024" alt="" data-user-id="955802095276138576"><img class="parser-avatar" src="https://cdn.discordapp.com/avatars/955802095276138576/3cecaa7e2206df6f7c7a56b9fc155d60.png" alt=""></div><div class="message-content"><div class="reply-preview" data-jump="m-1574143173767462944"><span class="reply-body">Original message was deleted</span></div><div class="message-header"><span class="message-author" data-user-id="955802095276138576" style="color: #e2e5e7">Jerry</span><span class="message-timestamp" title="Sunday, November 22, 2026 07:24 PM">Today at 7:24 PM</span></div><div class="message-text">eng only server btw</div></div></div><div class="message message-compact" id="m-1574143453535801478"><div class="message-avatar">7:24 PM</div><div class="message-content"><div class="message-header"><span class="message-author" data-user-id="955802095276138576" style="color: #e2e5e7">Jerry</span><span class="message-timestamp" title="Sunday, November 22, 2026 07:24 PM">Today at 7:24 PM</span></div><div class="message-text">pls floow rules</div></div></div><div class="message" id="m-1574143476721909922"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/483217929177923585/a3ecbba69c03caca22dffb4ea1d42668.png?size=1024" alt="" data-user-id="483217929177923585"><img class="parser-avatar" src="https://cdn.discordapp.com/avatars/483217929177923585/a3ecbba69c03caca22dffb4ea1d42668.png" alt=""></div><div class="message-content"><div class="reply-preview" data-jump="m-1574143410275745925"><span class="reply-body">Original message was deleted</span></div><div class="message-header"><span class="message-author" data-user-id="483217929177923585" style="color: #e2e5e7">xLx 🇵🇸</span><span class="message-timestamp" title="Sunday, November 22, 2026 07:24 PM">Today at 7:24 PM</span></div><div class="message-text">reveal tmr</div></div></div><div class="message" id="m-1574143479469187143"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/993191642280493177/04325df5031650bf56f63d51ab9caa58.png?size=1024" alt="" data-user-id="993191642280493177"><img class="parser-avatar" src="https://cdn.discordapp.com/avatars/993191642280493177/04325df5031650bf56f63d51ab9caa58.png" alt=""></div><div class="message-content"><div class="reply-preview" data-jump="m-1574143410275745925"><span class="reply-body">Original message was deleted</span></div><div class="message-header"><span class="message-author" data-user-id="993191642280493177" style="color: #ba2708">pz</span><span class="message-timestamp" title="Sunday, November 22, 2026 07:24 PM">Today at 7:24 PM</span></div><div class="message-text">Why didnt you rev</div></div></div><div class="message" id="m-1574143492958060770"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/758999095070687284/70e18007dbd33933f77d901a0db8eb19.png?size=1024" alt="" data-user-id="758999095070687284"><img class="parser-avatar" src="https://cdn.discordapp.com/avatars/758999095070687284/70e18007dbd33933f77d901a0db8eb19.png" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author" data-user-id="758999095070687284" style="color: #54aaec">Mafia Remastered</span><span class="bot-tag">BOT</span><span class="message-timestamp" title="Sunday, November 22, 2026 07:24 PM">Today at 7:24 PM</span></div><div class="components"><div class="component-container" style="border-left-color: #c67c1c;"><div class="component-text"><h3>Nomination results</h3></div><div class="component-separator"></div><div class="component-text">All votes are hidden. If someone is on trial, it will be announced.</div><div class="component-separator"></div><div class="component-text">-# Minimum votes to put someone on stand: 3</div></div></div></div></div><div class="message message-compact" id="m-1574143494732124171"><div class="message-avatar">7:24 PM</div><div class="message-content"><div class="message-header"><span class="message-author" data-user-id="758999095070687284" style="color: #54aaec">Mafia Remastered</span><span class="bot-tag">BOT</span><span class="message-timestamp" title="Sunday, November 22, 2026 07:24 PM">Today at 7:24 PM</span></div><div class="components"><div class="component-container" style="border-left-color: #972f25;"><div class="component-text"><h3>The town wasn&#x27;t able to decide on who to hang so no one was nominated...</h3></div><div class="component-text">Better work together next time...</div></div></div></div></div><div class="message message-compact" id="m-1574143508913070151"><div class="message-avatar">7:24 PM</div><div class="message-content"><div class="message-header"><span class="message-author" data-user-id="758999095070687284" style="color: #54aaec">Mafia Remastered</span><span class="bot-tag">BOT</span><span class="message-timestamp" title="Sunday, November 22, 2026 07:24 PM">Today at 7:24 PM</span></div><div class="components"><div class="component-container" style="border-left-color: #972f25;"><div class="component-text"><strong><img class="custom-emoji" alt=":animated_logo:" src="https://cdn.discordapp.com/emojis/1368198731878498385.gif"> Mafia Remastered</strong></div><div class="component-text">No one was hanged.</div></div></div></div></div><div class="message" id="m-1574143521320083508"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/995158317875875871/878fb1d60d23e1d1ae8815daca95caa4.png?size=1024" alt="" data-user-id="995158317875875871"><img class="parser-avatar" src="https://cdn.discordapp.com/avatars/995158317875875871/878fb1d60d23e1d1ae8815daca95caa4.png" alt=""></div><div class="message-content"><div class="reply-preview" data-jump="m-1574143479469187143"><span class="reply-body">Original message was deleted</span></div><div class="message-header"><span class="message-author" data-user-id="995158317875875871" style="color: #e2e5e7">gttl</span><span class="message-timestamp" title="Sunday, November 22, 2026 07:24 PM">Today at 7:24 PM</span></div><div class="message-text">idk <img class="custom-emoji" alt=":Shrug:" src="https://cdn.discordapp.com/emojis/1206347950016565278.png"></div></div></div><div class="message" id="m-1574143547609976934"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/758999095070687284/70e18007dbd33933f77d901a0db8eb19.png?size=1024" alt="" data-user-id="758999095070687284"><img class="parser-avatar" src="https://cdn.discordapp.com/avatars/758999095070687284/70e18007dbd33933f77d901a0db8eb19.png" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author" data-user-id="758999095070687284" style="color: #54aaec">Mafia Remastered</span><span class="bot-tag">BOT</span><span class="message-timestamp" title="Sunday, November 22, 2026 07:24 PM">Today at 7:24 PM</span></div><div class="components"><div class="component-container" style="border-left-color: #4e5058;"><div class="component-text"><h3>Night 2</h3></div><div class="component-separator"></div><div class="component-text"><strong>Currently Alive:</strong></div><div class="component-text">🙂 <span class="mention mention-user" data-user-id="993191642280493177">@User</span><br><br>🙂 <span class="mention mention-user" data-user-id="807160521353854986">@User</span><br><br>🙂 <span class="mention mention-user" data-user-id="1337560879813758996">@User</span><br><br>🙂 <span class="mention mention-user" data-user-id="995158317875875871">@User</span><br><br>🙂 <span class="mention mention-user" data-user-id="955802095276138576">@User</span><br><br>🙂 <span class="mention mention-user" data-user-id="483217929177923585">@User</span></div><div class="component-separator"></div><div class="component-text"><strong>Currently Dead:</strong></div><div class="component-text">💀 <span class="mention mention-user" data-user-id="890215961544757268">@User</span> - <strong><img class="custom-emoji" alt=":grave_robber:" src="https://cdn.discordapp.com/emojis/1172521800631078968.png"> Grave Robber</strong></div></div></div></div></div><div class="message message-compact" id="m-1574143561585270978"><div class="message-avatar">7:24 PM</div><div class="message-content"><div class="message-header"><span class="message-author" data-user-id="758999095070687284" style="color: #54aaec">Mafia Remastered</span><span class="bot-tag">BOT</span><span class="message-timestamp" title="Sunday, November 22, 2026 07:24 PM">Today at 7:24 PM</span></div><div class="components"><div class="component-container" style="border-left-color: #3498db;"><div class="component-text"><h3>To do your action tonight, click the Action button below.</h3></div><div class="component-text">You can choose not to do anything tonight by clicking the red button.</div><div class="component-separator"></div><div class="component-action-row"><span class="component-button component-button-success">Action</span></div></div></div></div></div><div class="message message-compact" id="m-1574143814665244753"><div class="message-avatar">7:25 PM</div><div class="message-content"><div class="message-header"><span class="message-author" data-user-id="758999095070687284" style="color: #54aaec">Mafia Remastered</span><span class="bot-tag">BOT</span><span class="message-timestamp" title="Sunday, November 22, 2026 07:25 PM">Today at 7:25 PM</span></div><div class="components"><div class="component-container" style="border-left-color: #972f25;"><div class="component-text"><strong><img class="custom-emoji" alt=":animated_logo:" src="https://cdn.discordapp.com/emojis/1368198731878498385.gif"> Mafia Remastered</strong></div><div class="component-text">Alright everybody, get your butts back here. It&#x27;s storytime.</div></div></div></div></div><div class="message message-compact" id="m-1574143820730339520"><div class="message-avatar">7:25 PM</div><div class="message-content"><div class="message-header"><span class="message-author" data-user-id="758999095070687284" style="color: #54aaec">Mafia Remastered</span><span class="bot-tag">BOT</span><span class="message-timestamp" title="Sunday, November 22, 2026 07:25 PM">Today at 7:25 PM</span></div><div class="components"><div class="component-container" style="border-left-color: #972f25;"><div class="component-text"><h3>.rqlic. was attacked by the Mafia :(</h3></div><div class="component-text">.rqlic. found out who the Mafia was and tried to poison them.. Unfortunately though .rqlic. accidentally poisoned themselves and died...Oops.</div><div class="component-media-gallery"><img src="https://res.cloudinary.com/dkpraixbv/image/upload/misc/youdied-default.png" alt="You died background"></div></div></div></div></div><div class="message message-compact" id="m-1574143850841252022"><div class="message-avatar">7:25 PM</div><div class="message-content"><div class="message-header"><span class="message-author" data-user-id="758999095070687284" style="color: #54aaec">Mafia Remastered</span><span class="bot-tag">BOT</span><span class="message-timestamp" title="Sunday, November 22, 2026 07:25 PM">Today at 7:25 PM</span></div><div class="components"><div class="component-container" style="border-left-color: #2ebb6a;"><div class="component-section"><div class="component-section-content"><div class="component-text"><h3>🧐 The mayor has been revealed!!!</h3></div><div class="component-text"><span class="mention mention-user" data-user-id="995158317875875871">@gttl</span> is the town&#x27;s <strong><img class="custom-emoji" alt=":mayor:" src="https://cdn.discordapp.com/emojis/1157657183710879764.png"> Mayor</strong>!</div><div class="component-text"><em> </em><br>-# Yup, my suspicions were correct. This town is cooked. Town, you can kiss goodbye to your win</div></div><div class="component-section-accessory"><img class="component-thumbnail" src="https://res.cloudinary.com/dkpraixbv/image/upload/w_100/abilities/reveal.png" alt=""></div></div></div></div></div></div><div class="message message-compact" id="m-1574143895950987429"><div class="message-avatar">7:25 PM</div><div class="message-content"><div class="message-header"><span class="message-author" data-user-id="758999095070687284" style="color: #54aaec">Mafia Remastered</span><span class="bot-tag">BOT</span><span class="message-timestamp" title="Sunday, November 22, 2026 07:25 PM">Today at 7:25 PM</span></div><div class="components"><div class="component-container" style="border-left-color: #972f25;"><div class="component-section"><div class="component-section-content"><div class="component-text"><h3>Day 2</h3></div><div class="component-text">-# The list below shows dead players. The alive player list will be shown later.</div><div class="component-text"><h2>Currently Dead</h2></div></div><div class="component-section-accessory"><img class="component-thumbnail" src="https://media.discordapp.net/attachments/923932323710398495/1046292063358029925/Screenshot_2022-11-27-13-10-29-43_680d03679600f7af0b4c700c6b270fe7.jpg?ex=6b0473ab&amp;is=6b03222b&amp;hm=f0e920006fb43fa55f936bf9c5862e9fb264e959d384b29beef1f19c737d506f&amp;" alt=""></div></div><div class="component-text">💀 <span class="mention mention-user" data-user-id="890215961544757268">@User</span> - <strong><img class="custom-emoji" alt=":grave_robber:" src="https://cdn.discordapp.com/emojis/1172521800631078968.png"> Grave Robber</strong><br><br>💀 <span class="mention mention-user" data-user-id="483217929177923585">@User</span> - <strong><img class="custom-emoji" alt=":judge:" src="https://cdn.discordapp.com/emojis/1171449992590938124.png"> Judge</strong></div></div></div></div></div><div class="message message-compact" id="m-1574143920718352536"><div class="message-avatar">7:25 PM</div><div class="message-content"><div class="message-header"><span class="message-author" data-user-id="758999095070687284" style="color: #54aaec">Mafia Remastered</span><span class="bot-tag">BOT</span><span class="message-timestamp" title="Sunday, November 22, 2026 07:25 PM">Today at 7:25 PM</span></div><div class="components"><div class="component-container" style="border-left-color: #3498db;"><div class="component-text"><h3>Currently Alive</h3></div><div class="component-text">◽ <span class="mention mention-user" data-user-id="993191642280493177">@pz</span><br><br>◽ <span class="mention mention-user" data-user-id="807160521353854986">@Rose</span><br><br>◽ <span class="mention mention-user" data-user-id="1337560879813758996">@Wintermelonboss</span><br><br>◽ <span class="mention mention-user" data-user-id="995158317875875871">@gttl</span><br><br>◽ <span class="mention mention-user" data-user-id="955802095276138576">@Jerry</span></div><div class="component-separator"></div><div class="component-text">-# Have fun!</div></div></div></div></div><div class="message" id="m-1574143971624620196"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/807160521353854986/78b2760fa15bee22f65ea038ff22f25d.png?size=1024" alt="" data-user-id="807160521353854986"><img class="parser-avatar" src="https://cdn.discordapp.com/avatars/807160521353854986/78b2760fa15bee22f65ea038ff22f25d.png" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author" data-user-id="807160521353854986" style="color: #ff0000">Rose</span><span class="message-timestamp" title="Sunday, November 22, 2026 07:26 PM">Today at 7:26 PM</span></div><div class="message-text">On winter till claim</div></div></div><div class="message message-compact" id="m-1574144003002204165"><div class="message-avatar">7:26 PM</div><div class="message-content"><div class="message-header"><span class="message-author" data-user-id="807160521353854986" style="color: #ff0000">Rose</span><span class="message-timestamp" title="Sunday, November 22, 2026 07:26 PM">Today at 7:26 PM</span></div><div class="message-text">I pub history again</div></div></div><div class="message" id="m-1574144003954446378"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/993191642280493177/04325df5031650bf56f63d51ab9caa58.png?size=1024" alt="" data-user-id="993191642280493177"><img class="parser-avatar" src="https://cdn.discordapp.com/avatars/993191642280493177/04325df5031650bf56f63d51ab9caa58.png" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author" data-user-id="993191642280493177" style="color: #ba2708">pz</span><span class="message-timestamp" title="Sunday, November 22, 2026 07:26 PM">Today at 7:26 PM</span></div><div class="message-text">Its winter</div></div></div><div class="message" id="m-1574144027182243904"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/1337560879813758996/5605e501e3c5ae3ebc21255a7e88e1c6.png?size=1024" alt="" data-user-id="1337560879813758996"><img class="parser-avatar" src="https://cdn.discordapp.com/avatars/1337560879813758996/5605e501e3c5ae3ebc21255a7e88e1c6.png" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author" data-user-id="1337560879813758996" style="color: #88c057">Wintermelonboss</span><span class="message-timestamp" title="Sunday, November 22, 2026 07:26 PM">Today at 7:26 PM</span></div><div class="message-text">im medium</div></div></div><div class="message" id="m-1574144036355317811"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/993191642280493177/04325df5031650bf56f63d51ab9caa58.png?size=1024" alt="" data-user-id="993191642280493177"><img class="parser-avatar" src="https://cdn.discordapp.com/avatars/993191642280493177/04325df5031650bf56f63d51ab9caa58.png" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author" data-user-id="993191642280493177" style="color: #ba2708">pz</span><span class="message-timestamp" title="Sunday, November 22, 2026 07:26 PM">Today at 7:26 PM</span></div><div class="message-text">Via jailed mort</div></div></div><div class="message" id="m-1574144051274449038"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/1337560879813758996/5605e501e3c5ae3ebc21255a7e88e1c6.png?size=1024" alt="" data-user-id="1337560879813758996"><img class="parser-avatar" src="https://cdn.discordapp.com/avatars/1337560879813758996/5605e501e3c5ae3ebc21255a7e88e1c6.png" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author" data-user-id="1337560879813758996" style="color: #88c057">Wintermelonboss</span><span class="message-timestamp" title="Sunday, November 22, 2026 07:26 PM">Today at 7:26 PM</span></div><div class="message-text">idk what medium actually does</div></div></div><div class="message message-compact" id="m-1574144062062203082"><div class="message-avatar">7:26 PM</div><div class="message-content"><div class="message-header"><span class="message-author" data-user-id="1337560879813758996" style="color: #88c057">Wintermelonboss</span><span class="message-timestamp" title="Sunday, November 22, 2026 07:26 PM">Today at 7:26 PM</span></div><div class="message-text">so i didnt do anything</div></div></div><div class="message" id="m-1574144068869562630"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/993191642280493177/04325df5031650bf56f63d51ab9caa58.png?size=1024" alt="" data-user-id="993191642280493177"><img class="parser-avatar" src="https://cdn.discordapp.com/avatars/993191642280493177/04325df5031650bf56f63d51ab9caa58.png" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author" data-user-id="993191642280493177" style="color: #ba2708">pz</span><span class="message-timestamp" title="Sunday, November 22, 2026 07:26 PM">Today at 7:26 PM</span></div><div class="message-text">I didnt like his tone</div></div></div><div class="message" id="m-1574144144945713363"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/807160521353854986/78b2760fa15bee22f65ea038ff22f25d.png?size=1024" alt="" data-user-id="807160521353854986"><img class="parser-avatar" src="https://cdn.discordapp.com/avatars/807160521353854986/78b2760fa15bee22f65ea038ff22f25d.png" alt=""></div><div class="message-content"><div class="reply-preview" data-jump="m-1574144068869562630"><span class="reply-body">Original message was deleted</span></div><div class="message-header"><span class="message-author" data-user-id="807160521353854986" style="color: #ff0000">Rose</span><span class="message-timestamp" title="Sunday, November 22, 2026 07:26 PM">Today at 7:26 PM</span></div><div class="message-text">Uh u can execute the mort and I&#x27;ll study u</div></div></div><div class="message" id="m-1574144174301642876"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/758999095070687284/70e18007dbd33933f77d901a0db8eb19.png?size=1024" alt="" data-user-id="758999095070687284"><img class="parser-avatar" src="https://cdn.discordapp.com/avatars/758999095070687284/70e18007dbd33933f77d901a0db8eb19.png" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author" data-user-id="758999095070687284" style="color: #54aaec">Mafia Remastered</span><span class="bot-tag">BOT</span><span class="message-timestamp" title="Sunday, November 22, 2026 07:26 PM">Today at 7:26 PM</span></div><div class="components"><div class="component-container" style="border-left-color: #a94300;"><div class="component-text"><h3>Now it is time to nominate! Vote the player you want by pressing the button below on who should be put on trial!</h3></div><div class="component-text">Minimum votes required: 3</div><div class="component-separator"></div><div class="component-text"><em></em>- <span class="mention mention-user" data-user-id="993191642280493177">@User</span><br>- <span class="mention mention-user" data-user-id="807160521353854986">@User</span><br>- <span class="mention mention-user" data-user-id="1337560879813758996">@User</span><br>- <span class="mention mention-user" data-user-id="995158317875875871">@User</span><br>- <span class="mention mention-user" data-user-id="955802095276138576">@User</span><em></em></div><div class="component-separator"></div><div class="component-action-row"><span class="component-button component-button-success">Vote</span></div><div class="component-text">-# You have 50 seconds to nominate someone...</div></div></div></div></div><div class="message" id="m-1574144227766436013"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/993191642280493177/04325df5031650bf56f63d51ab9caa58.png?size=1024" alt="" data-user-id="993191642280493177"><img class="parser-avatar" src="https://cdn.discordapp.com/avatars/993191642280493177/04325df5031650bf56f63d51ab9caa58.png" alt=""></div><div class="message-content"><div class="reply-preview" data-jump="m-1574144144945713363"><span class="reply-body">Original message was deleted</span></div><div class="message-header"><span class="message-author" data-user-id="993191642280493177" style="color: #ba2708">pz</span><span class="message-timestamp" title="Sunday, November 22, 2026 07:27 PM">Today at 7:27 PM</span></div><div class="message-text">Wtf thats stupid</div></div></div><div class="message" id="m-1574144228882260021"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/995158317875875871/878fb1d60d23e1d1ae8815daca95caa4.png?size=1024" alt="" data-user-id="995158317875875871"><img class="parser-avatar" src="https://cdn.discordapp.com/avatars/995158317875875871/878fb1d60d23e1d1ae8815daca95caa4.png" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author" data-user-id="995158317875875871" style="color: #e2e5e7">gttl</span><span class="message-timestamp" title="Sunday, November 22, 2026 07:27 PM">Today at 7:27 PM</span></div><div class="message-text">on who</div></div></div><div class="message" id="m-1574144268585672766"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/993191642280493177/04325df5031650bf56f63d51ab9caa58.png?size=1024" alt="" data-user-id="993191642280493177"><img class="parser-avatar" src="https://cdn.discordapp.com/avatars/993191642280493177/04325df5031650bf56f63d51ab9caa58.png" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author" data-user-id="993191642280493177" style="color: #ba2708">pz</span><span class="message-timestamp" title="Sunday, November 22, 2026 07:27 PM">Today at 7:27 PM</span></div><div class="message-text">Just vote winter for now</div></div></div><div class="message" id="m-1574144311782670448"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/807160521353854986/78b2760fa15bee22f65ea038ff22f25d.png?size=1024" alt="" data-user-id="807160521353854986"><img class="parser-avatar" src="https://cdn.discordapp.com/avatars/807160521353854986/78b2760fa15bee22f65ea038ff22f25d.png" alt=""></div><div class="message-content"><div class="reply-preview" data-jump="m-1574144268585672766"><span class="reply-body">Original message was deleted</span></div><div class="message-header"><span class="message-author" data-user-id="807160521353854986" style="color: #ff0000">Rose</span><span class="message-timestamp" title="Sunday, November 22, 2026 07:27 PM">Today at 7:27 PM</span></div><div class="message-text">I meant exec him</div></div></div><div class="message message-compact" id="m-1574144324734820454"><div class="message-avatar">7:27 PM</div><div class="message-content"><div class="message-header"><span class="message-author" data-user-id="807160521353854986" style="color: #ff0000">Rose</span><span class="message-timestamp" title="Sunday, November 22, 2026 07:27 PM">Today at 7:27 PM</span></div><div class="message-text">If this safe</div></div></div><div class="message" id="m-1574144353180586035"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/993191642280493177/04325df5031650bf56f63d51ab9caa58.png?size=1024" alt="" data-user-id="993191642280493177"><img class="parser-avatar" src="https://cdn.discordapp.com/avatars/993191642280493177/04325df5031650bf56f63d51ab9caa58.png" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author" data-user-id="993191642280493177" style="color: #ba2708">pz</span><span class="message-timestamp" title="Sunday, November 22, 2026 07:27 PM">Today at 7:27 PM</span></div><div class="message-text">Ohhh</div></div></div><div class="message" id="m-1574144385560612986"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/758999095070687284/70e18007dbd33933f77d901a0db8eb19.png?size=1024" alt="" data-user-id="758999095070687284"><img class="parser-avatar" src="https://cdn.discordapp.com/avatars/758999095070687284/70e18007dbd33933f77d901a0db8eb19.png" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author" data-user-id="758999095070687284" style="color: #54aaec">Mafia Remastered</span><span class="bot-tag">BOT</span><span class="message-timestamp" title="Sunday, November 22, 2026 07:27 PM">Today at 7:27 PM</span></div><div class="components"><div class="component-container" style="border-left-color: #c67c1c;"><div class="component-text"><h3>Nomination results</h3></div><div class="component-separator"></div><div class="component-text">All votes are hidden. If someone is on trial, it will be announced.</div><div class="component-separator"></div><div class="component-text">-# Minimum votes to put someone on stand: 3</div></div></div></div></div><div class="message message-compact" id="m-1574144386529361932"><div class="message-avatar">7:27 PM</div><div class="message-content"><div class="message-header"><span class="message-author" data-user-id="758999095070687284" style="color: #54aaec">Mafia Remastered</span><span class="bot-tag">BOT</span><span class="message-timestamp" title="Sunday, November 22, 2026 07:27 PM">Today at 7:27 PM</span></div><div class="components"><div class="component-container" style="border-left-color: #4e5058;"><div class="component-section"><div class="component-section-content"><div class="component-text"><h3>wintermelonbossnew has been called to the stand. How do you plead?</h3></div><div class="component-text">You have 50 seconds to defend yourself before the town casts their votes for judgement.</div></div><div class="component-section-accessory"><img class="component-thumbnail" src="https://cdn.discordapp.com/avatars/1337560879813758996/5605e501e3c5ae3ebc21255a7e88e1c6.webp" alt=""></div></div></div></div></div></div><div class="message" id="m-1574144449078894744"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/1337560879813758996/5605e501e3c5ae3ebc21255a7e88e1c6.png?size=1024" alt="" data-user-id="1337560879813758996"><img class="parser-avatar" src="https://cdn.discordapp.com/avatars/1337560879813758996/5605e501e3c5ae3ebc21255a7e88e1c6.png" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author" data-user-id="1337560879813758996" style="color: #88c057">Wintermelonboss</span><span class="message-timestamp" title="Sunday, November 22, 2026 07:28 PM">Today at 7:28 PM</span></div><div class="message-text">i literally just claimed medium</div></div></div><div class="message" id="m-1574144494851334177"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/993191642280493177/04325df5031650bf56f63d51ab9caa58.png?size=1024" alt="" data-user-id="993191642280493177"><img class="parser-avatar" src="https://cdn.discordapp.com/avatars/993191642280493177/04325df5031650bf56f63d51ab9caa58.png" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author" data-user-id="993191642280493177" style="color: #ba2708">pz</span><span class="message-timestamp" title="Sunday, November 22, 2026 07:28 PM">Today at 7:28 PM</span></div><div class="message-text">Idk mort said me you or mayor</div></div></div><div class="message message-compact" id="m-1574144519916749094"><div class="message-avatar">7:28 PM</div><div class="message-content"><div class="message-header"><span class="message-author" data-user-id="993191642280493177" style="color: #ba2708">pz</span><span class="message-timestamp" title="Sunday, November 22, 2026 07:28 PM">Today at 7:28 PM</span></div><div class="message-text">Assumed mort</div></div></div><div class="message message-compact" id="m-1574144540623904881"><div class="message-avatar">7:28 PM</div><div class="message-content"><div class="message-header"><span class="message-author" data-user-id="993191642280493177" style="color: #ba2708">pz</span><span class="message-timestamp" title="Sunday, November 22, 2026 07:28 PM">Today at 7:28 PM</span></div><div class="message-text">Cz i jailed them and they said that</div></div></div><div class="message message-compact" id="m-1574144547213025421"><div class="message-avatar">7:28 PM</div><div class="message-content"><div class="message-header"><span class="message-author" data-user-id="993191642280493177" style="color: #ba2708">pz</span><span class="message-timestamp" title="Sunday, November 22, 2026 07:28 PM">Today at 7:28 PM</span></div><div class="message-text">Also like</div></div></div><div class="message message-compact" id="m-1574144559695528158"><div class="message-avatar">7:28 PM</div><div class="message-content"><div class="message-header"><span class="message-author" data-user-id="993191642280493177" style="color: #ba2708">pz</span><span class="message-timestamp" title="Sunday, November 22, 2026 07:28 PM">Today at 7:28 PM</span></div><div class="message-text">Who else would it be</div></div></div><div class="message message-compact" id="m-1574144590632583412"><div class="message-avatar">7:28 PM</div><div class="message-content"><div class="message-header"><span class="message-author" data-user-id="993191642280493177" style="color: #ba2708">pz</span><span class="message-timestamp" title="Sunday, November 22, 2026 07:28 PM">Today at 7:28 PM</span></div><div class="message-text">Idk</div></div></div><div class="message" id="m-1574144597888864317"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/758999095070687284/70e18007dbd33933f77d901a0db8eb19.png?size=1024" alt="" data-user-id="758999095070687284"><img class="parser-avatar" src="https://cdn.discordapp.com/avatars/758999095070687284/70e18007dbd33933f77d901a0db8eb19.png" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author" data-user-id="758999095070687284" style="color: #54aaec">Mafia Remastered</span><span class="bot-tag">BOT</span><span class="message-timestamp" title="Sunday, November 22, 2026 07:28 PM">Today at 7:28 PM</span></div><span class="edited" title="Sunday, November 22, 2026 07:29 PM">(edited)</span><div class="components"><div class="component-container" style="border-left-color: #c67c1c;"><div class="component-text"><h3>It is judgement time 👨‍⚖️👩‍⚖️. The village is in session!</h3></div><div class="component-text">The village must now decide the fate of <strong>wintermelonbossnew</strong>. You guys have 50 seconds to vote, or forever hold your peace.</div><div class="component-separator"></div><div class="component-text">👿 Guilty</div><div class="component-text">Votes are hidden.</div><div class="component-separator"></div><div class="component-text">👼 Innocent</div><div class="component-text">Votes are hidden.</div><div class="component-separator"></div><div class="component-text">-# I really hope the town is coordinated (no not really)</div><div class="component-action-row"><span class="component-button component-button-danger component-button-disabled">👿<span>Guilty</span></span><span class="component-button component-button-success component-button-disabled">👼<span>Innocent</span></span><span class="component-button component-button-secondary component-button-disabled">🙅‍♂️<span>ME NO VOTE</span></span></div></div></div></div></div><div class="message" id="m-1574144613214715985"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/1337560879813758996/5605e501e3c5ae3ebc21255a7e88e1c6.png?size=1024" alt="" data-user-id="1337560879813758996"><img class="parser-avatar" src="https://cdn.discordapp.com/avatars/1337560879813758996/5605e501e3c5ae3ebc21255a7e88e1c6.png" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author" data-user-id="1337560879813758996" style="color: #88c057">Wintermelonboss</span><span class="message-timestamp" title="Sunday, November 22, 2026 07:28 PM">Today at 7:28 PM</span></div><div class="message-text">the &quot;mort&quot;?</div></div></div><div class="message" id="m-1574144653421449488"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/993191642280493177/04325df5031650bf56f63d51ab9caa58.png?size=1024" alt="" data-user-id="993191642280493177"><img class="parser-avatar" src="https://cdn.discordapp.com/avatars/993191642280493177/04325df5031650bf56f63d51ab9caa58.png" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author" data-user-id="993191642280493177" style="color: #ba2708">pz</span><span class="message-timestamp" title="Sunday, November 22, 2026 07:28 PM">Today at 7:28 PM</span></div><div class="message-text">Well I kill em ig idk</div></div></div><div class="message" id="m-1574144760027947091"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/1337560879813758996/5605e501e3c5ae3ebc21255a7e88e1c6.png?size=1024" alt="" data-user-id="1337560879813758996"><img class="parser-avatar" src="https://cdn.discordapp.com/avatars/1337560879813758996/5605e501e3c5ae3ebc21255a7e88e1c6.png" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author" data-user-id="1337560879813758996" style="color: #88c057">Wintermelonboss</span><span class="message-timestamp" title="Sunday, November 22, 2026 07:29 PM">Today at 7:29 PM</span></div><div class="message-text">if you vote me out, pz exec the guy then maf can just kill the mayor and they win</div></div></div><div class="message" id="m-1574144775270039574"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/993191642280493177/04325df5031650bf56f63d51ab9caa58.png?size=1024" alt="" data-user-id="993191642280493177"><img class="parser-avatar" src="https://cdn.discordapp.com/avatars/993191642280493177/04325df5031650bf56f63d51ab9caa58.png" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author" data-user-id="993191642280493177" style="color: #ba2708">pz</span><span class="message-timestamp" title="Sunday, November 22, 2026 07:29 PM">Today at 7:29 PM</span></div><div class="message-text">Ok</div></div></div><div class="message" id="m-1574144793871655214"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/807160521353854986/78b2760fa15bee22f65ea038ff22f25d.png?size=1024" alt="" data-user-id="807160521353854986"><img class="parser-avatar" src="https://cdn.discordapp.com/avatars/807160521353854986/78b2760fa15bee22f65ea038ff22f25d.png" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author" data-user-id="807160521353854986" style="color: #ff0000">Rose</span><span class="message-timestamp" title="Sunday, November 22, 2026 07:29 PM">Today at 7:29 PM</span></div><div class="message-text">I have winter studied</div></div></div><div class="message" id="m-1574144808107118653"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/993191642280493177/04325df5031650bf56f63d51ab9caa58.png?size=1024" alt="" data-user-id="993191642280493177"><img class="parser-avatar" src="https://cdn.discordapp.com/avatars/993191642280493177/04325df5031650bf56f63d51ab9caa58.png" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author" data-user-id="993191642280493177" style="color: #ba2708">pz</span><span class="message-timestamp" title="Sunday, November 22, 2026 07:29 PM">Today at 7:29 PM</span></div><div class="message-text">Uh</div></div></div><div class="message" id="m-1574144811282468935"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/758999095070687284/70e18007dbd33933f77d901a0db8eb19.png?size=1024" alt="" data-user-id="758999095070687284"><img class="parser-avatar" src="https://cdn.discordapp.com/avatars/758999095070687284/70e18007dbd33933f77d901a0db8eb19.png" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author" data-user-id="758999095070687284" style="color: #54aaec">Mafia Remastered</span><span class="bot-tag">BOT</span><span class="message-timestamp" title="Sunday, November 22, 2026 07:29 PM">Today at 7:29 PM</span></div><div class="components"><div class="component-container" style="border-left-color: #3498db;"><div class="component-text"><h3>Here are the final results</h3></div><div class="component-separator"></div><div class="component-text">Votes are hidden.</div></div></div></div></div><div class="message message-compact" id="m-1574144812506943659"><div class="message-avatar">7:29 PM</div><div class="message-content"><div class="message-header"><span class="message-author" data-user-id="758999095070687284" style="color: #54aaec">Mafia Remastered</span><span class="bot-tag">BOT</span><span class="message-timestamp" title="Sunday, November 22, 2026 07:29 PM">Today at 7:29 PM</span></div><div class="components"><div class="component-container" style="border-left-color: #972f25;"><div class="component-text"><h3>wintermelonbossnew has been found guilty so the village has hanged them. Press F to pay respect.</h3></div><div class="component-media-gallery"><img src="https://res.cloudinary.com/dkpraixbv/image/upload/misc/lynch-default.jpg" alt="hang background"></div></div></div></div></div><div class="message" id="m-1574144825794498753"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/993191642280493177/04325df5031650bf56f63d51ab9caa58.png?size=1024" alt="" data-user-id="993191642280493177"><img class="parser-avatar" src="https://cdn.discordapp.com/avatars/993191642280493177/04325df5031650bf56f63d51ab9caa58.png" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author" data-user-id="993191642280493177" style="color: #ba2708">pz</span><span class="message-timestamp" title="Sunday, November 22, 2026 07:29 PM">Today at 7:29 PM</span></div><div class="message-text">Idk</div></div></div><div class="message" id="m-1574144826637819905"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/758999095070687284/70e18007dbd33933f77d901a0db8eb19.png?size=1024" alt="" data-user-id="758999095070687284"><img class="parser-avatar" src="https://cdn.discordapp.com/avatars/758999095070687284/70e18007dbd33933f77d901a0db8eb19.png" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author" data-user-id="758999095070687284" style="color: #54aaec">Mafia Remastered</span><span class="bot-tag">BOT</span><span class="message-timestamp" title="Sunday, November 22, 2026 07:29 PM">Today at 7:29 PM</span></div><div class="components"><div class="component-container" style="border-left-color: #972f25;"><div class="component-text"><strong><img class="custom-emoji" alt=":animated_logo:" src="https://cdn.discordapp.com/emojis/1368198731878498385.gif"> Mafia Remastered</strong></div><div class="component-text">wintermelonbossnew&#x27;s role was <strong><img class="custom-emoji" alt=":godfather:" src="https://cdn.discordapp.com/emojis/1157662256599941150.png"> Godfather</strong>.</div></div></div></div></div><div class="message" id="m-1574144838603907264"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/993191642280493177/04325df5031650bf56f63d51ab9caa58.png?size=1024" alt="" data-user-id="993191642280493177"><img class="parser-avatar" src="https://cdn.discordapp.com/avatars/993191642280493177/04325df5031650bf56f63d51ab9caa58.png" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author" data-user-id="993191642280493177" style="color: #ba2708">pz</span><span class="message-timestamp" title="Sunday, November 22, 2026 07:29 PM">Today at 7:29 PM</span></div><div class="message-text">LOL</div></div></div><div class="message" id="m-1574144848171368530"><div class="message-avatar"><img src="https://cdn.discordapp.com/avatars/758999095070687284/70e18007dbd33933f77d901a0db8eb19.png?size=1024" alt="" data-user-id="758999095070687284"><img class="parser-avatar" src="https://cdn.discordapp.com/avatars/758999095070687284/70e18007dbd33933f77d901a0db8eb19.png" alt=""></div><div class="message-content"><div class="message-header"><span class="message-author" data-user-id="758999095070687284" style="color: #54aaec">Mafia Remastered</span><span class="bot-tag">BOT</span><span class="message-timestamp" title="Sunday, November 22, 2026 07:29 PM">Today at 7:29 PM</span></div><div class="components"><div class="component-container" style="border-left-color: #2ebb6a;"><div class="component-text"><h3>Game Over - Village won the match!</h3></div><div class="component-separator"></div><div class="component-text"><strong>🎊 Winners</strong></div><div class="component-text"><strong><u>Main winners</u></strong><br>👼 <span class="mention mention-user" data-user-id="993191642280493177">@pz</span> - Jailor <br>👼 <span class="mention mention-user" data-user-id="807160521353854986">@Rose</span> - Historian <br>👼 <span class="mention mention-user" data-user-id="995158317875875871">@gttl</span> - Mayor <br>👼 <span class="mention mention-user" data-user-id="955802095276138576">@Jerry</span> - Mortician <br><br>☠️ <span class="mention mention-user" data-user-id="483217929177923585">@xLx 🇵🇸</span> - Judge</div><div class="component-separator"></div><div class="component-text"><strong>🗡️ Losers</strong></div><div class="component-text">☠️ <span class="mention mention-user" data-user-id="890215961544757268">@transnationally feared</span> - Grave Robber <br>☠️ <span class="mention mention-user" data-user-id="1337560879813758996">@Wintermelonboss</span> - Godfather</div><div class="component-separator"></div><div class="component-text">-# W Village, L others</div></div></div></div></div></div></div><aside class="members"><h3>Members — 8</h3><div class="member-row" data-user-id="758999095070687284"><img src="https://cdn.discordapp.com/avatars/758999095070687284/70e18007dbd33933f77d901a0db8eb19.png?size=1024" alt=""><span class="member-name" style="color:#54aaec">Mafia Remastered <span class="bot-tag">BOT</span></span></div><div class="member-row" data-user-id="995158317875875871"><img src="https://cdn.discordapp.com/avatars/995158317875875871/878fb1d60d23e1d1ae8815daca95caa4.png?size=1024" alt=""><span class="member-name" style="color:#e2e5e7">gttl</span></div><div class="member-row" data-user-id="955802095276138576"><img src="https://cdn.discordapp.com/avatars/955802095276138576/3cecaa7e2206df6f7c7a56b9fc155d60.png?size=1024" alt=""><span class="member-name" style="color:#e2e5e7">Jerry</span></div><div class="member-row" data-user-id="993191642280493177"><img src="https://cdn.discordapp.com/avatars/993191642280493177/04325df5031650bf56f63d51ab9caa58.png?size=1024" alt=""><span class="member-name" style="color:#ba2708">pz</span></div><div class="member-row" data-user-id="807160521353854986"><img src="https://cdn.discordapp.com/avatars/807160521353854986/78b2760fa15bee22f65ea038ff22f25d.png?size=1024" alt=""><span class="member-name" style="color:#ff0000">Rose</span></div><div class="member-row" data-user-id="890215961544757268"><img src="https://cdn.discordapp.com/avatars/890215961544757268/59c30b9183776e5621488d5599936f5a.png?size=1024" alt=""><span class="member-name" style="color:#020202">transnationally feared</span></div><div class="member-row" data-user-id="1337560879813758996"><img src="https://cdn.discordapp.com/avatars/1337560879813758996/5605e501e3c5ae3ebc21255a7e88e1c6.png?size=1024" alt=""><span class="member-name" style="color:#88c057">Wintermelonboss</span></div><div class="member-row" data-user-id="483217929177923585"><img src="https://cdn.discordapp.com/avatars/483217929177923585/a3ecbba69c03caca22dffb4ea1d42668.png?size=1024" alt=""><span class="member-name" style="color:#e2e5e7">xLx 🇵🇸</span></div></aside></div></div></div><script type="application/json" id="transcript-users">[{"id": "758999095070687284", "name": "Mafia Remastered", "username": "Mafia Remastered", "avatar": "https://cdn.discordapp.com/avatars/758999095070687284/70e18007dbd33933f77d901a0db8eb19.png?size=1024", "bot": true, "color": "#54aaec", "roles": [{"name": "♢ Category E", "color": "#e81800"}, {"name": "♢ Bot", "color": "#54aaec"}, {"name": "♢ Role Management", "color": "#99aab5"}], "created_at": "2020-09-25T10:31:25.786000+00:00", "joined_at": "2026-07-19T05:40:44.861000+00:00"}, {"id": "483217929177923585", "name": "xLx 🇵🇸", "username": ".rqlic.", "avatar": "https://cdn.discordapp.com/avatars/483217929177923585/a3ecbba69c03caca22dffb4ea1d42668.png?size=1024", "bot": false, "color": "#e2e5e7", "roles": [{"name": "10 ✯ | Lurker", "color": "#99aab5"}, {"name": "20 ✯ | Active", "color": "#99aab5"}, {"name": "Donor [10M]", "color": "#fc9502"}, {"name": "Donor [69M]", "color": "#fadfdc"}, {"name": "Donor [250M]", "color": "#62b0fa"}, {"name": "Donor [500M]", "color": "#ffd782"}, {"name": "Donor [690M]", "color": "#f1a969"}, {"name": "Spooky 26 👻", "color": "#e2e5e7"}], "created_at": "2018-08-26T10:15:32.071000+00:00", "joined_at": "2025-10-24T18:39:38.313000+00:00"}, {"id": "807160521353854986", "name": "Rose", "username": "rubychills", "avatar": "https://cdn.discordapp.com/avatars/807160521353854986/78b2760fa15bee22f65ea038ff22f25d.png?size=1024", "bot": false, "color": "#ff0000", "roles": [{"name": "Donor [10B]", "color": "#f3848d"}, {"name": "Donor [20B]", "color": "#d1d1d1"}, {"name": "Spooky 26 👻", "color": "#e2e5e7"}, {"name": "Respected", "color": "#ffd915"}, {"name": "♢ Staff", "color": "#e74741"}, {"name": "Rose’s Petals", "color": "#ff0000"}, {"name": "✧ Partnership Manager", "color": "#99aab5"}, {"name": "✧ Rumble Manager", "color": "#99aab5"}], "created_at": "2021-02-05T08:07:44.608000+00:00", "joined_at": "2026-09-24T13:21:34.089000+00:00"}, {"id": "955802095276138576", "name": "Jerry", "username": "_big_tree", "avatar": "https://cdn.discordapp.com/avatars/955802095276138576/3cecaa7e2206df6f7c7a56b9fc155d60.png?size=1024", "bot": false, "color": "#e2e5e7", "roles": [{"name": "Member", "color": "#88c057"}, {"name": "10 ✯ | Lurker", "color": "#99aab5"}, {"name": "20 ✯ | Active", "color": "#99aab5"}, {"name": "30 ✯ | Notable", "color": "#99aab5"}, {"name": "Donor [10M]", "color": "#fc9502"}, {"name": "Donor [69M]", "color": "#fadfdc"}, {"name": "Donor [250M]", "color": "#62b0fa"}, {"name": "Spooky 26 👻", "color": "#e2e5e7"}], "created_at": "2022-03-22T12:16:17.458000+00:00", "joined_at": "2026-03-19T07:02:18.083000+00:00"}, {"id": "890215961544757268", "name": "transnationally feared", "username": "judev2", "avatar": "https://cdn.discordapp.com/avatars/890215961544757268/59c30b9183776e5621488d5599936f5a.png?size=1024", "bot": false, "color": "#020202", "roles": [{"name": "Donor [500M]", "color": "#ffd782"}, {"name": "Donor [690M]", "color": "#f1a969"}, {"name": "Donor [1B]", "color": "#d7dadd"}, {"name": "Donor [2B]", "color": "#d95cff"}, {"name": "Donor [5B]", "color": "#96cee5"}, {"name": "Donor [10B]", "color": "#f3848d"}, {"name": "Spooky 26 👻", "color": "#e2e5e7"}, {"name": "Real Organization XIII", "color": "#020202"}], "created_at": "2021-09-22T12:40:24.645000+00:00", "joined_at": "2026-06-14T00:35:06.751000+00:00"}, {"id": "1337560879813758996", "name": "Wintermelonboss", "username": "wintermelonbossnew", "avatar": "https://cdn.discordapp.com/avatars/1337560879813758996/5605e501e3c5ae3ebc21255a7e88e1c6.png?size=1024", "bot": false, "color": "#88c057", "roles": [{"name": "Rumble Ping", "color": "#99aab5"}, {"name": "Auction Ping", "color": "#99aab5"}, {"name": "Mafia Ping", "color": "#99aab5"}, {"name": "Big Event Ping", "color": "#99aab5"}, {"name": "Event Ping", "color": "#99aab5"}, {"name": "Heist Ping", "color": "#99aab5"}, {"name": "Poll Ping", "color": "#99aab5"}, {"name": "Member", "color": "#88c057"}], "created_at": "2025-02-07T23:09:24.427000+00:00", "joined_at": "2026-10-31T01:23:59.011000+00:00"}, {"id": "993191642280493177", "name": "pz", "username": "paracxsmz", "avatar": "https://cdn.discordapp.com/avatars/993191642280493177/04325df5031650bf56f63d51ab9caa58.png?size=1024", "bot": false, "color": "#ba2708", "roles": [{"name": "Mafia Ping", "color": "#99aab5"}, {"name": "Member", "color": "#88c057"}, {"name": "Donor [69M]", "color": "#fadfdc"}, {"name": "Witch‘s Kiss", "color": "#ba2708"}], "created_at": "2022-07-03T16:29:00.128000+00:00", "joined_at": "2026-11-17T12:47:33.609000+00:00"}, {"id": "995158317875875871", "name": "gttl", "username": "gttl2", "avatar": "https://cdn.discordapp.com/avatars/995158317875875871/878fb1d60d23e1d1ae8815daca95caa4.png?size=1024", "bot": false, "color": "#e2e5e7", "roles": [{"name": "Mafia Ping", "color": "#99aab5"}, {"name": "Big Event Ping", "color": "#99aab5"}, {"name": "Event Ping", "color": "#99aab5"}, {"name": "Heist Ping", "color": "#99aab5"}, {"name": "Poll Ping", "color": "#99aab5"}, {"name": "Member", "color": "#88c057"}, {"name": "Donor [10M]", "color": "#fc9502"}, {"name": "Spooky 26 👻", "color": "#e2e5e7"}], "created_at": "2022-07-09T02:43:52.129000+00:00", "joined_at": "2026-09-07T12:07:31.079000+00:00"}]</script><div id="profile-pop" class="profile-pop"></div><div id="lightbox" class="lightbox"><img alt=""></div>
+        <script>
+        (function () {
+          const users = JSON.parse(document.getElementById("transcript-users").textContent || "[]");
+          const byId = Object.fromEntries(users.map((u) => [String(u.id), u]));
+          const pop = document.getElementById("profile-pop");
+          const box = document.getElementById("lightbox");
+          const search = document.getElementById("tx-search");
+
+          function hidePop() { pop.classList.remove("show"); }
+          function colorOr(c, fb) { return c && c !== "#000000" ? c : fb; }
+
+          function showProfile(id, anchor) {
+            const u = byId[String(id)];
+            if (!u) return;
+            const roles = (u.roles || []).map((r) =>
+              `<span class="role-pill"><span class="role-dot" style="background:${colorOr(r.color, "#99aab5")}"></span>${escapeHtml(r.name)}</span>`
+            ).join("");
+            pop.innerHTML =
+              `<div class="profile-banner" style="background:${colorOr(u.color, "#5865f2")}"></div>` +
+              `<img class="profile-avatar" src="${escapeAttr(u.avatar || "")}" alt="">` +
+              `<div class="profile-body">` +
+              `<div class="profile-name">${escapeHtml(u.name || u.username || "User")}${u.bot ? ' <span class="bot-tag">BOT</span>' : ""}</div>` +
+              `<div class="profile-user">${escapeHtml(u.username || "")}</div>` +
+              (u.joined_at ? `<div class="profile-section">Server member since</div><div>${fmtDate(u.joined_at)}</div>` : "") +
+              (u.created_at ? `<div class="profile-section">Member since</div><div>${fmtDate(u.created_at)}</div>` : "") +
+              (roles ? `<div class="profile-section">Roles</div><div class="role-pills">${roles}</div>` : "") +
+              `<div class="profile-actions">` +
+              `<button type="button" data-copy="${escapeAttr(u.id)}">Copy ID</button>` +
+              `<a href="https://discord.com/users/${encodeURIComponent(u.id)}" target="_blank" rel="noreferrer">Open profile</a>` +
+              `</div></div>`;
+            pop.classList.add("show");
+            const r = (anchor || document.body).getBoundingClientRect();
+            let x = r.right + 8;
+            let y = r.top - 20;
+            const w = 300, h = Math.min(pop.offsetHeight || 360, window.innerHeight - 16);
+            if (x + w > window.innerWidth - 8) x = r.left - w - 8;
+            if (x < 8) x = 8;
+            if (y + h > window.innerHeight - 8) y = window.innerHeight - h - 8;
+            if (y < 8) y = 8;
+            pop.style.left = x + "px";
+            pop.style.top = y + "px";
+          }
+
+          function escapeHtml(s) {
+            return String(s || "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+          }
+          function escapeAttr(s) { return escapeHtml(s).replace(/`/g, ""); }
+          function fmtDate(iso) {
+            try { return new Date(iso).toLocaleString(undefined, { dateStyle: "medium", timeStyle: "short" }); }
+            catch (e) { return iso; }
+          }
+
+          document.addEventListener("click", (e) => {
+            const copy = e.target.closest("[data-copy]");
+            if (copy) {
+              navigator.clipboard.writeText(copy.getAttribute("data-copy") || "");
+              copy.textContent = "Copied";
+              setTimeout(() => { copy.textContent = "Copy ID"; }, 1200);
+              return;
+            }
+            const spoiler = e.target.closest(".spoiler:not(.revealed)");
+            if (spoiler) { spoiler.classList.add("revealed"); return; }
+            const img = e.target.closest(".attachment img, .embed-image img, .component-media-gallery img, .sticker, .embed-thumbnail img");
+            if (img && img.src) {
+              box.querySelector("img").src = img.src;
+              box.classList.add("show");
+              return;
+            }
+            const jump = e.target.closest("[data-jump]");
+            if (jump) {
+              const el = document.getElementById(jump.getAttribute("data-jump"));
+              if (el) {
+                el.scrollIntoView({ behavior: "smooth", block: "center" });
+                el.classList.add("flash");
+                setTimeout(() => el.classList.remove("flash"), 1600);
+              }
+              return;
+            }
+            const sel = e.target.closest(".component-select");
+            if (sel) {
+              sel.parentElement.classList.toggle("open");
+              return;
+            }
+            const hit = e.target.closest(".message-author, .member-row, .mention-user, .reply-author, img[data-user-id]");
+            if (hit) {
+              const uid = hit.getAttribute("data-user-id");
+              if (uid) {
+                showProfile(uid, hit);
+                e.stopPropagation();
+                return;
+              }
+            }
+            if (!pop.contains(e.target)) hidePop();
+          });
+          box.addEventListener("click", () => box.classList.remove("show"));
+          document.addEventListener("keydown", (e) => {
+            if (e.key === "Escape") { hidePop(); box.classList.remove("show"); }
+          });
+
+          if (search) {
+            search.addEventListener("input", () => {
+              const q = search.value.trim().toLowerCase();
+              document.querySelectorAll(".message, .system-message").forEach((el) => {
+                el.style.display = !q || el.textContent.toLowerCase().includes(q) ? "" : "none";
+              });
+            });
+          }
+
+          if (location.hash) {
+            const el = document.getElementById(location.hash.slice(1));
+            if (el) {
+              el.classList.add("flash");
+              setTimeout(() => el.classList.remove("flash"), 1800);
+            }
+          }
+        })();
+        </script>
+        </body></html>
